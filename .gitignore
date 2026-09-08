@@ -1,6 +1,29 @@
+# dependencies
 node_modules/
+.pnp
+.pnp.*
+
+# next.js
 .next/
+/out/
+/build
+next-env.d.ts
+
+# env
 .env
-.env.local
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+
+# claude / agent capture
 .claude/settings.local.json
 .agent-logs/.hook-debug.log
