@@ -14,10 +14,13 @@
   --bg-subtle: #f7fafa;
   --bg-inverse: #0f1111;
 
-  /* ── Chrome (site header / nav belt) ─────────────────────────── */
+  /* ── Chrome (site header / nav belt / footer) ───────────────── */
   --chrome-nav: #131921;
   --chrome-belt: #232f3e;
   --chrome-belt-hover: #37475a;
+  --chrome-footer-deep: #131a22;
+  --chrome-search-btn: #febd69;
+  --chrome-search-btn-hover: #f3a847;
 
   /* ── Borders ─────────────────────────────────────────────────── */
   --border-default: #d5d9d9;
@@ -88,6 +91,9 @@
   --color-chrome-nav: var(--chrome-nav);
   --color-chrome-belt: var(--chrome-belt);
   --color-chrome-belt-hover: var(--chrome-belt-hover);
+  --color-chrome-footer-deep: var(--chrome-footer-deep);
+  --color-chrome-search-btn: var(--chrome-search-btn);
+  --color-chrome-search-btn-hover: var(--chrome-search-btn-hover);
 
   --color-border-default: var(--border-default);
   --color-border-strong: var(--border-strong);

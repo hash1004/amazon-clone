@@ -29,6 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${ember.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-canvas text-text-primary antialiased">
         <CartProvider>
+          <span id="top" />
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />
