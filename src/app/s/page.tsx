@@ -98,6 +98,23 @@ export default async function SearchPage({
         ? "Today's Deals"
         : "All products";
 
+  const activeFilters: string[] = [];
+  if (sp.dept && DEPARTMENT_BY_SLUG[sp.dept] && sp.q)
+    activeFilters.push(DEPARTMENT_BY_SLUG[sp.dept].label);
+  if (sp.brand) activeFilters.push(sp.brand);
+  if (sp.rating) activeFilters.push(`${sp.rating}★ & up`);
+  if (sp.min || sp.max)
+    activeFilters.push(
+      `${sp.min ? "$" + Number(sp.min) / 100 : "$0"}–${
+        sp.max ? "$" + Number(sp.max) / 100 : "∞"
+      }`,
+    );
+  if (sp.deals && !sp.q && !sp.dept) {
+    /* heading already says Today's Deals */
+  } else if (sp.deals) {
+    activeFilters.push("On sale");
+  }
+
   return (
     <div className="bg-canvas">
       {/* Results bar */}
@@ -120,10 +137,22 @@ export default async function SearchPage({
         <FilterRail params={sp} brands={brands} />
 
         <div className="min-w-0 flex-1">
-          <h1 className="mb-1 text-xl font-bold">
-            {sp.q ? `Results for "${sp.q}"` : heading}
-          </h1>
-          <p className="mb-3 border-b border-border-default pb-2 text-xs text-text-secondary">
+          <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border-default pb-2">
+            <h1 className="text-xl font-bold">
+              {sp.q ? `Results for "${sp.q}"` : heading}
+            </h1>
+            {activeFilters.length > 0 && (
+              <>
+                <span className="text-sm text-text-secondary">
+                  {activeFilters.join(" · ")}
+                </span>
+                <Link href={searchUrl({ q: sp.q }, {})} className="link text-sm">
+                  Clear filters
+                </Link>
+              </>
+            )}
+          </div>
+          <p className="mb-3 text-xs text-text-secondary">
             Check each product page for other buying options.
           </p>
 

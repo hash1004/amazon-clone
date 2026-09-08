@@ -70,6 +70,12 @@ async function main() {
   await db.cartItem.deleteMany();
   await db.product.deleteMany();
 
+  // Deterministic pseudo-random in [0,1) from an integer seed.
+  const rand = (n: number) => {
+    const x = Math.sin(n * 12.9898) * 43758.5453;
+    return x - Math.floor(x);
+  };
+
   let created = 0;
   for (const p of products) {
     const department = DEPT_MAP[p.category] ?? "everything-else";
@@ -80,6 +86,15 @@ async function main() {
         : null;
     const images = (p.images?.length ? p.images : [p.thumbnail]).filter(Boolean);
 
+    const firstSentence =
+      p.description.split(/(?<=[.!?])\s/)[0] ?? p.description;
+    const prettyCategory = p.category
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+    const ratingCount = Math.round(
+      p.rating ** 2 * 40 + rand(p.id) * 2600 + 15,
+    );
+
     await db.product.create({
       data: {
         slug: `${slugify(p.title)}-${p.id}`,
@@ -88,17 +103,19 @@ async function main() {
         brand: p.brand?.trim() || "Generic",
         department,
         bullets: [
-          ...p.tags.map((t) => `Category: ${t}`),
-          `Ships from the Amazon clone warehouse`,
-          `${p.stock} in stock`,
+          firstSentence,
+          `${p.brand?.trim() || "Quality"} ${prettyCategory.toLowerCase()} — genuine, brand-new stock`,
+          `Rated ${p.rating.toFixed(1)} out of 5 by ${ratingCount.toLocaleString()} customers`,
+          listPriceCents
+            ? `Now ${p.discountPercentage.toFixed(0)}% off the list price`
+            : `Everyday low price`,
+          `Ships from and sold by the Amazon clone warehouse`,
         ],
         images,
         priceCents,
         listPriceCents,
         rating: Math.round(p.rating * 10) / 10,
-        ratingCount: p.reviews?.length
-          ? p.reviews.length * 37 + p.id
-          : 10 + (p.id % 90),
+        ratingCount,
         stock: p.stock,
         featured: p.rating >= 4.5,
       },

@@ -11,7 +11,7 @@ export function ProductGallery({
   title: string;
 }) {
   const [active, setActive] = useState(0);
-  const list = images.length ? images : ["/window.svg"];
+  const list = images.length ? images : ["/icon.svg"];
 
   return (
     <div className="flex gap-3">
@@ -23,29 +23,31 @@ export function ProductGallery({
               type="button"
               onMouseEnter={() => setActive(i)}
               onClick={() => setActive(i)}
-              className={`relative h-12 w-12 overflow-hidden rounded-md border bg-white ${
-                i === active ? "border-border-accent" : "border-border-default"
+              className={`relative h-11 w-11 shrink-0 overflow-hidden rounded-md border bg-white transition ${
+                i === active
+                  ? "border-border-accent ring-1 ring-border-accent"
+                  : "border-border-default hover:border-border-strong"
               }`}
             >
               <Image
                 src={src}
                 alt={`${title} view ${i + 1}`}
                 fill
-                sizes="48px"
+                sizes="44px"
                 className="object-contain p-1"
               />
             </button>
           ))}
         </div>
       )}
-      <div className="relative aspect-square min-w-0 flex-1 bg-white">
+      <div className="relative mx-auto aspect-square w-full max-w-[420px] bg-white">
         <Image
           src={list[active]}
           alt={title}
           fill
-          sizes="(max-width: 1024px) 100vw, 480px"
+          sizes="(max-width: 1024px) 90vw, 420px"
           priority
-          className="object-contain p-4"
+          className="object-contain p-2"
         />
       </div>
     </div>
