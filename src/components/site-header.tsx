@@ -20,16 +20,16 @@ export async function SiteHeader() {
     <header className="sticky top-0 z-40">
       {/* ── Top row ─────────────────────────────────────────────── */}
       <div className="bg-chrome-nav text-white">
-        <div className="mx-auto flex max-w-[1500px] items-center gap-2 px-2 py-1.5">
+        <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-2 gap-y-1 px-2 py-1.5">
           <Link
             href="/"
-            className="flex shrink-0 items-end rounded-sm border border-transparent px-2 py-2 text-2xl font-bold leading-none hover:border-white"
+            className="flex shrink-0 items-end rounded-sm border border-transparent px-2 py-2 text-xl font-bold leading-none hover:border-white sm:text-2xl"
           >
             amazon
             <span className="text-accent-buy">.clone</span>
           </Link>
 
-          <div className="hidden shrink-0 items-center gap-1 rounded-sm border border-transparent px-2 py-1.5 sm:flex">
+          <div className="hidden shrink-0 items-center gap-1 rounded-sm border border-transparent px-2 py-1.5 lg:flex">
             <span aria-hidden className="text-lg">📍</span>
             <span className="leading-tight">
               <span className="block text-xs text-neutral-300">Deliver to</span>
@@ -37,8 +37,11 @@ export async function SiteHeader() {
             </span>
           </div>
 
-          {/* Search */}
-          <form action="/s" className="flex min-w-0 flex-1 overflow-hidden rounded-md">
+          {/* Search — own row on mobile, inline from sm up */}
+          <form
+            action="/s"
+            className="order-last flex w-full min-w-0 overflow-hidden rounded-md sm:order-none sm:w-auto sm:flex-1"
+          >
             <input
               type="search"
               name="q"
@@ -56,7 +59,7 @@ export async function SiteHeader() {
           </form>
 
           {session?.user ? (
-            <div className="hidden shrink-0 rounded-sm border border-transparent px-2 py-1.5 text-xs leading-tight hover:border-white md:block">
+            <div className="ml-auto shrink-0 rounded-sm border border-transparent px-2 py-1.5 text-xs leading-tight hover:border-white sm:ml-0">
               <Link href="/account" className="block">
                 Hello, {firstName}
               </Link>
@@ -65,7 +68,7 @@ export async function SiteHeader() {
           ) : (
             <Link
               href="/login"
-              className="hidden shrink-0 rounded-sm border border-transparent px-2 py-1.5 text-xs leading-tight hover:border-white md:block"
+              className="ml-auto shrink-0 rounded-sm border border-transparent px-2 py-1.5 text-xs leading-tight hover:border-white sm:ml-0"
             >
               <span className="block">Hello, sign in</span>
               <span className="block text-sm font-bold">Account &amp; Lists</span>
