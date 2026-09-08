@@ -4,9 +4,8 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useState,
+  useSyncExternalStore,
 } from "react";
 
 export type CartLine = {
@@ -30,49 +29,82 @@ type CartContextValue = {
 };
 
 const STORAGE_KEY = "amazon-clone.cart.v1";
-const CartContext = createContext<CartContextValue | null>(null);
+const EVENT = "amazon-clone:cart";
 
-function read(): CartLine[] {
-  if (typeof window === "undefined") return [];
+// ─── External store backed by localStorage ────────────────────────────────
+
+let cachedRaw: string | null = null;
+let cachedLines: CartLine[] = [];
+
+function getSnapshot(): CartLine[] {
+  let raw: string | null = null;
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    raw = window.localStorage.getItem(STORAGE_KEY);
   } catch {
-    return [];
+    raw = null;
   }
+  if (raw === cachedRaw) return cachedLines;
+  cachedRaw = raw;
+  try {
+    const parsed = raw ? JSON.parse(raw) : [];
+    cachedLines = Array.isArray(parsed) ? parsed : [];
+  } catch {
+    cachedLines = [];
+  }
+  return cachedLines;
 }
 
+const EMPTY: CartLine[] = [];
+function getServerSnapshot(): CartLine[] {
+  return EMPTY;
+}
+
+function subscribe(onChange: () => void): () => void {
+  const handler = () => onChange();
+  const storageHandler = (e: StorageEvent) => {
+    if (e.key === STORAGE_KEY) onChange();
+  };
+  window.addEventListener(EVENT, handler);
+  window.addEventListener("storage", storageHandler);
+  return () => {
+    window.removeEventListener(EVENT, handler);
+    window.removeEventListener("storage", storageHandler);
+  };
+}
+
+function write(next: CartLine[]) {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // quota / private mode — fall back to in-memory for this tab
+    cachedRaw = JSON.stringify(next);
+    cachedLines = next;
+  }
+  window.dispatchEvent(new Event(EVENT));
+}
+
+function mutate(fn: (lines: CartLine[]) => CartLine[]) {
+  write(fn(getSnapshot()));
+}
+
+// ─── Context (thin wrapper so components just call useCart) ────────────────
+
+const CartContext = createContext<CartContextValue | null>(null);
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [lines, setLines] = useState<CartLine[]>([]);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    setLines(read());
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
-    } catch {
-      /* quota / private mode — cart stays in-memory for this session */
-    }
-  }, [lines, ready]);
-
-  // Reflect changes made in other tabs.
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === STORAGE_KEY) setLines(read());
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, []);
+  const lines = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
+  const ready = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 
   const add = useCallback<CartContextValue["add"]>((line, quantity = 1) => {
-    setLines((prev) => {
+    mutate((prev) => {
       const existing = prev.find((l) => l.productId === line.productId);
       if (existing) {
         return prev.map((l) =>
@@ -87,7 +119,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const setQuantity = useCallback<CartContextValue["setQuantity"]>(
     (productId, quantity) => {
-      setLines((prev) =>
+      mutate((prev) =>
         quantity <= 0
           ? prev.filter((l) => l.productId !== productId)
           : prev.map((l) =>
@@ -101,10 +133,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   const remove = useCallback<CartContextValue["remove"]>((productId) => {
-    setLines((prev) => prev.filter((l) => l.productId !== productId));
+    mutate((prev) => prev.filter((l) => l.productId !== productId));
   }, []);
 
-  const clear = useCallback(() => setLines([]), []);
+  const clear = useCallback(() => write([]), []);
 
   const value = useMemo<CartContextValue>(() => {
     const count = lines.reduce((n, l) => n + l.quantity, 0);

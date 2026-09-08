@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/departments";
 import { CartBadge } from "@/components/cart-badge";
+import { auth } from "@/auth";
+import { SignOutButton } from "@/components/sign-out-button";
 
 const NAV_LINKS = [
   { label: "Today's Deals", href: "/s?deals=1" },
@@ -10,7 +12,10 @@ const NAV_LINKS = [
   })),
 ];
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const session = await auth();
+  const firstName = session?.user?.name?.split(" ")[0] ?? session?.user?.email;
+
   return (
     <header className="sticky top-0 z-40">
       {/* ── Top row ─────────────────────────────────────────────── */}
@@ -24,16 +29,13 @@ export function SiteHeader() {
             <span className="text-accent-buy">.clone</span>
           </Link>
 
-          <Link
-            href="/account/addresses"
-            className="hidden shrink-0 items-center gap-1 rounded-sm border border-transparent px-2 py-1.5 hover:border-white sm:flex"
-          >
+          <div className="hidden shrink-0 items-center gap-1 rounded-sm border border-transparent px-2 py-1.5 sm:flex">
             <span aria-hidden className="text-lg">📍</span>
             <span className="leading-tight">
               <span className="block text-xs text-neutral-300">Deliver to</span>
               <span className="block text-sm font-bold">United States</span>
             </span>
-          </Link>
+          </div>
 
           {/* Search */}
           <form action="/s" className="flex min-w-0 flex-1 overflow-hidden rounded-md">
@@ -53,13 +55,22 @@ export function SiteHeader() {
             </button>
           </form>
 
-          <Link
-            href="/account"
-            className="hidden shrink-0 rounded-sm border border-transparent px-2 py-1.5 text-xs leading-tight hover:border-white md:block"
-          >
-            <span className="block">Hello, sign in</span>
-            <span className="block text-sm font-bold">Account &amp; Lists</span>
-          </Link>
+          {session?.user ? (
+            <div className="hidden shrink-0 rounded-sm border border-transparent px-2 py-1.5 text-xs leading-tight hover:border-white md:block">
+              <Link href="/account" className="block">
+                Hello, {firstName}
+              </Link>
+              <SignOutButton />
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="hidden shrink-0 rounded-sm border border-transparent px-2 py-1.5 text-xs leading-tight hover:border-white md:block"
+            >
+              <span className="block">Hello, sign in</span>
+              <span className="block text-sm font-bold">Account &amp; Lists</span>
+            </Link>
+          )}
 
           <Link
             href="/account/orders"
