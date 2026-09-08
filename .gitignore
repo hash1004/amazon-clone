@@ -27,3 +27,11 @@ npm-debug.log*
 # claude / agent capture
 .claude/settings.local.json
 .agent-logs/.hook-debug.log
+
+/src/generated/prisma
+
+# prisma CLI agent-skill scaffolding (editor-local, not part of the app)
+.agents/
+.windsurf/
+.claude/skills/
+skills-lock.json

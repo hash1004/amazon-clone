@@ -1,11 +1,11 @@
 import Link from "next/link";
+import { DEPARTMENTS } from "@/lib/departments";
 
-const CATEGORY_CARDS = [
-  { title: "Electronics", href: "/s?dept=electronics", emoji: "🎧" },
-  { title: "Home & Kitchen", href: "/s?dept=home-kitchen", emoji: "🍳" },
-  { title: "Books", href: "/s?dept=books", emoji: "📚" },
-  { title: "Toys & Games", href: "/s?dept=toys-games", emoji: "🧸" },
-];
+const CATEGORY_CARDS = DEPARTMENTS.slice(0, 4).map((d) => ({
+  title: d.label,
+  href: `/s?dept=${d.slug}`,
+  emoji: d.emoji,
+}));
 
 export default function Home() {
   return (

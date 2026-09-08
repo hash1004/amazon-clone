@@ -1,12 +1,12 @@
 import Link from "next/link";
+import { DEPARTMENTS } from "@/lib/departments";
 
 const NAV_LINKS = [
   { label: "Today's Deals", href: "/s?deals=1" },
-  { label: "Electronics", href: "/s?dept=electronics" },
-  { label: "Home & Kitchen", href: "/s?dept=home-kitchen" },
-  { label: "Books", href: "/s?dept=books" },
-  { label: "Toys & Games", href: "/s?dept=toys-games" },
-  { label: "Sports & Outdoors", href: "/s?dept=sports-outdoors" },
+  ...DEPARTMENTS.map((d) => ({
+    label: d.label,
+    href: `/s?dept=${d.slug}`,
+  })),
 ];
 
 export function SiteHeader() {
