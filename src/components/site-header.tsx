@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/departments";
+import { CartBadge } from "@/components/cart-badge";
 
 const NAV_LINKS = [
   { label: "Today's Deals", href: "/s?deals=1" },
@@ -68,13 +69,7 @@ export function SiteHeader() {
             <span className="block text-sm font-bold">&amp; Orders</span>
           </Link>
 
-          <Link
-            href="/cart"
-            className="flex shrink-0 items-center gap-1 rounded-sm border border-transparent px-2 py-1.5 hover:border-white"
-          >
-            <span aria-hidden className="text-2xl">🛒</span>
-            <span className="text-sm font-bold">Cart</span>
-          </Link>
+          <CartBadge />
         </div>
       </div>
 
