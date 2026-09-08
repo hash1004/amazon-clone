@@ -128,25 +128,48 @@ function renderFrontmatter(fm) {
   return `---\n${lines.join("\n")}\n---\n`;
 }
 
-function countPromptEntries(body) {
-  const matches = body.match(/\[LOG_ENTRY type=PROMPT /g);
-  return matches ? matches.length : 0;
+// Parse existing entries (in order) as {type, num} so num assignment can
+// survive edge cases - e.g. a RESPONSE with no matching PROMPT, which
+// happens when this hook is installed mid-session and the turn already
+// in flight has no captured UserPromptSubmit event to pair with.
+function parseEntries(body) {
+  const re = /\[LOG_ENTRY type=(PROMPT|RESPONSE) num=(\d+)/g;
+  const entries = [];
+  let m;
+  while ((m = re.exec(body))) entries.push({ type: m[1], num: parseInt(m[2], 10) });
+  return entries;
 }
 
-function appendEntry({ sessionId, type, num, timestamp, model, text }) {
+function nextNum(entries, type) {
+  const maxNum = entries.reduce((mx, e) => Math.max(mx, e.num), 0);
+  if (type === "RESPONSE") {
+    // Reuse the num of the most recent PROMPT if it doesn't already have a
+    // RESPONSE (the normal case: this response answers that prompt).
+    for (let i = entries.length - 1; i >= 0; i--) {
+      if (entries[i].type === "PROMPT") {
+        const promptNum = entries[i].num;
+        const answered = entries.some((e) => e.type === "RESPONSE" && e.num === promptNum);
+        return answered ? maxNum + 1 : promptNum;
+      }
+    }
+  }
+  return maxNum + 1;
+}
+
+function appendEntry({ sessionId, type, timestamp, model, text }) {
   mkdirSync(LOG_DIR, { recursive: true });
   const shortId = sessionId.slice(0, 8);
   let logPath = findSessionLogPath(sessionId);
   const nowIso = timestamp;
 
-  const entryBlock =
-    `\n[LOG_ENTRY type=${type} num=${num} session=${shortId}]\n` +
-    `timestamp: ${nowIso}\n` +
-    `model: ${model}\n\n` +
-    `${text}\n\n`;
-
   if (!logPath) {
     // First write for this session - create the file with frontmatter + header.
+    const num = 1;
+    const entryBlock =
+      `\n[LOG_ENTRY type=${type} num=${num} session=${shortId}]\n` +
+      `timestamp: ${nowIso}\n` +
+      `model: ${model}\n\n` +
+      `${text}\n\n`;
     const date = nowIso.slice(0, 10);
     logPath = join(LOG_DIR, `${tsStamp(new Date(nowIso))}_${sessionId}.md`);
     const fm = {
@@ -156,7 +179,7 @@ function appendEntry({ sessionId, type, num, timestamp, model, text }) {
       model,
       tool: TOOL,
       project: PROJECT,
-      total_exchanges: type === "PROMPT" ? 1 : 0,
+      total_exchanges: num,
       first_prompt_time: nowIso,
       last_prompt_time: nowIso,
     };
@@ -167,13 +190,20 @@ function appendEntry({ sessionId, type, num, timestamp, model, text }) {
     return;
   }
 
-  // File exists: append entry, then mechanically update the frontmatter counters.
+  // File exists: compute this entry's num from what's already there, append,
+  // then mechanically update the frontmatter counters (never touch prior entries).
   const content = readFileSync(logPath, "utf8");
-  const { fm } = parseFrontmatter(content);
-  const updated = content + entryBlock;
-  const { body: newBody } = parseFrontmatter(updated);
+  const { fm, body } = parseFrontmatter(content);
+  const entries = parseEntries(body);
+  const num = nextNum(entries, type);
+  const entryBlock =
+    `\n[LOG_ENTRY type=${type} num=${num} session=${shortId}]\n` +
+    `timestamp: ${nowIso}\n` +
+    `model: ${model}\n\n` +
+    `${text}\n\n`;
+  const newBody = body + entryBlock;
   fm.model = model; // reflect the most recent model, so a switch is visible
-  fm.total_exchanges = String(countPromptEntries(newBody));
+  fm.total_exchanges = String(Math.max(num, ...entries.map((e) => e.num), 0));
   if (type === "PROMPT") fm.last_prompt_time = nowIso;
   writeFileSync(logPath, renderFrontmatter(fm) + newBody);
 }
@@ -200,14 +230,9 @@ function main() {
     if (typeof prompt !== "string" || prompt.length === 0) return;
     const timestamp = new Date().toISOString();
     const model = extractModelFromTranscript(input.transcript_path) || FALLBACK_MODEL;
-    const existing = findSessionLogPath(sessionId);
-    const bodyCount = existing
-      ? countPromptEntries(readFileSync(existing, "utf8"))
-      : 0;
     appendEntry({
       sessionId,
       type: "PROMPT",
-      num: bodyCount + 1,
       timestamp,
       model,
       text: prompt,
@@ -220,16 +245,9 @@ function main() {
     }
     const timestamp = new Date().toISOString();
     const model = result.model || FALLBACK_MODEL;
-    const existing = findSessionLogPath(sessionId);
-    // RESPONSE num should match the PROMPT it answers: count of PROMPT entries
-    // written so far (they're written first, synchronously, by the prompt hook).
-    const bodyCount = existing
-      ? countPromptEntries(readFileSync(existing, "utf8"))
-      : 1;
     appendEntry({
       sessionId,
       type: "RESPONSE",
-      num: bodyCount,
       timestamp,
       model,
       text: result.text,
