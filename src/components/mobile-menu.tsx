@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { DEPARTMENTS } from "@/lib/departments";
 
 export function MobileMenu({ userName }: { userName?: string | null }) {
@@ -12,6 +13,13 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
     return () => {
       document.body.style.overflow = "";
     };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   return (
@@ -30,13 +38,15 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
         </span>
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setOpen(false)}
-          />
-          <nav className="absolute left-0 top-0 h-full w-[85%] max-w-sm overflow-y-auto bg-surface text-text-primary shadow-xl">
+      {open &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed inset-0 z-[100] lg:hidden">
+            <div
+              className="absolute inset-0 bg-black/50"
+              onClick={() => setOpen(false)}
+            />
+            <nav className="absolute left-0 top-0 flex h-[100dvh] w-[85%] max-w-sm flex-col overflow-y-auto bg-surface text-text-primary shadow-xl">
             <div className="flex items-center justify-between bg-chrome-belt px-4 py-3 text-white">
               <span className="font-bold">
                 Hello, {userName ?? "sign in"}
@@ -92,8 +102,9 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
               </Item>
             </Group>
           </nav>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

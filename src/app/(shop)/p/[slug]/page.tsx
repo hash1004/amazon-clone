@@ -17,7 +17,6 @@ import { ProductCard } from "@/components/product-card";
 import { FrequentlyBought } from "@/components/product/frequently-bought";
 import { MobileBuyBar } from "@/components/product/mobile-buy-bar";
 import { RecordView } from "@/lib/recently-viewed";
-import { RecentlyViewedRow } from "@/components/recently-viewed-row";
 
 export async function generateMetadata({
   params,
@@ -293,9 +292,7 @@ export default async function ProductPage({
         </section>
       )}
 
-      <div className="mt-6 pb-16 lg:pb-0">
-        <RecentlyViewedRow excludeId={product.id} />
-      </div>
+      <div className="pb-16 lg:pb-0" />
 
       <MobileBuyBar product={cartLine} inStock={inStock} />
     </div>
