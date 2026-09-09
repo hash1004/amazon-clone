@@ -16,8 +16,38 @@ export function SearchIcon({ className = "h-5 w-5" }: P) {
 
 export function CartIcon({ className = "h-7 w-7" }: P) {
   return (
-    <svg viewBox="0 0 36 32" className={className} fill="currentColor" aria-hidden>
-      <path d="M8.5 24.5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm16 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM0 2c0-.6.4-1 1-1h4.3c.9 0 1.7.6 1.9 1.5L7.9 6H34c1.3 0 2.3 1.3 1.9 2.6l-3.6 12A3 3 0 0 1 29.4 23H10.2a3 3 0 0 1-2.9-2.3L3.4 3H1c-.6 0-1-.4-1-1Z" />
+    <svg
+      viewBox="0 0 36 32"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M1 2h4.3l4.6 17.7a2.4 2.4 0 0 0 2.3 1.8h16.4a2.4 2.4 0 0 0 2.3-1.8L34 7H7" />
+      <circle cx="12" cy="27" r="2.4" fill="currentColor" stroke="none" />
+      <circle cx="26" cy="27" r="2.4" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function UsFlagIcon({ className = "h-3.5 w-5" }: P) {
+  return (
+    <svg viewBox="0 0 20 14" className={className} aria-hidden>
+      <rect width="20" height="14" rx="1.5" fill="#fff" />
+      {[0, 2, 4, 6, 8, 10, 12].map((y) => (
+        <rect key={y} y={y} width="20" height="1" fill="#b22234" />
+      ))}
+      <rect width="9" height="7" fill="#3c3b6e" />
+      <g fill="#fff">
+        {[1, 3, 5].map((cy) =>
+          [1, 3, 5, 7].map((cx) => (
+            <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="0.5" />
+          )),
+        )}
+      </g>
     </svg>
   );
 }

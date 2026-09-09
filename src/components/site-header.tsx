@@ -4,7 +4,12 @@ import { CartBadge } from "@/components/cart-badge";
 import { auth } from "@/auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import { AmazonLogo } from "@/components/ui/amazon-logo";
-import { SearchIcon, PinIcon, ChevronDownIcon } from "@/components/ui/icons";
+import {
+  SearchIcon,
+  PinIcon,
+  ChevronDownIcon,
+  UsFlagIcon,
+} from "@/components/ui/icons";
 import { MobileMenu } from "@/components/mobile-menu";
 
 const BELT_LINKS = [
@@ -77,7 +82,8 @@ export async function SiteHeader() {
 
           <div className={`${cell} ml-auto hidden text-xs sm:flex`}>
             <span>&nbsp;</span>
-            <span className="flex items-center gap-0.5 font-bold">
+            <span className="flex items-center gap-1 font-bold">
+              <UsFlagIcon className="h-3 w-[18px] rounded-[1px]" />
               EN <ChevronDownIcon className="h-3 w-3 text-neutral-400" />
             </span>
           </div>
