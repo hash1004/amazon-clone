@@ -40,7 +40,7 @@ export function MobileSearchControls({
       {panel && (
         <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" onClick={close} />
-          <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-xl bg-surface p-4">
+          <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto overscroll-contain rounded-t-xl bg-surface p-4">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-lg font-bold">
                 {panel === "sort" ? "Sort by" : "Filters"}

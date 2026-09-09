@@ -9,9 +9,15 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!open) return;
+    const { body } = document;
+    const scrollY = window.scrollY;
+    body.style.top = `-${scrollY}px`;
+    body.classList.add("scroll-locked");
     return () => {
-      document.body.style.overflow = "";
+      body.classList.remove("scroll-locked");
+      body.style.top = "";
+      window.scrollTo(0, scrollY);
     };
   }, [open]);
 
@@ -41,12 +47,12 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
       {open &&
         typeof document !== "undefined" &&
         createPortal(
-          <div className="fixed inset-0 z-[100] lg:hidden">
+          <div className="fixed inset-0 z-[100] overscroll-none lg:hidden">
             <div
               className="absolute inset-0 bg-black/50"
               onClick={() => setOpen(false)}
             />
-            <nav className="absolute left-0 top-0 flex h-[100dvh] w-[85%] max-w-sm flex-col overflow-y-auto bg-surface text-text-primary shadow-xl">
+            <nav className="absolute left-0 top-0 flex h-[100dvh] w-[85%] max-w-sm flex-col overflow-y-auto overscroll-contain bg-surface text-text-primary shadow-xl">
             <div className="flex items-center justify-between bg-chrome-belt px-4 py-3 text-white">
               <span className="font-bold">
                 Hello, {userName ?? "sign in"}
