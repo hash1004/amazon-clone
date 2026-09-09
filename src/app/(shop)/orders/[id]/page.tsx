@@ -193,7 +193,10 @@ export default async function OrderPage({
               {order.paymentLast4 ? ` ending ${order.paymentLast4}` : ""}
             </p>
             <dl className="mt-2 space-y-1">
-              <Meta k="Items" v={formatPrice(order.subtotalCents)} />
+              <Meta
+                k="Items"
+                v={formatPrice(order.subtotalCents + order.discountCents)}
+              />
               {order.discountCents > 0 && (
                 <Meta k="Discount" v={`−${formatPrice(order.discountCents)}`} />
               )}
