@@ -109,7 +109,7 @@ async function main() {
           listPriceCents
             ? `Now ${p.discountPercentage.toFixed(0)}% off the list price`
             : `Everyday low price`,
-          `Ships from and sold by the Amazon clone warehouse`,
+          `Ships from and sold by Amazon.com`,
         ],
         images,
         priceCents,

@@ -86,7 +86,7 @@ export default async function OrderPage({
           <div>
             <h2 className="mb-1 text-sm font-bold">Payment</h2>
             <p className="text-sm text-text-secondary">
-              Card ending {order.paymentLast4} (mock)
+              Card ending in {order.paymentLast4}
             </p>
             <dl className="mt-2 space-y-0.5 text-sm">
               <div className="flex justify-between">

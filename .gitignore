@@ -35,3 +35,6 @@ npm-debug.log*
 .windsurf/
 .claude/skills/
 skills-lock.json
+
+# local screenshot helper
+.shot.mjs

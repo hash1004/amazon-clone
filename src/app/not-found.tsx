@@ -15,7 +15,7 @@ export default function NotFound() {
         href="/"
         className="mt-6 inline-block rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
       >
-        Go to the Amazon clone home page
+        Go to the Amazon.com home page
       </Link>
     </div>
   );

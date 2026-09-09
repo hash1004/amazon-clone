@@ -29,31 +29,31 @@ export function HomeHero({ slides }: { slides: HeroSlide[] }) {
         className="relative h-[280px] w-full overflow-hidden sm:h-[360px]"
         style={{ background: slide.bg }}
       >
-        <div className="mx-auto flex h-full max-w-[1500px] items-center justify-between gap-4 px-12">
+        <div className="mx-auto flex h-full max-w-[1400px] items-center justify-between gap-6 px-14">
           <div className="z-10 shrink-0">
-            <h2 className="text-3xl font-bold text-[#0f1111] sm:text-4xl">
+            <h2 className="text-3xl font-bold leading-tight text-[#0f1111] sm:text-[2.6rem]">
               {slide.headline}
             </h2>
             <Link
               href={slide.href}
-              className="mt-3 inline-block rounded-pill bg-white px-6 py-2 text-sm font-medium text-[#0f1111] shadow-sm hover:bg-white/80"
+              className="mt-4 inline-block rounded-pill bg-white px-6 py-2 text-sm font-medium text-[#0f1111] shadow-sm hover:bg-white/85"
             >
               Shop now
             </Link>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8 pr-8">
             {slide.images.slice(0, 3).map((src, k) => (
               <div
                 key={src + k}
-                className={`relative h-40 w-40 sm:h-64 sm:w-64 ${
-                  k === 0 ? "hidden md:block" : ""
+                className={`relative h-32 w-32 sm:h-48 sm:w-48 ${
+                  k === 0 ? "hidden xl:block" : "hidden sm:block"
                 }`}
               >
                 <Image
                   src={src}
                   alt=""
                   fill
-                  sizes="256px"
+                  sizes="208px"
                   className="object-contain drop-shadow-xl"
                   priority={i === 0}
                 />
@@ -66,7 +66,7 @@ export function HomeHero({ slides }: { slides: HeroSlide[] }) {
           type="button"
           aria-label="Previous slide"
           onClick={() => go(-1)}
-          className="absolute left-1 top-1/2 z-20 -translate-y-1/2 rounded border border-transparent bg-white/30 px-1.5 py-8 text-2xl text-[#0f1111] hover:border-[#0f1111]/30 hover:bg-white/60"
+          className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full px-2 py-2 text-3xl text-[#0f1111]/70 hover:bg-white/40 hover:text-[#0f1111]"
         >
           ‹
         </button>
@@ -74,7 +74,7 @@ export function HomeHero({ slides }: { slides: HeroSlide[] }) {
           type="button"
           aria-label="Next slide"
           onClick={() => go(1)}
-          className="absolute right-1 top-1/2 z-20 -translate-y-1/2 rounded border border-transparent bg-white/30 px-1.5 py-8 text-2xl text-[#0f1111] hover:border-[#0f1111]/30 hover:bg-white/60"
+          className="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full px-2 py-2 text-3xl text-[#0f1111]/70 hover:bg-white/40 hover:text-[#0f1111]"
         >
           ›
         </button>
@@ -91,11 +91,6 @@ export function HomeHero({ slides }: { slides: HeroSlide[] }) {
         </div>
       </div>
 
-      <p className="bg-subtle px-4 py-1.5 text-center text-xs text-text-secondary">
-        You&apos;re browsing the Amazon clone — a working storefront built as a
-        timed assignment. Browse, search, cart and checkout all work; payments
-        are mocked.
-      </p>
     </div>
   );
 }

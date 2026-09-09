@@ -14,7 +14,7 @@ export default function CartPage() {
     return (
       <div className="mx-auto max-w-[1000px] px-4 py-6">
         <div className="bg-surface p-8 shadow-sm">
-          <h1 className="text-2xl font-bold">Your Amazon clone Cart is empty</h1>
+          <h1 className="text-2xl font-bold">Your Amazon Cart is empty</h1>
           <p className="mt-2 text-sm text-text-secondary">
             Your shopping cart lives here. Give it purpose — fill it with
             groceries, electronics, or a new pair of shoes.

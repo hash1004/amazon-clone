@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AmazonLogo } from "@/components/ui/amazon-logo";
 
 const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] = [
   {
@@ -91,17 +92,15 @@ export function SiteFooter() {
         </div>
         <div className="border-t border-white/15" />
         <div className="flex flex-wrap items-center justify-center gap-4 py-8">
-          <span className="text-xl font-bold">
-            amazon<span className="text-accent-buy">.clone</span>
+          <AmazonLogo className="h-7 w-[92px]" />
+          <span className="rounded border border-border-strong px-3 py-1 text-xs">
+            English
           </span>
           <span className="rounded border border-border-strong px-3 py-1 text-xs">
-            🌐 English
+            USD - U.S. Dollar
           </span>
           <span className="rounded border border-border-strong px-3 py-1 text-xs">
-            $ USD
-          </span>
-          <span className="rounded border border-border-strong px-3 py-1 text-xs">
-            🇺🇸 United States
+            United States
           </span>
         </div>
       </div>
@@ -123,8 +122,9 @@ export function SiteFooter() {
             <span>Consumer Health Data Privacy Disclosure</span>
             <span>Your Ads Privacy Choices</span>
           </p>
-          <p className="mt-2">
-            © 1996–2026, Amazon clone — a portfolio project, not affiliated with
+          <p className="mt-2">© 1996–2026, Amazon.com, Inc. or its affiliates</p>
+          <p className="mt-1 text-neutral-500">
+            Demonstration build for a coding assignment · not affiliated with
             Amazon.com, Inc.
           </p>
         </div>

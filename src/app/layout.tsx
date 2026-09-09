@@ -18,10 +18,10 @@ export const metadata: Metadata = {
   ),
   title: {
     default: "Amazon.com. Spend less. Smile more.",
-    template: "%s | Amazon clone",
+    template: "Amazon.com: %s",
   },
   description:
-    "A working slice of amazon.com — browse, search, cart, and checkout. Built as a timed assignment.",
+    "Online shopping from a great selection at a low price. Free shipping on qualifying orders.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -85,8 +85,8 @@ export function CheckoutClient({ defaultName }: { defaultName: string }) {
         <section className="bg-surface p-4 shadow-sm">
           <h2 className="mb-1 text-lg font-bold">Payment</h2>
           <p className="mb-3 text-xs text-text-secondary">
-            Mock payment — no real charge. Any 16-digit number works (e.g.
-            4242 4242 4242 4242).
+            Your card is not charged in this demonstration — enter any 16-digit
+            number (e.g. 4242 4242 4242 4242).
           </p>
           <Field
             name="card"
@@ -164,8 +164,8 @@ export function CheckoutClient({ defaultName }: { defaultName: string }) {
           {pending ? "Placing order…" : "Place your order"}
         </button>
         <p className="mt-2 text-xs text-text-secondary">
-          By placing your order you agree this is a demo with no real
-          transaction.
+          By placing your order, you agree to Amazon&apos;s Conditions of Use and
+          Privacy Notice.
         </p>
       </aside>
     </form>

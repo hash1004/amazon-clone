@@ -47,11 +47,11 @@ export default async function ProductPage({
     ["Department", dept?.label ?? product.department],
     ["Rating", `${product.rating.toFixed(1)} of 5 (${product.ratingCount})`],
     ["Availability", inStock ? `In stock — ${product.stock} units` : "Out of stock"],
-    ["Ships from", "Amazon clone"],
+    ["Ships from", "Amazon.com"],
   ];
 
   return (
-    <div className="mx-auto max-w-[1400px] px-4 py-4">
+    <div className="mx-auto max-w-[1400px] bg-surface px-4 py-4">
       <nav className="mb-3 text-xs text-text-secondary">
         <Link href="/s" className="link">
           All
@@ -70,14 +70,14 @@ export default async function ProductPage({
         </Link>
       </nav>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_300px]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_300px]">
         {/* Gallery */}
-        <div className="bg-surface p-4 shadow-sm">
+        <div className="self-start">
           <ProductGallery images={product.images} title={product.title} />
         </div>
 
         {/* Info */}
-        <div className="min-w-0">
+        <div className="min-w-0 lg:border-x lg:border-border-default lg:px-6">
           <h1 className="text-2xl font-normal leading-tight">{product.title}</h1>
           <Link
             href={`/s?q=${encodeURIComponent(product.brand)}`}
@@ -183,10 +183,10 @@ export default async function ProductPage({
           />
           <dl className="mt-3 space-y-1 border-t border-border-default pt-3 text-xs">
             {[
-              ["Ships from", "Amazon clone"],
-              ["Sold by", "Amazon clone"],
-              ["Returns", "Eligible (demo)"],
-              ["Payment", "Secure transaction (mock)"],
+              ["Ships from", "Amazon.com"],
+              ["Sold by", "Amazon.com"],
+              ["Returns", "30-day refund/replacement"],
+              ["Payment", "Secure transaction"],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-2">
                 <dt className="text-text-secondary">{k}</dt>
@@ -198,7 +198,7 @@ export default async function ProductPage({
       </div>
 
       {related.length > 0 && (
-        <section className="mt-8 bg-surface p-4 shadow-sm">
+        <section className="mt-8 border-t border-border-default pt-5">
           <h2 className="mb-3 text-lg font-bold">Products related to this item</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {related.map((p) => (
