@@ -5,28 +5,28 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
   {
     heading: "Get to Know Us",
     links: [
-      { label: "About the build", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Investor Relations", href: "#" },
+      { label: "About", href: "/info/about" },
+      { label: "Careers", href: "/info/careers" },
+      { label: "Blog", href: "/info/blog" },
+      { label: "Investor Relations", href: "/info/investor-relations" },
     ],
   },
   {
     heading: "Make Money with Us",
     links: [
-      { label: "Sell products", href: "#" },
-      { label: "Become an Affiliate", href: "#" },
-      { label: "Advertise Your Products", href: "#" },
-      { label: "Self-Publish with Us", href: "#" },
+      { label: "Sell products", href: "/info/sell" },
+      { label: "Become an Affiliate", href: "/info/affiliate" },
+      { label: "Advertise Your Products", href: "/info/advertise" },
+      { label: "Self-Publish with Us", href: "/info/self-publish" },
     ],
   },
   {
     heading: "Payment Products",
     links: [
-      { label: "Business Card", href: "#" },
-      { label: "Shop with Points", href: "#" },
-      { label: "Reload Your Balance", href: "#" },
-      { label: "Currency Converter", href: "#" },
+      { label: "Business Card", href: "/info/business-card" },
+      { label: "Shop with Points", href: "/info/shop-with-points" },
+      { label: "Reload Your Balance", href: "/info/reload-balance" },
+      { label: "Currency Converter", href: "/info/currency-converter" },
     ],
   },
   {
@@ -35,8 +35,8 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Your Account", href: "/account" },
       { label: "Your Orders", href: "/account/orders" },
       { label: "Your Cart", href: "/cart" },
-      { label: "Shipping Rates & Policies", href: "#" },
-      { label: "Help", href: "#" },
+      { label: "Shipping Rates & Policies", href: "/info/shipping-policy" },
+      { label: "Help", href: "/info/help" },
     ],
   },
 ];
@@ -117,10 +117,18 @@ export function SiteFooter() {
         </div>
         <div className="px-6 pb-10 text-center text-[0.7rem] text-neutral-400">
           <p className="space-x-3">
-            <span>Conditions of Use</span>
-            <span>Privacy Notice</span>
-            <span>Consumer Health Data Privacy Disclosure</span>
-            <span>Your Ads Privacy Choices</span>
+            <Link href="/info/conditions-of-use" className="hover:underline">
+              Conditions of Use
+            </Link>
+            <Link href="/info/privacy-notice" className="hover:underline">
+              Privacy Notice
+            </Link>
+            <Link href="/info/consumer-health-data" className="hover:underline">
+              Consumer Health Data Privacy Disclosure
+            </Link>
+            <Link href="/info/ad-choices" className="hover:underline">
+              Your Ads Privacy Choices
+            </Link>
           </p>
           <p className="mt-2">© 1996–2026, Amazon.com, Inc. or its affiliates</p>
           <p className="mt-1 text-neutral-500">

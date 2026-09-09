@@ -20,13 +20,13 @@ export default function AuthLayout({
 
       <footer className="border-t border-border-default bg-gradient-to-b from-white to-[#f3f3f3] py-6 text-center text-xs text-text-secondary">
         <p className="space-x-4">
-          <Link href="#" className="link">
+          <Link href="/info/conditions-of-use" className="link">
             Conditions of Use
           </Link>
-          <Link href="#" className="link">
+          <Link href="/info/privacy-notice" className="link">
             Privacy Notice
           </Link>
-          <Link href="#" className="link">
+          <Link href="/info/help" className="link">
             Help
           </Link>
         </p>
