@@ -48,10 +48,32 @@ model User {
   passwordHash  String? // set for credentials sign-up
   createdAt     DateTime  @default(now())
 
-  accounts Account[]
-  sessions Session[]
-  cart     Cart?
-  orders   Order[]
+  accounts  Account[]
+  sessions  Session[]
+  cart      Cart?
+  orders    Order[]
+  addresses Address[]
+}
+
+// ─── Saved delivery addresses ─────────────────────────────────────────────
+
+model Address {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName  String
+  phone     String
+  line1     String
+  line2     String?
+  city      String
+  state     String
+  postal    String
+  country   String  @default("US")
+  isDefault Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Account {
@@ -115,9 +137,11 @@ model CartItem {
 // ─── Orders ───────────────────────────────────────────────────────────────
 
 enum OrderStatus {
-  PENDING
-  PAID
+  PLACED
+  CONFIRMED
+  PACKED
   SHIPPED
+  OUT_FOR_DELIVERY
   DELIVERED
   CANCELLED
 }
@@ -126,14 +150,20 @@ model Order {
   id            String      @id @default(cuid())
   userId        String
   user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  status        OrderStatus @default(PENDING)
+  status        OrderStatus @default(PLACED)
 
   subtotalCents Int
+  discountCents Int @default(0)
   shippingCents Int
   taxCents      Int
   totalCents    Int
 
+  deliverySpeed String   @default("standard") // "standard" | "express"
+  paymentMethod String   @default("card") // "card" | "upi" | "cod"
+  estimatedDelivery DateTime?
+
   shipName    String
+  shipPhone   String @default("")
   shipLine1   String
   shipLine2   String?
   shipCity    String
@@ -141,7 +171,7 @@ model Order {
   shipPostal  String
   shipCountry String @default("US")
 
-  paymentLast4 String // mocked
+  paymentLast4 String // mocked; blank for COD/UPI
 
   items     OrderItem[]
   createdAt DateTime    @default(now())
