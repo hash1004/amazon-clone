@@ -5,16 +5,26 @@ import { useState } from "react";
 
 const FALLBACK = "/placeholder.svg";
 
-/** next/image that swaps to a placeholder if the source fails or is empty. */
+/**
+ * next/image that swaps to a placeholder if the source fails or is empty.
+ * Follows `src` changes (e.g. a gallery switching images) — it only falls
+ * back for the exact URL that errored.
+ */
 export function SafeImage({ src, alt, ...rest }: ImageProps) {
-  const initial = typeof src === "string" && src.length > 0 ? src : FALLBACK;
-  const [current, setCurrent] = useState<ImageProps["src"]>(initial);
+  const [failed, setFailed] = useState<string | null>(null);
+
+  const wanted =
+    typeof src === "string" && src.length > 0 ? src : FALLBACK;
+  const show = typeof src === "string" && src === failed ? FALLBACK : wanted;
+
   return (
     <Image
       {...rest}
-      src={current}
+      src={show}
       alt={alt}
-      onError={() => setCurrent(FALLBACK)}
+      onError={() => {
+        if (typeof src === "string") setFailed(src);
+      }}
     />
   );
 }
