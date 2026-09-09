@@ -103,6 +103,11 @@ export async function SiteHeader() {
             <span className="text-sm font-bold">&amp; Orders</span>
           </Link>
 
+          <Link href="/wishlist" className={`${cell} hidden text-xs lg:flex`}>
+            <span>Your</span>
+            <span className="text-sm font-bold">List</span>
+          </Link>
+
           {session?.user && (
             <div className={`${cell} hidden text-xs lg:flex`}>
               <span>&nbsp;</span>

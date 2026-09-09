@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart-store";
+import { WishlistProvider } from "@/lib/wishlist-store";
+import { RecentlyViewedProvider } from "@/lib/recently-viewed";
 
 // Amazon Ember is proprietary; Inter is the closest free grotesque.
 const ember = Inter({
@@ -27,7 +29,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${ember.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-canvas text-text-primary antialiased">
         <span id="top" />
-        <CartProvider>{children}</CartProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <RecentlyViewedProvider>{children}</RecentlyViewedProvider>
+          </WishlistProvider>
+        </CartProvider>
       </body>
     </html>
   );
