@@ -4,13 +4,9 @@ import { CartBadge } from "@/components/cart-badge";
 import { auth } from "@/auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import { AmazonLogo } from "@/components/ui/amazon-logo";
-import {
-  SearchIcon,
-  PinIcon,
-  ChevronDownIcon,
-  UsFlagIcon,
-} from "@/components/ui/icons";
+import { PinIcon, ChevronDownIcon, UsFlagIcon } from "@/components/ui/icons";
 import { MobileMenu } from "@/components/mobile-menu";
+import { SearchBox } from "@/components/search/search-box";
 
 const BELT_LINKS = [
   { label: "Today's Deals", href: "/s?deals=1" },
@@ -48,37 +44,7 @@ export async function SiteHeader() {
           </div>
 
           {/* Search */}
-          <form
-            action="/s"
-            className="order-last flex h-10 w-full min-w-0 items-stretch overflow-hidden rounded-md ring-accent-buy focus-within:ring-3 sm:order-none sm:w-auto sm:flex-1"
-          >
-            <select
-              name="dept"
-              aria-label="Search in department"
-              className="hidden shrink-0 border-r border-[#cdcdcd] bg-[#e6e6e6] px-2 text-xs text-text-primary outline-none hover:bg-[#dcdcdc] sm:block"
-            >
-              <option value="">All</option>
-              {DEPARTMENTS.map((d) => (
-                <option key={d.slug} value={d.slug}>
-                  {d.label}
-                </option>
-              ))}
-            </select>
-            <input
-              type="search"
-              name="q"
-              aria-label="Search Amazon"
-              placeholder="Search Amazon"
-              className="min-w-0 flex-1 bg-white px-3 text-sm text-text-primary outline-none"
-            />
-            <button
-              type="submit"
-              aria-label="Go"
-              className="flex shrink-0 items-center bg-chrome-search-btn px-3.5 text-[#0f1111] hover:bg-chrome-search-btn-hover"
-            >
-              <SearchIcon className="h-5 w-5" />
-            </button>
-          </form>
+          <SearchBox />
 
           <div className={`${cell} ml-auto hidden text-xs sm:flex`}>
             <span>&nbsp;</span>

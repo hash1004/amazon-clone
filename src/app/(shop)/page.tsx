@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { DEPARTMENTS } from "@/lib/departments";
 import { HomeHero, type HeroSlide } from "@/components/home/home-hero";
 import { PosterCard, type PosterCardData } from "@/components/home/poster-card";
-import { ProductRail } from "@/components/home/product-rail";
+import { ProductRail, type RailProduct } from "@/components/home/product-rail";
 import { RecentlyViewedRow } from "@/components/recently-viewed-row";
 
 const SELECT = {
@@ -16,68 +16,86 @@ const SELECT = {
   listPriceCents: true,
   rating: true,
   ratingCount: true,
+  department: true,
+  createdAt: true,
 } as const;
+
+type Row = RailProduct & { department: string; createdAt: Date };
 
 function shortName(title: string) {
   return title.length > 24 ? title.slice(0, 22).trimEnd() + "…" : title;
 }
 
+function discountFrac(p: Row) {
+  return p.listPriceCents ? (p.listPriceCents - p.priceCents) / p.listPriceCents : 0;
+}
+
 export default async function Home() {
   const session = await auth();
 
-  const [byDept, deals, topRated, newArrivals] = await Promise.all([
-    Promise.all(
-      DEPARTMENTS.map(async (d) => ({
-        dept: d,
-        products: await db.product.findMany({
-          where: { department: d.slug },
-          orderBy: { ratingCount: "desc" },
-          take: 16,
-          select: SELECT,
-        }),
-      })),
-    ),
-    db.product.findMany({
-      where: { listPriceCents: { not: null } },
-      orderBy: { ratingCount: "desc" },
-      take: 18,
-      select: SELECT,
-    }),
-    db.product.findMany({
-      where: { rating: { gte: 4.5 } },
-      orderBy: { ratingCount: "desc" },
-      take: 18,
-      select: SELECT,
-    }),
-    db.product.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 18,
-      select: SELECT,
-    }),
-  ]);
+  // One pool, partitioned into non-overlapping sections below.
+  const all = (await db.product.findMany({ select: SELECT })) as Row[];
 
-  // biggest discounts first for the deals rail
-  deals.sort(
-    (a, b) =>
-      (b.listPriceCents! - b.priceCents) / b.listPriceCents! -
-      (a.listPriceCents! - a.priceCents) / a.listPriceCents!,
+  const used = new Set<string>();
+  const take = (sorted: Row[], n: number) => {
+    const out: Row[] = [];
+    for (const p of sorted) {
+      if (out.length >= n) break;
+      if (!used.has(p.id)) {
+        out.push(p);
+        used.add(p.id);
+      }
+    }
+    return out;
+  };
+
+  const bySales = [...all].sort((a, b) => b.ratingCount - a.ratingCount);
+  const byRating = [...all].sort(
+    (a, b) => b.rating - a.rating || b.ratingCount - a.ratingCount,
   );
+  const byNewest = [...all].sort(
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+  );
+  const byDiscount = all
+    .filter((p) => p.listPriceCents && discountFrac(p) > 0.05)
+    .sort((a, b) => discountFrac(b) - discountFrac(a));
 
-  const bestSellers = byDept
-    .flatMap((d) => d.products.slice(0, 4))
-    .sort((a, b) => b.ratingCount - a.ratingCount)
-    .slice(0, 16);
+  // Category poster tiles claim their products first, then each rail.
+  const topByDept = DEPARTMENTS.map((d) => ({
+    dept: d,
+    products: take(
+      bySales.filter((p) => p.department === d.slug),
+      4,
+    ),
+  }));
+
+  // Priority order — each section claims its products first.
+  const dealItems = take(byDiscount, 16); // active promotions, biggest % off
+  const bestSellerItems = take(bySales, 16); // highest "sales" (rating count)
+  const newItems = take(byNewest, 16); // most recently added
+  const topRatedItems = take(
+    byRating.filter((p) => p.ratingCount >= 40),
+    16,
+  ); // highest rating (with enough reviews to be meaningful)
+
+  const deptRails = DEPARTMENTS.map((d) => ({
+    dept: d,
+    items: take(
+      bySales.filter((p) => p.department === d.slug),
+      16,
+    ),
+  })).filter((r) => r.items.length >= 4);
 
   const heroCopy = ["Upgrade your everyday", "Refresh every room", "New-season finds"];
   const heroBg = ["#c7ddd8", "#e8e0d2", "#f0dcd6"];
-  const heroSlides: HeroSlide[] = byDept.slice(0, 3).map(({ dept, products }, i) => ({
+  const heroSlides: HeroSlide[] = topByDept.slice(0, 3).map(({ dept, products }, i) => ({
     headline: heroCopy[i] ?? `Shop ${dept.label}`,
     href: `/s?dept=${dept.slug}`,
     bg: heroBg[i] ?? "#e3e6e6",
     images: products.slice(0, 3).map((p) => p.images[0]).filter(Boolean),
   }));
 
-  const deptCards: PosterCardData[] = byDept.map(({ dept, products }) => ({
+  const deptCards: PosterCardData[] = topByDept.map(({ dept, products }) => ({
     kind: "quad",
     title: `Shop ${dept.label}`,
     footerHref: `/s?dept=${dept.slug}`,
@@ -102,36 +120,36 @@ export default async function Home() {
 
         <ProductRail
           theme="deal"
-          title="Today's Deals — up to 60% off"
+          title="Today's Deals"
           href="/s?deals=1&sort=price-asc"
-          items={deals}
+          items={dealItems}
         />
 
         <ProductRail
           theme="bestseller"
           title="Best Sellers"
           href="/s?sort=rating"
-          items={bestSellers}
+          items={bestSellerItems}
         />
 
         <ProductRail
-          title="New arrivals"
+          title="New Arrivals"
           href="/s?sort=newest"
-          items={newArrivals}
+          items={newItems}
         />
 
         <ProductRail
-          title="Top rated — 4 stars & above"
-          href="/s?rating=4"
-          items={topRated}
+          title="Top Rated"
+          href="/s?rating=4&sort=rating"
+          items={topRatedItems}
         />
 
-        {byDept.slice(0, 3).map(({ dept, products }) => (
+        {deptRails.map(({ dept, items }) => (
           <ProductRail
             key={dept.slug}
             title={`More to explore in ${dept.label}`}
             href={`/s?dept=${dept.slug}`}
-            items={products}
+            items={items}
           />
         ))}
 
