@@ -25,7 +25,7 @@ export function QuickAdd({
         setAdded(true);
         setTimeout(() => setAdded(false), 1800);
       }}
-      className="mt-1 w-full max-w-[220px] rounded-pill bg-accent px-3 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+      className="mt-1.5 w-full rounded-pill bg-accent px-3 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
     >
       {added ? "✓ Added" : "Add to cart"}
     </button>

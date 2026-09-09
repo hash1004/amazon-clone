@@ -97,33 +97,36 @@ export function ProductRail({
                   )}
                 </div>
 
-                {t.accent === "deal" && pct > 0 && (
-                  <p className="text-xs font-bold uppercase text-text-deal">
-                    Limited time deal
+                {t.accent === "deal" && (
+                  <p className="min-h-[1rem] text-xs font-bold uppercase text-text-deal">
+                    {pct > 0 ? "Limited time deal" : ""}
                   </p>
                 )}
 
-                <p className="line-clamp-2 text-xs text-text-primary group-hover:text-text-accent">
+                <p className="line-clamp-2 min-h-[2rem] text-xs text-text-primary group-hover:text-text-accent">
                   {p.title}
                 </p>
 
-                <div className="mt-0.5">
+                <div className="mt-0.5 min-h-[1rem]">
                   <RatingStars rating={p.rating} count={p.ratingCount} />
                 </div>
 
-                <p className="mt-0.5 text-sm">
-                  <span className="align-super text-[0.6rem]">$</span>
-                  <span className="font-medium">{whole}</span>
-                  <span className="align-super text-[0.6rem]">{frac}</span>
-                  {pct > 0 && (
-                    <span className="ml-1 text-[0.7rem] text-text-secondary line-through">
-                      {formatPrice(p.listPriceCents!)}
-                    </span>
-                  )}
-                </p>
-                <p className="mt-0.5 flex items-center gap-1 text-[0.7rem] text-text-secondary">
-                  <PrimeBadge /> {deliveryEstimate().replace("FREE delivery ", "")}
-                </p>
+                <div className="mt-auto pt-1">
+                  <p className="text-sm">
+                    <span className="align-super text-[0.6rem]">$</span>
+                    <span className="font-medium">{whole}</span>
+                    <span className="align-super text-[0.6rem]">{frac}</span>
+                    {pct > 0 && (
+                      <span className="ml-1 text-[0.7rem] text-text-secondary line-through">
+                        {formatPrice(p.listPriceCents!)}
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-0.5 flex items-center gap-1 text-[0.7rem] text-text-secondary">
+                    <PrimeBadge />{" "}
+                    {deliveryEstimate().replace("FREE delivery ", "")}
+                  </p>
+                </div>
               </Link>
             );
           })}

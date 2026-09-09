@@ -39,7 +39,7 @@ export function ProductCard({
   const inStock = product.stock === undefined ? true : product.stock > 0;
 
   return (
-    <div className="flex flex-col bg-surface p-4">
+    <div className="flex h-full flex-col bg-surface p-4">
       {withCart && looksSponsored(product.id) && (
         <p className="mb-1 text-[0.7rem] text-text-muted">Sponsored</p>
       )}
@@ -87,17 +87,19 @@ export function ProductCard({
 
       <Link
         href={`/p/${product.slug}`}
-        className="line-clamp-3 text-sm text-text-primary hover:text-text-accent-hover"
+        className="line-clamp-2 min-h-[2.5rem] text-sm text-text-primary hover:text-text-accent-hover"
       >
         {product.title}
       </Link>
 
-      <div className="mt-1">
+      <div className="mt-1 min-h-[1rem]">
         <RatingStars rating={product.rating} count={product.ratingCount} />
       </div>
 
-      {withCart && bought && (
-        <p className="mt-0.5 text-xs text-text-secondary">{bought}</p>
+      {withCart && (
+        <p className="mt-0.5 min-h-[1rem] text-xs text-text-secondary">
+          {bought ?? ""}
+        </p>
       )}
 
       <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
@@ -113,15 +115,14 @@ export function ProductCard({
       </div>
 
       {withCart && (
-        <>
-          <p className="mt-0.5 flex items-center gap-1 text-xs text-text-secondary">
-            <PrimeBadge /> {deliveryEstimate()}
+        <div className="mt-auto pt-1.5">
+          <p className="flex min-h-[1.75rem] items-start gap-1 text-xs leading-tight text-text-secondary">
+            <PrimeBadge />
+            <span>{deliveryEstimate()}</span>
           </p>
-          {!inStock && (
-            <p className="mt-0.5 text-xs font-medium text-text-deal">
-              Currently unavailable
-            </p>
-          )}
+          <p className="min-h-[1rem] text-xs font-medium text-text-deal">
+            {!inStock ? "Currently unavailable" : ""}
+          </p>
           <QuickAdd
             disabled={!inStock}
             product={{
@@ -132,7 +133,7 @@ export function ProductCard({
               priceCents: product.priceCents,
             }}
           />
-        </>
+        </div>
       )}
     </div>
   );
