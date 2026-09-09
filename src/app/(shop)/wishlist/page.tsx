@@ -4,12 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useWishlist } from "@/lib/wishlist-store";
 import { useCart } from "@/lib/cart-store";
+import { useToast } from "@/lib/toast";
 import { formatPrice, discountPct } from "@/lib/format";
 import { RatingStars } from "@/components/rating-stars";
 
 export default function WishlistPage() {
   const { items, ready, remove } = useWishlist();
   const { add } = useCart();
+  const { toast } = useToast();
 
   if (ready && items.length === 0) {
     return (
@@ -106,6 +108,7 @@ export default function WishlistPage() {
                         1,
                       );
                       remove(it.productId);
+                      toast("Moved to your Cart");
                     }}
                     className="rounded-pill bg-accent px-4 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
                   >

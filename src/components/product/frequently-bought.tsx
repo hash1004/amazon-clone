@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
+import { SafeImage as Image } from "@/components/ui/safe-image";
 import Link from "next/link";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-store";
+import { useToast } from "@/lib/toast";
 import { formatPrice } from "@/lib/format";
 
 export type FBTItem = {
@@ -22,6 +23,7 @@ export function FrequentlyBought({
   companions: FBTItem[];
 }) {
   const { add } = useCart();
+  const { toast } = useToast();
   const all = [main, ...companions];
   const [checked, setChecked] = useState<Record<string, boolean>>(
     Object.fromEntries(all.map((i) => [i.productId, true])),
@@ -82,6 +84,7 @@ export function FrequentlyBought({
                   1,
                 ),
               );
+              toast(`${selected.length} items added to your Cart`);
               setAdded(true);
               setTimeout(() => setAdded(false), 2000);
             }}

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/lib/cart-store";
+import { useToast } from "@/lib/toast";
 
 export type ReorderItem = {
   productId: string;
@@ -15,6 +16,7 @@ export type ReorderItem = {
 
 export function ReorderButton({ items }: { items: ReorderItem[] }) {
   const { add } = useCart();
+  const { toast } = useToast();
   const router = useRouter();
   const [done, setDone] = useState(false);
 
@@ -23,6 +25,7 @@ export function ReorderButton({ items }: { items: ReorderItem[] }) {
       type="button"
       onClick={() => {
         items.forEach(({ quantity, ...line }) => add(line, quantity));
+        toast("Items added to your Cart");
         setDone(true);
         setTimeout(() => router.push("/cart"), 500);
       }}

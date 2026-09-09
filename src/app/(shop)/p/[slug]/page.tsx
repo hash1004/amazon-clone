@@ -15,6 +15,7 @@ import { AddToCart } from "@/components/add-to-cart";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductCard } from "@/components/product-card";
 import { FrequentlyBought } from "@/components/product/frequently-bought";
+import { MobileBuyBar } from "@/components/product/mobile-buy-bar";
 import { RecordView } from "@/lib/recently-viewed";
 import { RecentlyViewedRow } from "@/components/recently-viewed-row";
 
@@ -292,9 +293,11 @@ export default async function ProductPage({
         </section>
       )}
 
-      <div className="mt-6">
+      <div className="mt-6 pb-16 lg:pb-0">
         <RecentlyViewedRow excludeId={product.id} />
       </div>
+
+      <MobileBuyBar product={cartLine} inStock={inStock} />
     </div>
   );
 }

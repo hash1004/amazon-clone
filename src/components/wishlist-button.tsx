@@ -1,6 +1,7 @@
 "use client";
 
 import { useWishlist, type WishlistEntry } from "@/lib/wishlist-store";
+import { useToast } from "@/lib/toast";
 
 export function WishlistButton({
   entry,
@@ -10,7 +11,12 @@ export function WishlistButton({
   variant?: "full" | "icon";
 }) {
   const { has, toggle, ready } = useWishlist();
+  const { toast } = useToast();
   const saved = ready && has(entry.productId);
+  const onToggle = () => {
+    toggle(entry);
+    toast(saved ? "Removed from your List" : "Added to your List");
+  };
 
   if (variant === "icon") {
     return (
@@ -20,7 +26,7 @@ export function WishlistButton({
         aria-pressed={saved}
         onClick={(e) => {
           e.preventDefault();
-          toggle(entry);
+          onToggle();
         }}
         className="rounded-full border border-border-default bg-surface/90 p-1.5 shadow-sm hover:bg-subtle"
       >
@@ -32,7 +38,7 @@ export function WishlistButton({
   return (
     <button
       type="button"
-      onClick={() => toggle(entry)}
+      onClick={onToggle}
       aria-pressed={saved}
       className="flex w-full items-center justify-center gap-1.5 rounded-pill border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
     >

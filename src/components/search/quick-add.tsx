@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart, type CartLine } from "@/lib/cart-store";
+import { useToast } from "@/lib/toast";
 
 export function QuickAdd({
   product,
@@ -11,6 +12,7 @@ export function QuickAdd({
   disabled?: boolean;
 }) {
   const { add } = useCart();
+  const { toast } = useToast();
   const [added, setAdded] = useState(false);
 
   return (
@@ -19,6 +21,7 @@ export function QuickAdd({
       disabled={disabled}
       onClick={() => {
         add(product, 1);
+        toast("Added to Cart");
         setAdded(true);
         setTimeout(() => setAdded(false), 1800);
       }}
