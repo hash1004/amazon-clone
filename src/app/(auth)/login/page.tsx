@@ -31,9 +31,19 @@ function LoginForm() {
     router.refresh();
   }
 
+  const reason =
+    callbackUrl.startsWith("/wishlist") || params.get("from") === "wishlist"
+      ? "Sign in to save items to your List."
+      : callbackUrl.startsWith("/checkout")
+        ? "Sign in to continue to checkout."
+        : null;
+
   return (
     <div className="w-full rounded-lg border border-border-default bg-surface p-6 shadow-sm">
-      <h1 className="mb-4 text-2xl font-medium">Sign in</h1>
+      <h1 className="mb-1 text-2xl font-medium">Sign in</h1>
+      {reason && (
+        <p className="mb-3 text-sm text-text-secondary">{reason}</p>
+      )}
       {error && (
         <p className="mb-3 rounded-md bg-danger-subtle p-2 text-sm text-danger">
           {error}

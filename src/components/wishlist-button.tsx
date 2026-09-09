@@ -22,8 +22,9 @@ export function WishlistButton({
 
   const onToggle = () => {
     if (!isAuthed) {
-      toast("Sign in to save items to your List");
-      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      router.push(
+        `/login?from=wishlist&callbackUrl=${encodeURIComponent(pathname)}`,
+      );
       return;
     }
     toggle(entry);
