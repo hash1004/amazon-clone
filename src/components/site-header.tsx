@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import { AmazonLogo } from "@/components/ui/amazon-logo";
 import { SearchIcon, PinIcon, ChevronDownIcon } from "@/components/ui/icons";
+import { MobileMenu } from "@/components/mobile-menu";
 
 const BELT_LINKS = [
   { label: "Today's Deals", href: "/s?deals=1" },
@@ -26,6 +27,8 @@ export async function SiteHeader() {
       {/* ── Top bar ─────────────────────────────────────────────── */}
       <div className="bg-chrome-nav">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-1 gap-y-1 px-2 py-1.5 text-sm">
+          <MobileMenu userName={firstName} />
+
           <Link
             href="/"
             className="flex shrink-0 items-center rounded-sm border border-transparent px-1.5 py-2 hover:border-white"

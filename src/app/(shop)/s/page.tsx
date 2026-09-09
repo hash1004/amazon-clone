@@ -5,6 +5,7 @@ import type { Prisma } from "@/generated/prisma/client";
 import { ProductCard } from "@/components/product-card";
 import { FilterRail } from "@/components/search/filter-rail";
 import { SortSelect } from "@/components/search/sort-select";
+import { MobileSearchControls } from "@/components/search/mobile-controls";
 import { DEPARTMENT_BY_SLUG } from "@/lib/departments";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 
@@ -98,22 +99,34 @@ export default async function SearchPage({
         ? "Today's Deals"
         : "All products";
 
-  const activeFilters: string[] = [];
-  if (sp.dept && DEPARTMENT_BY_SLUG[sp.dept] && sp.q)
-    activeFilters.push(DEPARTMENT_BY_SLUG[sp.dept].label);
-  if (sp.brand) activeFilters.push(sp.brand);
-  if (sp.rating) activeFilters.push(`${sp.rating}★ & up`);
+  const chips: { label: string; href: string }[] = [];
+  if (sp.dept && DEPARTMENT_BY_SLUG[sp.dept] && (sp.q || sp.deals))
+    chips.push({
+      label: DEPARTMENT_BY_SLUG[sp.dept].label,
+      href: searchUrl(sp, { dept: undefined, page: undefined }),
+    });
+  if (sp.brand)
+    chips.push({
+      label: sp.brand,
+      href: searchUrl(sp, { brand: undefined, page: undefined }),
+    });
+  if (sp.rating)
+    chips.push({
+      label: `${sp.rating}★ & Up`,
+      href: searchUrl(sp, { rating: undefined, page: undefined }),
+    });
   if (sp.min || sp.max)
-    activeFilters.push(
-      `${sp.min ? "$" + Number(sp.min) / 100 : "$0"}–${
-        sp.max ? "$" + Number(sp.max) / 100 : "∞"
+    chips.push({
+      label: `${sp.min ? "$" + Number(sp.min) / 100 : "$0"} – ${
+        sp.max ? "$" + Number(sp.max) / 100 : "any"
       }`,
-    );
-  if (sp.deals && !sp.q && !sp.dept) {
-    /* heading already says Today's Deals */
-  } else if (sp.deals) {
-    activeFilters.push("On sale");
-  }
+      href: searchUrl(sp, { min: undefined, max: undefined, page: undefined }),
+    });
+  if (sp.deals && (sp.q || sp.dept))
+    chips.push({
+      label: "On sale",
+      href: searchUrl(sp, { deals: undefined, page: undefined }),
+    });
 
   return (
     <div className="bg-canvas">
@@ -133,23 +146,37 @@ export default async function SearchPage({
         </div>
       </div>
 
+      <MobileSearchControls params={sp} brands={brands} />
+
       <div className="mx-auto flex max-w-[1500px] gap-6 px-4 py-4">
         <FilterRail params={sp} brands={brands} />
 
         <div className="min-w-0 flex-1">
-          <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-border-default pb-2">
+          <div className="mb-2 border-b border-border-default pb-2">
             <h1 className="text-xl font-bold">
               {sp.q ? `Results for "${sp.q}"` : heading}
             </h1>
-            {activeFilters.length > 0 && (
-              <>
-                <span className="text-sm text-text-secondary">
-                  {activeFilters.join(" · ")}
-                </span>
-                <Link href={searchUrl({ q: sp.q }, {})} className="link text-sm">
-                  Clear filters
+            {chips.length > 0 && (
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                {chips.map((c) => (
+                  <Link
+                    key={c.label}
+                    href={c.href}
+                    className="inline-flex items-center gap-1 rounded-full border border-border-strong bg-subtle px-2.5 py-1 text-xs hover:bg-elevated"
+                  >
+                    {c.label}
+                    <span aria-hidden className="text-text-secondary">
+                      ✕
+                    </span>
+                  </Link>
+                ))}
+                <Link
+                  href={searchUrl({ q: sp.q }, {})}
+                  className="link text-xs font-medium"
+                >
+                  Clear all
                 </Link>
-              </>
+              </div>
             )}
           </div>
           <p className="mb-3 text-xs text-text-secondary">
