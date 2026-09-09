@@ -10,9 +10,8 @@ import { MobileMenu } from "@/components/mobile-menu";
 const BELT_LINKS = [
   { label: "Today's Deals", href: "/s?deals=1" },
   ...DEPARTMENTS.map((d) => ({ label: d.label, href: `/s?dept=${d.slug}` })),
-  { label: "Customer Service", href: "#" },
-  { label: "Gift Cards", href: "#" },
-  { label: "Sell", href: "#" },
+  { label: "New Arrivals", href: "/s?sort=newest" },
+  { label: "Best Sellers", href: "/s?sort=rating" },
 ];
 
 const cell =
