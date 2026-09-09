@@ -8,6 +8,7 @@ import { SortSelect } from "@/components/search/sort-select";
 import { MobileSearchControls } from "@/components/search/mobile-controls";
 import { DEPARTMENT_BY_SLUG } from "@/lib/departments";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
+import { SorryDog } from "@/components/ui/sorry-dog";
 
 const PAGE_SIZE = 24;
 
@@ -184,17 +185,31 @@ export default async function SearchPage({
           </p>
 
           {products.length === 0 ? (
-            <div className="bg-surface p-10 text-center shadow-sm">
-              <p className="text-lg font-bold">
-                No results{sp.q ? ` for "${sp.q}"` : ""}
-              </p>
-              <p className="mt-1 text-sm text-text-secondary">
-                Try different keywords or{" "}
-                <Link href="/s" className="link">
-                  browse all products
-                </Link>
-                .
-              </p>
+            <div className="flex flex-col items-center gap-6 rounded-lg border border-border-default bg-surface p-10 text-center sm:flex-row sm:text-left">
+              <SorryDog className="h-40 w-40 shrink-0" seed={(sp.q ?? "x").length + 1} />
+              <div>
+                <p className="text-lg font-bold">
+                  No results{sp.q ? ` for "${sp.q}"` : ""}
+                </p>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Check your spelling or try more general terms. Our dog
+                  couldn&apos;t sniff anything out this time.
+                </p>
+                <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
+                  <Link
+                    href="/s"
+                    className="rounded-pill bg-accent px-5 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+                  >
+                    Browse all products
+                  </Link>
+                  <Link
+                    href="/s?deals=1"
+                    className="rounded-pill border border-border-strong px-5 py-1.5 text-sm hover:bg-subtle"
+                  >
+                    Today&apos;s Deals
+                  </Link>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
