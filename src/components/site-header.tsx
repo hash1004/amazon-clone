@@ -2,11 +2,11 @@ import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/departments";
 import { CartBadge } from "@/components/cart-badge";
 import { auth } from "@/auth";
-import { SignOutButton } from "@/components/sign-out-button";
 import { AmazonLogo } from "@/components/ui/amazon-logo";
 import { PinIcon, ChevronDownIcon, UsFlagIcon } from "@/components/ui/icons";
 import { MobileMenu } from "@/components/mobile-menu";
 import { SearchBox } from "@/components/search/search-box";
+import { AccountMenu } from "@/components/account-menu";
 
 const BELT_LINKS = [
   { label: "Today's Deals", href: "/s?deals=1" },
@@ -16,7 +16,7 @@ const BELT_LINKS = [
 ];
 
 const cell =
-  "flex shrink-0 flex-col justify-center rounded-sm border border-transparent px-2 py-1 leading-tight hover:border-white";
+  "flex shrink-0 flex-col justify-center rounded-sm px-2 py-1 leading-tight hover:bg-white/10";
 
 export async function SiteHeader() {
   const session = await auth();
@@ -31,12 +31,12 @@ export async function SiteHeader() {
 
           <Link
             href="/"
-            className="flex shrink-0 items-center rounded-sm border border-transparent px-1.5 py-2 hover:border-white"
+            className="flex shrink-0 items-center rounded-sm px-1.5 py-2"
           >
             <AmazonLogo className="h-8 w-auto" />
           </Link>
 
-          <div className={`${cell} hidden lg:flex`}>
+          <div className="hidden shrink-0 flex-col justify-center px-2 py-1 leading-tight lg:flex">
             <span className="pl-3 text-xs text-neutral-300">Deliver to</span>
             <span className="flex items-center gap-0.5 text-sm font-bold">
               <PinIcon className="h-3.5 w-3.5" /> United States
@@ -54,40 +54,14 @@ export async function SiteHeader() {
             </span>
           </div>
 
-          {session?.user ? (
-            <Link href="/account" className={`${cell} ml-auto text-xs sm:ml-0`}>
-              <span>Hello, {firstName}</span>
-              <span className="flex items-center gap-0.5 text-sm font-bold">
-                Account &amp; Lists
-                <ChevronDownIcon className="h-3 w-3 text-neutral-400" />
-              </span>
-            </Link>
-          ) : (
-            <Link href="/login" className={`${cell} ml-auto text-xs sm:ml-0`}>
-              <span>Hello, sign in</span>
-              <span className="flex items-center gap-0.5 text-sm font-bold">
-                Account &amp; Lists
-                <ChevronDownIcon className="h-3 w-3 text-neutral-400" />
-              </span>
-            </Link>
-          )}
+          <div className="ml-auto sm:ml-0">
+            <AccountMenu isAuthed={!!session?.user} firstName={firstName} />
+          </div>
 
           <Link href="/account/orders" className={`${cell} hidden text-xs md:flex`}>
             <span>Returns</span>
             <span className="text-sm font-bold">&amp; Orders</span>
           </Link>
-
-          <Link href="/wishlist" className={`${cell} hidden text-xs lg:flex`}>
-            <span>Your</span>
-            <span className="text-sm font-bold">List</span>
-          </Link>
-
-          {session?.user && (
-            <div className={`${cell} hidden text-xs lg:flex`}>
-              <span>&nbsp;</span>
-              <SignOutButton />
-            </div>
-          )}
 
           <CartBadge />
         </div>
@@ -98,7 +72,7 @@ export async function SiteHeader() {
         <div className="mx-auto flex max-w-[1500px] items-center gap-0.5 overflow-x-auto px-1.5 py-0.5 text-sm">
           <Link
             href="/s"
-            className="flex shrink-0 items-center gap-1.5 rounded-sm border border-transparent px-2 py-1.5 font-bold hover:border-white"
+            className="flex shrink-0 items-center gap-1.5 rounded-sm px-2 py-1.5 font-bold hover:bg-white/10"
           >
             <span aria-hidden className="flex flex-col gap-[3px]">
               <span className="block h-[2px] w-3.5 bg-white" />
@@ -111,7 +85,7 @@ export async function SiteHeader() {
             <Link
               key={l.label}
               href={l.href}
-              className="shrink-0 rounded-sm border border-transparent px-2 py-1.5 hover:border-white"
+              className="shrink-0 rounded-sm px-2 py-1.5 hover:bg-white/10"
             >
               {l.label}
             </Link>

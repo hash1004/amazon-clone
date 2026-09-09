@@ -8,12 +8,6 @@ export function boughtInPastMonth(ratingCount: number): string | null {
   return null;
 }
 
-/** Stable pseudo-random "Sponsored" flag so ~1 in 7 cards show the label. */
-export function looksSponsored(id: string): boolean {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
-  return Math.abs(h) % 7 === 0;
-}
 
 /** Static delivery estimate line. */
 export function deliveryEstimate(): string {

@@ -10,6 +10,14 @@ import { orderTotals } from "@/lib/pricing";
 import { DELIVERY_OPTIONS, deliveryRange, type DeliverySpeed } from "@/lib/delivery";
 import { createAddress } from "@/lib/address-actions";
 import { AddressFields } from "@/components/checkout/address-form";
+import {
+  formatCardNumber,
+  formatExpiry,
+  formatCvv,
+  validateCard,
+  validateUpi,
+  type CardFields,
+} from "@/lib/payment";
 
 type Address = {
   id: string;
@@ -37,8 +45,17 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
   const [addingAddr, setAddingAddr] = useState(addresses.length === 0);
   const [speed, setSpeed] = useState<DeliverySpeed>("standard");
   const [pay, setPay] = useState<PayMethod>("card");
-  const [card, setCard] = useState({ number: "", name: "", exp: "", cvv: "" });
+  const [card, setCard] = useState<CardFields>({
+    number: "",
+    name: "",
+    exp: "",
+    cvv: "",
+  });
+  const [cardErrors, setCardErrors] = useState<
+    Partial<Record<keyof CardFields, string>>
+  >({});
   const [upiId, setUpiId] = useState("");
+  const [upiError, setUpiError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -70,6 +87,25 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
       setStep(1);
       return;
     }
+
+    if (pay === "card") {
+      const errs = validateCard(card);
+      setCardErrors(errs);
+      if (Object.keys(errs).length > 0) {
+        setStep(3);
+        setError("Check the card details below.");
+        return;
+      }
+    }
+    if (pay === "upi") {
+      const e = validateUpi(upiId);
+      setUpiError(e);
+      if (e) {
+        setStep(3);
+        return;
+      }
+    }
+
     setPending(true);
     const res = await fetch("/api/orders", {
       method: "POST",
@@ -299,26 +335,45 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                   <CardInput
                     label="Card number"
                     span2
+                    inputMode="numeric"
                     value={card.number}
-                    onChange={(v) => setCard({ ...card, number: v })}
+                    error={cardErrors.number}
+                    onChange={(v) => {
+                      setCard({ ...card, number: formatCardNumber(v) });
+                      setCardErrors((e) => ({ ...e, number: undefined }));
+                    }}
                     placeholder="4242 4242 4242 4242"
                   />
                   <CardInput
                     label="Name on card"
                     span2
                     value={card.name}
-                    onChange={(v) => setCard({ ...card, name: v })}
+                    error={cardErrors.name}
+                    onChange={(v) => {
+                      setCard({ ...card, name: v });
+                      setCardErrors((e) => ({ ...e, name: undefined }));
+                    }}
                   />
                   <CardInput
                     label="Expiry (MM/YY)"
+                    inputMode="numeric"
                     value={card.exp}
-                    onChange={(v) => setCard({ ...card, exp: v })}
+                    error={cardErrors.exp}
+                    onChange={(v) => {
+                      setCard({ ...card, exp: formatExpiry(v) });
+                      setCardErrors((e) => ({ ...e, exp: undefined }));
+                    }}
                     placeholder="12/28"
                   />
                   <CardInput
                     label="CVV"
+                    inputMode="numeric"
                     value={card.cvv}
-                    onChange={(v) => setCard({ ...card, cvv: v })}
+                    error={cardErrors.cvv}
+                    onChange={(v) => {
+                      setCard({ ...card, cvv: formatCvv(v) });
+                      setCardErrors((e) => ({ ...e, cvv: undefined }));
+                    }}
                     placeholder="123"
                   />
                   <p className="text-xs text-text-secondary sm:col-span-2">
@@ -338,7 +393,11 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                   <CardInput
                     label="UPI ID"
                     value={upiId}
-                    onChange={setUpiId}
+                    error={upiError ?? undefined}
+                    onChange={(v) => {
+                      setUpiId(v);
+                      setUpiError(null);
+                    }}
                     placeholder="name@bank"
                   />
                   <p className="mt-1 text-xs text-text-secondary">
@@ -523,12 +582,16 @@ function CardInput({
   onChange,
   placeholder,
   span2,
+  error,
+  inputMode,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   span2?: boolean;
+  error?: string;
+  inputMode?: "numeric" | "text";
 }) {
   return (
     <label className={`block text-sm font-bold ${span2 ? "sm:col-span-2" : ""}`}>
@@ -537,8 +600,19 @@ function CardInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="mt-1 w-full rounded-md border border-border-strong px-2 py-1.5 text-sm font-normal focus:border-border-accent focus:outline-none"
+        inputMode={inputMode}
+        aria-invalid={!!error}
+        className={`mt-1 w-full rounded-md border px-2 py-1.5 text-sm font-normal focus:outline-none ${
+          error
+            ? "border-danger focus:border-danger"
+            : "border-border-strong focus:border-border-accent"
+        }`}
       />
+      {error && (
+        <span className="mt-0.5 block text-xs font-normal text-danger">
+          {error}
+        </span>
+      )}
     </label>
   );
 }

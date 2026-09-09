@@ -21,7 +21,7 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
         aria-label="Open menu"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="flex shrink-0 items-center gap-1 rounded-sm border border-transparent px-2 py-2 hover:border-white lg:hidden"
+        className="flex shrink-0 items-center gap-1 rounded-sm px-2 py-2 hover:bg-white/10 lg:hidden"
       >
         <span aria-hidden className="flex flex-col gap-[3px]">
           <span className="block h-[2px] w-4 bg-white" />

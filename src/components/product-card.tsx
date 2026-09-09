@@ -5,11 +5,7 @@ import { RatingStars } from "@/components/rating-stars";
 import { PriceTag } from "@/components/ui/price-tag";
 import { ChoiceBadge } from "@/components/ui/badge";
 import { PrimeBadge } from "@/components/ui/prime-badge";
-import {
-  boughtInPastMonth,
-  deliveryEstimate,
-  looksSponsored,
-} from "@/lib/product-display";
+import { boughtInPastMonth, deliveryEstimate } from "@/lib/product-display";
 import { QuickAdd } from "@/components/search/quick-add";
 import { WishlistButton } from "@/components/wishlist-button";
 
@@ -40,10 +36,6 @@ export function ProductCard({
 
   return (
     <div className="flex h-full flex-col bg-surface p-4">
-      {withCart && looksSponsored(product.id) && (
-        <p className="mb-1 text-[0.7rem] text-text-muted">Sponsored</p>
-      )}
-
       <div className="relative mb-3">
         <Link href={`/p/${product.slug}`} className="group block">
           <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-white">

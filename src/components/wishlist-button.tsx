@@ -1,7 +1,9 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import { useWishlist, type WishlistEntry } from "@/lib/wishlist-store";
 import { useToast } from "@/lib/toast";
+import { useAuthed } from "@/lib/auth-context";
 
 export function WishlistButton({
   entry,
@@ -12,8 +14,18 @@ export function WishlistButton({
 }) {
   const { has, toggle, ready } = useWishlist();
   const { toast } = useToast();
-  const saved = ready && has(entry.productId);
+  const isAuthed = useAuthed();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const saved = ready && isAuthed && has(entry.productId);
+
   const onToggle = () => {
+    if (!isAuthed) {
+      toast("Sign in to save items to your List");
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
     toggle(entry);
     toast(saved ? "Removed from your List" : "Added to your List");
   };
