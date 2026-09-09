@@ -58,7 +58,7 @@ export function ProductGallery({
           ref={frameRef}
           onMouseMove={onMove}
           onMouseLeave={() => setZoom(null)}
-          className="relative mx-auto aspect-square w-full max-w-[440px] cursor-crosshair bg-white"
+          className="relative mx-auto aspect-square w-full max-w-[500px] cursor-crosshair overflow-hidden rounded-lg border border-border-default bg-white"
         >
           <Image
             src={list[active]}
@@ -82,13 +82,13 @@ export function ProductGallery({
           Tap thumbnails to change image
         </p>
 
-        {/* Zoom panel (desktop) */}
+        {/* Zoom panel (desktop) — overlays the info column, never widens the page */}
         {zoom && (
           <div
-            className="pointer-events-none absolute left-[105%] top-0 z-20 hidden h-[440px] w-[440px] border border-border-default bg-white bg-no-repeat shadow-lg lg:block"
+            className="pointer-events-none absolute left-full top-0 z-20 ml-3 hidden h-[460px] w-[380px] rounded-lg border border-border-default bg-white bg-no-repeat shadow-xl xl:block"
             style={{
               backgroundImage: `url(${list[active]})`,
-              backgroundSize: "200%",
+              backgroundSize: "220%",
               backgroundPosition: `${zoom.x}% ${zoom.y}%`,
             }}
           />

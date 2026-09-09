@@ -10,7 +10,7 @@ export default function AuthLayout({
     <div className="flex min-h-full flex-col bg-white">
       <div className="flex justify-center border-b border-border-default py-4">
         <Link href="/">
-          <AmazonLogo className="h-8 w-[105px]" tone="dark" />
+          <AmazonLogo className="h-9 w-auto" tone="dark" />
         </Link>
       </div>
 

@@ -22,7 +22,7 @@ export async function SiteHeader() {
   const firstName = session?.user?.name?.split(" ")[0] ?? session?.user?.email;
 
   return (
-    <header className="sticky top-0 z-40 text-white">
+    <header className="text-white">
       {/* ── Top bar ─────────────────────────────────────────────── */}
       <div className="bg-chrome-nav">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-1 gap-y-1 px-2 py-1.5 text-sm">
@@ -32,7 +32,7 @@ export async function SiteHeader() {
             href="/"
             className="flex shrink-0 items-center rounded-sm border border-transparent px-1.5 py-2 hover:border-white"
           >
-            <AmazonLogo className="h-7 w-[92px]" />
+            <AmazonLogo className="h-8 w-auto" />
           </Link>
 
           <div className={`${cell} hidden lg:flex`}>

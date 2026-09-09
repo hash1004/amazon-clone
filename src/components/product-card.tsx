@@ -46,13 +46,13 @@ export function ProductCard({
 
       <div className="relative mb-3">
         <Link href={`/p/${product.slug}`} className="group block">
-          <div className="relative aspect-square w-full bg-white">
+          <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-white">
             <Image
               src={product.images[0]}
               alt={product.title}
               fill
-              sizes="(max-width:640px) 45vw, (max-width:1024px) 30vw, 240px"
-              className="object-contain p-2 transition-transform duration-200 group-hover:scale-105"
+              sizes="(max-width:640px) 45vw, (max-width:1024px) 30vw, 280px"
+              className="object-contain p-4 transition-transform duration-200 group-hover:scale-105"
             />
           </div>
         </Link>

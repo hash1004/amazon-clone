@@ -102,8 +102,8 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
         </span>
       </h1>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-3">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0 space-y-3">
           {/* STEP 1 — address */}
           <Section
             n={1}
@@ -270,7 +270,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
             done={false}
             onChange={() => setStep(3)}
           >
-            <div className="space-y-3">
+            <div className="min-w-0 space-y-3">
               <div className="flex flex-wrap gap-2">
                 {(
                   [

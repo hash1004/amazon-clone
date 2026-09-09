@@ -1,6 +1,6 @@
 /**
  * Amazon-style wordmark: "amazon" with the orange smile/arrow from a → z.
- * `tone` controls the text colour (white on dark chrome, ink on light).
+ * Render with a height class only (e.g. `h-7`); width follows the viewBox ratio.
  */
 export function AmazonLogo({
   className = "",
@@ -11,28 +11,37 @@ export function AmazonLogo({
 }) {
   const text = tone === "light" ? "#ffffff" : "#0f1111";
   return (
-    <svg viewBox="0 0 100 34" className={className} role="img" aria-label="Amazon">
+    <svg
+      viewBox="0 0 102 40"
+      className={className}
+      role="img"
+      aria-label="Amazon"
+      preserveAspectRatio="xMinYMid meet"
+    >
       <text
-        x="0"
-        y="23"
+        x="1"
+        y="24"
         fontFamily="Arial, Helvetica, sans-serif"
-        fontSize="26"
+        fontSize="25"
         fontWeight="700"
-        letterSpacing="-1.4"
+        letterSpacing="-1"
         fill={text}
       >
         amazon
       </text>
-      {/* the a→z smile */}
+      {/* the a → z smile */}
       <path
-        d="M7 25.5c8.6 6 20 9.2 32.4 9.2 8.9 0 19.3-2.1 28.6-6.2"
+        d="M5 27c9.2 6.6 22.2 10 35.4 10 9.6 0 20.2-2.4 29.6-7"
         stroke="#FF9900"
-        strokeWidth="3.2"
+        strokeWidth="3"
         strokeLinecap="round"
         fill="none"
       />
-      {/* arrowhead flick under the 'n' */}
-      <path d="M63.5 30.6c2.6-1.6 5.2-2.1 6.4-1.4 1.1.7 1 3-.2 5.1" fill="#FF9900" />
+      {/* upturned arrowhead near the end of the smile */}
+      <path
+        d="M63.5 30.8c2.9-1.9 6.2-2.5 7.7-1.5 1.4 1 1.1 3.7-.6 6.7-.1-2.6-1-4.4-2.5-5.1-1.4-.7-3-.7-4.6-.1z"
+        fill="#FF9900"
+      />
     </svg>
   );
 }

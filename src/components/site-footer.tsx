@@ -92,7 +92,7 @@ export function SiteFooter() {
         </div>
         <div className="border-t border-white/15" />
         <div className="flex flex-wrap items-center justify-center gap-4 py-8">
-          <AmazonLogo className="h-7 w-[92px]" />
+          <AmazonLogo className="h-7 w-auto" />
           <span className="rounded border border-border-strong px-3 py-1 text-xs">
             English
           </span>

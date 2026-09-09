@@ -31,7 +31,7 @@ export function PosterCard({ data }: { data: PosterCardData }) {
 
         {data.kind === "single" && (
           <Link href={data.tile.href} className="block">
-            <div className="relative aspect-[4/3] w-full bg-white">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md border border-border-default bg-white">
               <Image
                 src={data.tile.image}
                 alt={data.tile.caption ?? data.title}
@@ -46,7 +46,7 @@ export function PosterCard({ data }: { data: PosterCardData }) {
         {data.kind === "split" && (
           <div>
             <Link href={data.lead.href} className="block">
-              <div className="relative aspect-[16/10] w-full bg-white">
+              <div className="relative aspect-[16/10] w-full overflow-hidden rounded-md border border-border-default bg-white">
                 <Image
                   src={data.lead.image}
                   alt={data.lead.caption ?? data.title}
@@ -83,13 +83,13 @@ export function PosterCard({ data }: { data: PosterCardData }) {
 function TileLink({ tile, compact }: { tile: Tile; compact?: boolean }) {
   return (
     <Link href={tile.href} className="group block">
-      <div className="relative aspect-square w-full bg-white">
+      <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-white">
         <Image
           src={tile.image}
           alt={tile.caption ?? ""}
           fill
-          sizes="160px"
-          className="object-contain p-1"
+          sizes="180px"
+          className="object-contain p-2 transition-transform group-hover:scale-105"
         />
       </div>
       {tile.caption && (

@@ -75,15 +75,15 @@ export function ProductRail({
               <Link
                 key={p.id}
                 href={`/p/${p.slug}`}
-                className="group flex w-40 shrink-0 flex-col rounded-md border border-transparent p-1 hover:border-border-default"
+                className="group flex w-44 shrink-0 flex-col rounded-md p-1.5 hover:bg-subtle sm:w-52"
               >
-                <div className="relative mb-2 aspect-square w-full bg-white">
+                <div className="relative mb-2 aspect-square w-full overflow-hidden rounded-md border border-border-default bg-white">
                   <Image
                     src={p.images[0]}
                     alt={p.title}
                     fill
-                    sizes="160px"
-                    className="object-contain p-1 transition-transform group-hover:scale-105"
+                    sizes="208px"
+                    className="object-contain p-3 transition-transform group-hover:scale-105"
                   />
                   {t.accent === "deal" && pct > 0 && (
                     <span className="absolute left-1 top-1 rounded bg-text-deal px-1 py-0.5 text-[0.7rem] font-bold text-white">

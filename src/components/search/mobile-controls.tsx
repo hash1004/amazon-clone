@@ -20,7 +20,7 @@ export function MobileSearchControls({
 
   return (
     <div className="lg:hidden">
-      <div className="sticky top-[92px] z-20 flex border-y border-border-default bg-surface text-sm font-medium">
+      <div className="sticky top-0 z-20 flex border-y border-border-default bg-surface text-sm font-medium">
         <button
           type="button"
           onClick={() => setPanel("sort")}
