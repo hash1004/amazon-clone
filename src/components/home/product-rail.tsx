@@ -45,7 +45,7 @@ export function ProductRail({
 
   return (
     <section
-      className={`bg-surface p-4 shadow-sm ${
+      className={`overflow-hidden bg-surface p-4 shadow-sm ${
         theme === "deal" ? "border-t-4 border-text-deal" : ""
       }`}
     >
@@ -63,7 +63,7 @@ export function ProductRail({
         </Link>
       </div>
 
-      <div className="relative">
+      <div className="relative min-w-0">
         <div
           ref={track}
           className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"

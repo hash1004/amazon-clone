@@ -17,7 +17,7 @@ export function RecentlyViewedRow({
   if (list.length === 0) return null;
 
   return (
-    <section className="bg-surface p-4 shadow-sm">
+    <section className="overflow-hidden bg-surface p-4 shadow-sm">
       <h2 className="mb-3 text-lg font-bold">{title}</h2>
       <div className="flex gap-4 overflow-x-auto pb-1">
         {list.map((p) => {
