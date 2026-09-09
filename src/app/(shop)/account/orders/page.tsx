@@ -62,11 +62,7 @@ export default async function OrdersPage() {
                   <Col k="Ship to">{order.shipName}</Col>
                   <div className="ml-auto self-center">
                     <Link href={`/orders/${order.id}`} className="link">
-                      View order details
-                    </Link>
-                    <span className="mx-2 text-border-strong">|</span>
-                    <Link href={`/orders/${order.id}`} className="link">
-                      Track package
+                      View order details &amp; tracking
                     </Link>
                   </div>
                 </div>
