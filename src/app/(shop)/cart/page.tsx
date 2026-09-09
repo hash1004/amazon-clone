@@ -23,7 +23,7 @@ export default function CartPage() {
             href="/s"
             className="mt-4 inline-block rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
           >
-            Shop today&apos;s deals
+            Keep shopping
           </Link>
         </div>
       </div>
