@@ -73,3 +73,57 @@ export function ChevronDownIcon({ className = "h-3 w-3" }: P) {
     </svg>
   );
 }
+
+export function CategoriesIcon({ className = "h-5 w-5" }: P) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden
+    >
+      <line x1="4" y1="7" x2="20" y2="7" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      <line x1="4" y1="17" x2="20" y2="17" />
+    </svg>
+  );
+}
+
+export function PersonIcon({ className = "h-5 w-5" }: P) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <circle cx="12" cy="8" r="3.6" />
+      <path d="M4.5 20c1.4-4 4.2-6 7.5-6s6.1 2 7.5 6" />
+    </svg>
+  );
+}
+
+export function HeartIcon({
+  className = "h-5 w-5",
+  filled = false,
+}: P & { filled?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      aria-hidden
+    >
+      <path d="M12 21s-7.5-4.6-10-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 10 6c-2.5 4.4-10 9-10 9Z" />
+    </svg>
+  );
+}
