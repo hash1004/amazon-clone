@@ -66,8 +66,8 @@ function HeartIcon({ filled }: { filled: boolean }) {
     <svg
       viewBox="0 0 24 24"
       className="h-4 w-4"
-      fill={filled ? "#c7511f" : "none"}
-      stroke={filled ? "#c7511f" : "currentColor"}
+      fill={filled ? "var(--accent-primary)" : "none"}
+      stroke={filled ? "var(--accent-primary)" : "currentColor"}
       strokeWidth="2"
       aria-hidden
     >

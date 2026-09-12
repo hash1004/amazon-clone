@@ -19,7 +19,7 @@ export function SorryDog({
 
   return (
     <svg viewBox="0 0 240 240" className={className} role="img" aria-label="A dog">
-      <ellipse cx="120" cy="214" rx="70" ry="14" fill="#0f1111" opacity="0.08" />
+      <ellipse cx="120" cy="214" rx="70" ry="14" fill="#1f1d15" opacity="0.08" />
       {/* back leg */}
       <path d="M78 196c-14 0-24-6-24-20 0-16 14-26 30-24l4 44z" fill={c.body} />
       {/* tail */}
@@ -64,8 +64,8 @@ export function SorryDog({
         strokeLinecap="round"
       />
       {/* collar + tag */}
-      <path d="M92 120c16 12 40 12 56 0" fill="none" stroke="#c7511f" strokeWidth="7" strokeLinecap="round" />
-      <circle cx="120" cy="132" r="6" fill="#febd69" stroke="#c7511f" strokeWidth="2" />
+      <path d="M92 120c16 12 40 12 56 0" fill="none" stroke="#284c32" strokeWidth="7" strokeLinecap="round" />
+      <circle cx="120" cy="132" r="6" fill="#def1e2" stroke="#284c32" strokeWidth="2" />
     </svg>
   );
 }

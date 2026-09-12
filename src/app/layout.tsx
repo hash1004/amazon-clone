@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Work_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart-store";
 import { WishlistProvider } from "@/lib/wishlist-store";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed";
 import { ToastProvider } from "@/lib/toast";
 
-// Amazon Ember is proprietary; Inter is the closest free grotesque.
-const ember = Inter({
-  variable: "--font-ember",
+// Redesign v2 type system — see design/redesign-v2-spec.md.
+const body = Work_Sans({
+  variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+// Display/serif — wordmark + Home's headline only.
+const display = Newsreader({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -27,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${ember.variable} h-full`}>
+    <html lang="en" className={`${body.variable} ${display.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-canvas text-text-primary antialiased">
         <span id="top" />
         <ToastProvider>

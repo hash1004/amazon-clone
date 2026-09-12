@@ -16,16 +16,16 @@ const BELT_LINKS = [
 ];
 
 const cell =
-  "flex shrink-0 flex-col justify-center rounded-sm px-2 py-1 leading-tight hover:bg-white/10";
+  "flex shrink-0 flex-col justify-center rounded-sm px-2 py-1 leading-tight hover:bg-black/5";
 
 export async function SiteHeader() {
   const session = await auth();
   const firstName = session?.user?.name?.split(" ")[0] ?? session?.user?.email;
 
   return (
-    <header className="text-white">
+    <header className="text-text-primary">
       {/* ── Top bar ─────────────────────────────────────────────── */}
-      <div className="bg-chrome-nav">
+      <div className="border-b border-border-default bg-chrome-nav">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center gap-x-1 gap-y-1 px-2 py-1.5 text-sm">
           <MobileMenu userName={firstName} />
 
@@ -37,7 +37,7 @@ export async function SiteHeader() {
           </Link>
 
           <div className="hidden shrink-0 flex-col justify-center px-2 py-1 leading-tight lg:flex">
-            <span className="pl-3 text-xs text-neutral-300">Deliver to</span>
+            <span className="pl-3 text-xs text-text-secondary">Deliver to</span>
             <span className="flex items-center gap-0.5 text-sm font-bold">
               <PinIcon className="h-3.5 w-3.5" /> United States
             </span>
@@ -50,7 +50,7 @@ export async function SiteHeader() {
             <span>&nbsp;</span>
             <span className="flex items-center gap-1 font-bold">
               <UsFlagIcon className="h-3 w-[18px] rounded-[1px]" />
-              EN <ChevronDownIcon className="h-3 w-3 text-neutral-400" />
+              EN <ChevronDownIcon className="h-3 w-3 text-text-muted" />
             </span>
           </div>
 
@@ -72,12 +72,12 @@ export async function SiteHeader() {
         <div className="mx-auto flex max-w-[1500px] items-center gap-0.5 overflow-x-auto px-1.5 py-0.5 text-sm">
           <Link
             href="/s"
-            className="flex shrink-0 items-center gap-1.5 rounded-sm px-2 py-1.5 font-bold hover:bg-white/10"
+            className="flex shrink-0 items-center gap-1.5 rounded-sm px-2 py-1.5 font-bold hover:bg-black/5"
           >
             <span aria-hidden className="flex flex-col gap-[3px]">
-              <span className="block h-[2px] w-3.5 bg-white" />
-              <span className="block h-[2px] w-3.5 bg-white" />
-              <span className="block h-[2px] w-3.5 bg-white" />
+              <span className="block h-[2px] w-3.5 bg-text-primary" />
+              <span className="block h-[2px] w-3.5 bg-text-primary" />
+              <span className="block h-[2px] w-3.5 bg-text-primary" />
             </span>
             All
           </Link>
@@ -85,7 +85,7 @@ export async function SiteHeader() {
             <Link
               key={l.label}
               href={l.href}
-              className="shrink-0 rounded-sm px-2 py-1.5 hover:bg-white/10"
+              className="shrink-0 rounded-sm px-2 py-1.5 hover:bg-black/5"
             >
               {l.label}
             </Link>

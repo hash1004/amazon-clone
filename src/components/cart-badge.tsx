@@ -9,7 +9,7 @@ export function CartBadge() {
   return (
     <Link
       href="/cart"
-      className="flex shrink-0 items-end gap-1 rounded-sm px-2 py-1 hover:bg-white/10"
+      className="flex shrink-0 items-end gap-1 rounded-sm px-2 py-1 hover:bg-black/5"
     >
       <span className="relative">
         <CartIcon className="h-8 w-8" />

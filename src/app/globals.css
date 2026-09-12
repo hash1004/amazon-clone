@@ -1,73 +1,82 @@
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   DESIGN TOKENS — ported from @pos_ui, reskinned warm/retail (Amazon-ish).
-   Architecture kept: canvas/surface/elevated backgrounds, text-* ramp,
-   brand accent, system-owned status colors, radius + shadow scales.
+   DESIGN TOKENS — v2, "minimal/decluttered" redesign.
+   See design/redesign-v2-spec.md for the full rationale and the old→new
+   value table. Architecture kept from v1 (canvas/surface/elevated
+   backgrounds, text-* ramp, brand accent, system-owned status colors,
+   radius + shadow scales) — only values changed, so every consumer that
+   already read tokens repaints for free. One accent (deep forest green)
+   replaces v1's three competing accents (yellow CTA / orange buy-now /
+   teal link); discount/"deal" indicators now use that same accent instead
+   of a separate alarm-red — quiet deals is the thesis, made literal here.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
   /* ── Backgrounds ─────────────────────────────────────────────── */
-  --bg-canvas: #eaeded;
-  --bg-surface: #ffffff;
-  --bg-elevated: #ffffff;
-  --bg-subtle: #f7fafa;
-  --bg-inverse: #0f1111;
+  --bg-canvas: #f8f7f2;
+  --bg-surface: #fefdfb;
+  --bg-elevated: #fefdfb;
+  --bg-subtle: #f2f0ea;
+  --bg-inverse: #16140e;
 
   /* ── Chrome (site header / nav belt / footer) ───────────────── */
-  --chrome-nav: #131921;
-  --chrome-belt: #232f3e;
-  --chrome-belt-hover: #37475a;
-  --chrome-footer-deep: #131a22;
-  --chrome-search-btn: #febd69;
-  --chrome-search-btn-hover: #f3a847;
+  --chrome-nav: #fefdfb;
+  --chrome-belt: #f2f0ea;
+  --chrome-belt-hover: #e2e0d8;
+  --chrome-footer-deep: #16140e;
+  --chrome-search-btn: #284c32;
+  --chrome-search-btn-hover: #183b23;
 
   /* ── Borders ─────────────────────────────────────────────────── */
-  --border-default: #d5d9d9;
-  --border-strong: #8d9096;
-  --border-accent: #e77600;
+  --border-default: #dddbd5;
+  --border-strong: #a7a49c;
+  --border-accent: #284c32;
 
   /* ── Text ────────────────────────────────────────────────────── */
-  --text-primary: #0f1111;
-  --text-secondary: #565959;
-  --text-muted: #848688;
-  --text-inverse: #ffffff;
-  --text-accent: #007185;
-  --text-accent-hover: #c7511f;
-  --text-price: #0f1111;
-  --text-deal: #cc0c39;
+  --text-primary: #1f1d15;
+  --text-secondary: #605d56;
+  --text-muted: #8b8982;
+  --text-inverse: #faf8f4;
+  --text-accent: #284c32;
+  --text-accent-hover: #12361e;
+  --text-price: #1f1d15;
+  --text-deal: #284c32;
 
-  /* ── Accent — brand CTA (Amazon yellow) ──────────────────────── */
-  --accent-primary: #ffd814;
-  --accent-hover: #f7ca00;
-  --accent-subtle: #fef3d0;
-  --accent-foreground: #0f1111;
+  /* ── Accent — the one brand accent (deep forest green) ───────── */
+  --accent-primary: #284c32;
+  --accent-hover: #183b23;
+  --accent-subtle: #def1e2;
+  --accent-foreground: #faf8f4;
 
-  /* ── Secondary CTA — "Buy now" orange ────────────────────────── */
-  --accent-buy: #ffa41c;
-  --accent-buy-hover: #fa8900;
+  /* ── Second CTA color retired — aliased to the one accent ────── */
+  --accent-buy: #284c32;
+  --accent-buy-hover: #183b23;
 
-  /* ── Status (system-owned) ──────────────────────────────────── */
-  --status-success: #007600;
-  --status-warning: #b12704;
-  --status-danger: #c40000;
-  --status-info: #007185;
-  --status-success-subtle: #ecf7ec;
-  --status-warning-subtle: #fdf0e9;
-  --status-danger-subtle: #fdeeee;
-  --status-info-subtle: #eef6f7;
+  /* ── Status (system-owned — kept genuinely distinct from the
+         brand accent so real errors/warnings still read as such) ── */
+  --status-success: #165626;
+  --status-warning: #9a6500;
+  --status-danger: #a12f2f;
+  --status-info: #345a73;
+  --status-success-subtle: #e4f3e5;
+  --status-warning-subtle: #fbecd9;
+  --status-danger-subtle: #ffe7e4;
+  --status-info-subtle: #e3f1fb;
 
-  /* ── Radius ─────────────────────────────────────────────────── */
+  /* ── Radius — unchanged; the mockup's card/thumb radii already
+         matched this scale ───────────────────────────────────────── */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-pill: 9999px;
 
-  /* ── Shadow ─────────────────────────────────────────────────── */
-  --shadow-sm: 0 1px 2px rgba(15, 17, 17, 0.08);
-  --shadow-md: 0 2px 8px rgba(15, 17, 17, 0.12);
-  --shadow-lg: 0 6px 24px rgba(15, 17, 17, 0.16);
+  /* ── Shadow — quieter everywhere; Home's own new modules skip
+         shadow entirely in favor of a 1px border (per mockup) ───── */
+  --shadow-sm: 0 1px 2px rgba(31, 29, 21, 0.05);
+  --shadow-md: 0 2px 8px rgba(31, 29, 21, 0.07);
+  --shadow-lg: 0 8px 28px rgba(31, 29, 21, 0.1);
 
   /* ── Motion ─────────────────────────────────────────────────── */
   --duration-fast: 120ms;
@@ -79,7 +88,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    TAILWIND THEME MAP — exposes tokens as utility classes.
    bg-canvas / bg-surface / text-text-primary / bg-accent / border-border-default …
-   (names kept identical to @pos_ui's tailwind.config so ported primitives work)
    ═══════════════════════════════════════════════════════════════════════════ */
 @theme inline {
   --color-canvas: var(--bg-canvas);
@@ -133,7 +141,8 @@
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
 
-  --font-sans: var(--font-ember), "Amazon Ember", Arial, Helvetica, sans-serif;
+  --font-sans: var(--font-body), "Work Sans", Arial, Helvetica, sans-serif;
+  --font-serif: var(--font-display), Georgia, serif;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -153,7 +162,7 @@ html {
 body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: var(--font-ember), "Amazon Ember", Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), "Work Sans", Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;

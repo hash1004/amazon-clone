@@ -41,7 +41,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             role="status"
             className={`pointer-events-auto flex items-center gap-2 rounded-md px-4 py-2.5 text-sm text-white shadow-lg ${
-              t.kind === "error" ? "bg-danger" : "bg-[#1c1917]"
+              t.kind === "error" ? "bg-danger" : "bg-inverse"
             }`}
           >
             <span aria-hidden>{t.kind === "error" ? "⚠" : "✓"}</span>

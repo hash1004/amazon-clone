@@ -38,12 +38,12 @@ export function AccountMenu({
         onClick={() => setOpen(false)}
         aria-haspopup="true"
         aria-expanded={open}
-        className="flex flex-col justify-center rounded-sm px-2 py-1 text-xs leading-tight hover:bg-white/10"
+        className="flex flex-col justify-center rounded-sm px-2 py-1 text-xs leading-tight hover:bg-black/5"
       >
         <span>{isAuthed ? `Hello, ${firstName}` : "Hello, sign in"}</span>
         <span className="flex items-center gap-0.5 text-sm font-bold">
           Account &amp; Lists
-          <ChevronDownIcon className="h-3 w-3 text-neutral-400" />
+          <ChevronDownIcon className="h-3 w-3 text-text-muted" />
         </span>
       </Link>
 

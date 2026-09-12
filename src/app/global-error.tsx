@@ -18,13 +18,14 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
           <h1 style={{ fontSize: "1.25rem", fontWeight: 700 }}>
             Something went wrong
           </h1>
-          <p style={{ margin: "0.5rem 0 1rem", color: "#565959" }}>
+          <p style={{ margin: "0.5rem 0 1rem", color: "#605d56" }}>
             An unexpected error occurred.
           </p>
           <button
             onClick={reset}
             style={{
-              background: "#ffd814",
+              background: "#284c32",
+              color: "#faf8f4",
               border: "none",
               borderRadius: "999px",
               padding: "0.5rem 1.5rem",

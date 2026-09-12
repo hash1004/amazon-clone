@@ -132,7 +132,7 @@ export function SearchBox() {
           value={dept}
           onChange={(e) => setDept(e.target.value)}
           aria-label="Search in department"
-          className="hidden shrink-0 border-r border-[#cdcdcd] bg-[#e6e6e6] px-2 text-xs text-text-primary outline-none hover:bg-[#dcdcdc] sm:block"
+          className="hidden shrink-0 border-r border-border-default bg-subtle px-2 text-xs text-text-primary outline-none hover:bg-chrome-belt-hover sm:block"
         >
           <option value="">All</option>
           {DEPARTMENTS.map((d) => (
@@ -165,7 +165,7 @@ export function SearchBox() {
         <button
           type="submit"
           aria-label="Go"
-          className="flex shrink-0 items-center bg-chrome-search-btn px-3.5 text-[#0f1111] hover:bg-chrome-search-btn-hover"
+          className="flex shrink-0 items-center bg-chrome-search-btn px-3.5 text-accent-fg hover:bg-chrome-search-btn-hover"
         >
           <SearchIcon className="h-5 w-5" />
         </button>

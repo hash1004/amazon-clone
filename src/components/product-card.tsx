@@ -48,11 +48,6 @@ export function ProductCard({
             />
           </div>
         </Link>
-        {pct > 0 && (
-          <span className="absolute left-1 top-1 rounded bg-text-deal px-1.5 py-0.5 text-[0.7rem] font-bold text-white">
-            -{pct}%
-          </span>
-        )}
         <span className="absolute right-1 top-1">
           <WishlistButton
             variant="icon"
@@ -97,12 +92,14 @@ export function ProductCard({
       <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
         <PriceTag cents={product.priceCents} size="md" />
         {pct > 0 && (
-          <span className="text-xs text-text-secondary">
-            List:{" "}
-            <span className="line-through">
+          <>
+            <span className="text-xs text-text-secondary line-through">
               {formatPrice(product.listPriceCents!)}
             </span>
-          </span>
+            <span className="rounded-full bg-accent-subtle px-1.5 py-0.5 text-[0.7rem] font-bold text-text-accent">
+              {pct}% off
+            </span>
+          </>
         )}
       </div>
 

@@ -172,7 +172,7 @@ export default async function ProductPage({
           <table className="w-full text-sm">
             <tbody>
               {specs.map(([k, v]) => (
-                <tr key={k} className="border-b border-[#f0f0f0]">
+                <tr key={k} className="border-b border-border-default">
                   <th className="w-40 py-1.5 text-left align-top font-bold text-text-primary">
                     {k}
                   </th>

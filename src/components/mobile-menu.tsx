@@ -35,12 +35,12 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
         aria-label="Open menu"
         aria-expanded={open}
         onClick={() => setOpen(true)}
-        className="flex shrink-0 items-center gap-1 rounded-sm px-2 py-2 hover:bg-white/10 lg:hidden"
+        className="flex shrink-0 items-center gap-1 rounded-sm px-2 py-2 hover:bg-black/5 lg:hidden"
       >
         <span aria-hidden className="flex flex-col gap-[3px]">
-          <span className="block h-[2px] w-4 bg-white" />
-          <span className="block h-[2px] w-4 bg-white" />
-          <span className="block h-[2px] w-4 bg-white" />
+          <span className="block h-[2px] w-4 bg-text-primary" />
+          <span className="block h-[2px] w-4 bg-text-primary" />
+          <span className="block h-[2px] w-4 bg-text-primary" />
         </span>
       </button>
 
@@ -53,7 +53,7 @@ export function MobileMenu({ userName }: { userName?: string | null }) {
               onClick={() => setOpen(false)}
             />
             <nav className="absolute left-0 top-0 flex h-[100dvh] w-[85%] max-w-sm flex-col overflow-y-auto overscroll-contain bg-surface text-text-primary shadow-xl">
-            <div className="flex items-center justify-between bg-chrome-belt px-4 py-3 text-white">
+            <div className="flex items-center justify-between border-b border-border-default bg-chrome-belt px-4 py-3 text-text-primary">
               <span className="font-bold">
                 Hello, {userName ?? "sign in"}
               </span>
