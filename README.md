@@ -1,20 +1,50 @@
 # amazon-clone
 
 A working slice of [amazon.com](https://amazon.com), built as a timed
-assignment. The goal was to reproduce the shopping experience closely — chrome,
-home, search, product, cart, checkout, orders — not just a generic storefront.
+assignment: chrome, home, search, product, cart, checkout, orders.
 
 **Live:** https://amazon-clone-sgtc.vercel.app
 
+## Design direction (v2 — resubmission)
+
+The first submission matched amazon.com's own layout closely and was
+rejected for it: a faithful clone isn't a point of view. **The opinion this
+version leads with: amazon.com is too crowded.** Banner carousels,
+poster-tile grids, and a loud badge on every third card compete for
+attention instead of earning it. The redesign replaces that with a calm,
+considered layout that still surfaces categorization and deals — quietly
+(borders, one accent color, discounts priced inline) instead of loudly
+(carousels, ribbons, three competing CTA colors).
+
+**What was built first:** the Home page and its token system, because
+that's where the opinion had to prove itself visually before anything
+else could inherit it. **What changed and where:**
+
+- **Home** and **Search** got the deep restructure — see below.
+- Everything else (product page, cart, checkout, orders, account,
+  wishlist, auth, header/footer chrome) kept its exact structure and every
+  feature — only the visual skin (tokens, badges, the wordmark) changed.
+  Nothing was cut from these flows; the opinion is about Home's layout,
+  not about removing functionality.
+
+Full rationale, the token table, and the exact module decisions are in
+[`design/redesign-v2-spec.md`](design/redesign-v2-spec.md).
+
 ## What's implemented
 
-- **Home** — hero carousel, category tiles, and product rails that are each a
-  distinct, non-overlapping cut of the catalog: Today's Deals (biggest
-  discount), Best Sellers (most reviews), New Arrivals, Top Rated, and
-  per-department rows. Recently-viewed strip.
+- **Home** — one **Spotlight**: a single considered pick (image, price,
+  discount, rating) instead of an auto-rotating carousel, plus a static
+  4-up product grid per department instead of nine horizontally-scrolling
+  themed rails (Deals / Best Sellers / New Arrivals / Top Rated / 5×
+  "More to explore"). Same catalog, reorganized — discounts now show
+  inline on the card instead of in a separate red-ribboned rail, and
+  bestseller rank chips are cut in favor of the rating itself. Recently-
+  viewed strip.
 - **Search** — full-text over title/brand, department + brand + price + rating
   filters, sort, removable filter chips, pagination, **type-ahead autocomplete**
-  (products, brands, departments), and a mobile filter/sort sheet.
+  (products, brands, departments), and a mobile filter/sort sheet. Its
+  clutter wasn't structural, so its pass was restraint: quiet discount
+  pills instead of a bold ribbon, tightened copy.
 - **Product page** — image gallery with hover-zoom, MRP / price / savings,
   stock + delivery date, quantity, Add to Cart / Buy Now / Add to List, spec
   table, seller card, frequently-bought-together, related items.
@@ -37,8 +67,8 @@ cross-device cart sync.
 ## Stack
 
 - **Next.js 16** (App Router, TypeScript, Turbopack) on **Vercel**
-- **Tailwind CSS v4** — design tokens ported from an internal POS design
-  system, reskinned to Amazon's palette
+- **Tailwind CSS v4** — CSS-first design tokens (`src/app/globals.css`);
+  one accent color, Work Sans + Newsreader. See the design doc above.
 - **Prisma 7 + PostgreSQL** (Neon), driver adapter (`@prisma/adapter-pg`)
 - **Auth.js** (credentials, JWT sessions)
 
