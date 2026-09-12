@@ -7,7 +7,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-full flex-col bg-white">
+    <div className="flex min-h-full flex-col bg-surface">
       <div className="flex justify-center border-b border-border-default py-4">
         <Link href="/">
           <AmazonLogo className="h-9 w-auto" tone="dark" />
@@ -18,7 +18,7 @@ export default function AuthLayout({
         {children}
       </div>
 
-      <footer className="border-t border-border-default bg-gradient-to-b from-white to-[#f3f3f3] py-6 text-center text-xs text-text-secondary">
+      <footer className="border-t border-border-default bg-gradient-to-b from-surface to-subtle py-6 text-center text-xs text-text-secondary">
         <p className="space-x-4">
           <Link href="/info/conditions-of-use" className="link">
             Conditions of Use
