@@ -536,7 +536,7 @@ function Section({
             done
               ? "bg-success text-white"
               : open
-                ? "bg-chrome-nav text-white"
+                ? "bg-accent text-accent-fg"
                 : "bg-subtle text-text-secondary"
           }`}
         >

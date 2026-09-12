@@ -34,7 +34,7 @@ export default function NotFound() {
           />
           <button
             type="submit"
-            className="bg-chrome-search-btn px-4 text-sm font-medium text-[#0f1111] hover:bg-chrome-search-btn-hover"
+            className="bg-chrome-search-btn px-4 text-sm font-medium text-accent-fg hover:bg-chrome-search-btn-hover"
           >
             Go
           </button>

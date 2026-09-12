@@ -3,15 +3,21 @@
 import { useState } from "react";
 
 /**
- * Amazon wordmark. Renders the inline SVG mark by default and seamlessly
- * swaps in a PNG from /public if one has been added:
- *   amazon-logo-white.png  — for dark chrome (header, footer)
- *   amazon-logo-dark.png   — for light backgrounds (sign-in page)
+ * Wordmark. Renders the inline SVG mark by default and seamlessly swaps in
+ * a PNG from /public if one has been added:
+ *   amazon-logo-white.png  — for dark chrome (unused by default in v2 —
+ *                             header/footer chrome is light now)
+ *   amazon-logo-dark.png   — for light backgrounds (header, sign-in page)
  * Render with a height class only (e.g. `h-8`); width follows the ratio.
+ *
+ * v2: plain italic serif wordmark (Newsreader) — the smile-swoosh mark was
+ * dropped along with the rest of Amazon's own visual identity. `tone` now
+ * just switches ink vs. inverse text color via tokens instead of a
+ * hardcoded hex per tone. See design/redesign-v2-spec.md.
  */
 export function AmazonLogo({
   className = "",
-  tone = "light",
+  tone = "dark",
 }: {
   className?: string;
   tone?: "light" | "dark";
@@ -47,10 +53,11 @@ function LogoSvg({
   className: string;
   tone: "light" | "dark";
 }) {
-  const text = tone === "light" ? "#ffffff" : "#0f1111";
+  const fill =
+    tone === "light" ? "var(--text-inverse)" : "var(--text-primary)";
   return (
     <svg
-      viewBox="0 0 102 40"
+      viewBox="0 0 102 30"
       className={className}
       role="img"
       aria-label="Amazon"
@@ -58,26 +65,18 @@ function LogoSvg({
     >
       <text
         x="1"
-        y="24"
-        fontFamily="Arial, Helvetica, sans-serif"
-        fontSize="25"
-        fontWeight="700"
-        letterSpacing="-1"
-        fill={text}
+        y="22"
+        style={{
+          fontFamily: "var(--font-display), Georgia, serif",
+          fontStyle: "italic",
+          fontWeight: 500,
+        }}
+        fontSize="24"
+        letterSpacing="-0.5"
+        fill={fill}
       >
         amazon
       </text>
-      <path
-        d="M5 27c9.2 6.6 22.2 10 35.4 10 9.6 0 20.2-2.4 29.6-7"
-        stroke="#FF9900"
-        strokeWidth="3"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M63.5 30.8c2.9-1.9 6.2-2.5 7.7-1.5 1.4 1 1.1 3.7-.6 6.7-.1-2.6-1-4.4-2.5-5.1-1.4-.7-3-.7-4.6-.1z"
-        fill="#FF9900"
-      />
     </svg>
   );
 }

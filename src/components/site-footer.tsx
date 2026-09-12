@@ -64,21 +64,21 @@ const SUB_BRANDS = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-10 text-white">
+    <footer className="mt-10">
       <Link
         href="#top"
-        className="block bg-chrome-belt-hover py-4 text-center text-sm hover:brightness-110"
+        className="block bg-chrome-belt-hover py-4 text-center text-sm text-text-primary hover:brightness-95"
       >
         Back to top
       </Link>
 
       {/* Link columns */}
-      <div className="bg-chrome-belt">
+      <div className="bg-chrome-belt text-text-primary">
         <div className="mx-auto grid max-w-[1000px] gap-8 px-6 py-12 sm:grid-cols-2 md:grid-cols-4">
           {COLUMNS.map((col) => (
             <div key={col.heading}>
               <h3 className="mb-2 font-bold">{col.heading}</h3>
-              <ul className="space-y-2 text-sm text-neutral-300">
+              <ul className="space-y-2 text-sm text-text-secondary">
                 {col.links.map((l) => (
                   <li key={l.label}>
                     <Link href={l.href} className="hover:underline">
@@ -90,7 +90,7 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-        <div className="border-t border-white/15" />
+        <div className="border-t border-border-default" />
         <div className="flex flex-wrap items-center justify-center gap-4 py-8">
           <AmazonLogo className="h-7 w-auto" />
           <span className="rounded border border-border-strong px-3 py-1 text-xs">
@@ -105,8 +105,9 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Sub-brand grid */}
-      <div className="bg-chrome-footer-deep">
+      {/* Sub-brand grid — the one deliberately dark band left in the
+          footer, for contrast; kept light-on-dark. */}
+      <div className="bg-chrome-footer-deep text-text-inverse">
         <div className="mx-auto grid max-w-[1000px] gap-x-6 gap-y-5 px-6 py-10 text-center text-[0.7rem] leading-tight text-neutral-400 sm:grid-cols-3 lg:grid-cols-6">
           {SUB_BRANDS.map(([name, desc]) => (
             <div key={name}>

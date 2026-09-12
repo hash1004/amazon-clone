@@ -16,24 +16,33 @@ export default function OpengraphImage() {
           alignItems: "flex-start",
           justifyContent: "center",
           padding: "80px",
-          background: "#131921",
-          color: "#ffffff",
-          fontFamily: "sans-serif",
+          background: "#f8f7f2",
+          color: "#1f1d15",
+          fontFamily: "serif",
+          fontStyle: "italic",
         }}
       >
-        <div style={{ display: "flex", fontSize: 100, fontWeight: 800 }}>
+        <div style={{ display: "flex", fontSize: 100, fontWeight: 500 }}>
           <span>amazon</span>
         </div>
         <div
           style={{
             width: 260,
-            height: 10,
-            marginTop: 4,
-            background: "#ff9900",
+            height: 4,
+            marginTop: 12,
+            background: "#284c32",
             borderRadius: 999,
           }}
         />
-        <div style={{ fontSize: 40, marginTop: 40, color: "#d5d9d9" }}>
+        <div
+          style={{
+            fontSize: 40,
+            marginTop: 40,
+            fontStyle: "normal",
+            fontFamily: "sans-serif",
+            color: "#605d56",
+          }}
+        >
           Spend less. Smile more.
         </div>
       </div>

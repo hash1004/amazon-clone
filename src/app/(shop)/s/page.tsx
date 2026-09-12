@@ -139,7 +139,7 @@ export default async function SearchPage({
             {sp.q && (
               <>
                 {" "}
-                for <span className="font-bold text-warning">&quot;{sp.q}&quot;</span>
+                for <span className="font-bold text-text-accent">&quot;{sp.q}&quot;</span>
               </>
             )}
           </p>
@@ -154,7 +154,7 @@ export default async function SearchPage({
 
         <div className="min-w-0 flex-1">
           <div className="mb-2 border-b border-border-default pb-2">
-            <h1 className="text-xl font-bold">
+            <h1 className="font-serif text-xl font-medium text-text-primary">
               {sp.q ? `Results for "${sp.q}"` : heading}
             </h1>
             {chips.length > 0 && (
@@ -180,10 +180,6 @@ export default async function SearchPage({
               </div>
             )}
           </div>
-          <p className="mb-3 text-xs text-text-secondary">
-            Check each product page for other buying options.
-          </p>
-
           {products.length === 0 ? (
             <div className="flex flex-col items-center gap-6 rounded-lg border border-border-default bg-surface p-10 text-center sm:flex-row sm:text-left">
               <SorryDog className="h-40 w-40 shrink-0" seed={(sp.q ?? "x").length + 1} />
