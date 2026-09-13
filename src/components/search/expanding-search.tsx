@@ -236,10 +236,16 @@ export function ExpandingSearch() {
       </div>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-[60] flex flex-col bg-surface sm:hidden">
+        // h-dvh, not inset-0/100vh — a `fixed` element doesn't reflow when
+        // the on-screen keyboard opens, so with a plain 100vh height the
+        // bottom of this overlay (where the suggestion list lives, below
+        // the input) ends up anchored past where the keyboard now covers
+        // the screen: present in the DOM, just not actually on screen.
+        // dvh is the viewport unit that actually accounts for the keyboard.
+        <div className="fixed inset-x-0 top-0 z-[60] flex h-dvh flex-col bg-surface sm:hidden">
           <form
             onSubmit={submit}
-            className="flex items-center gap-2 border-b border-border-default px-3 py-2.5"
+            className="flex shrink-0 items-center gap-2 border-b border-border-default px-3 py-2.5"
           >
             <button
               type="button"
