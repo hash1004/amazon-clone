@@ -86,8 +86,16 @@ export function ExpandingSearch() {
     requestAnimationFrame(() => inputRef.current?.focus());
   };
 
+  const collapseIfIdle = () => {
+    if (document.activeElement !== inputRef.current) {
+      setOpen(false);
+      setExpanded(false);
+    }
+  };
+
   const go = (s: Suggestion) => {
     setOpen(false);
+    setQ(s.kind === "product" ? s.title : s.text);
     if (s.kind === "product") router.push(`/p/${s.slug}`);
     else if (s.kind === "department") router.push(`/s?dept=${s.slug}`);
     else router.push(`/s?q=${encodeURIComponent(s.text)}`);
@@ -121,6 +129,7 @@ export function ExpandingSearch() {
     <div
       ref={rootRef}
       onMouseEnter={openWide}
+      onMouseLeave={collapseIfIdle}
       className={`relative flex items-center transition-[width] duration-200 ease-out ${
         expanded ? "w-56 sm:w-72" : "w-9"
       }`}
@@ -151,7 +160,7 @@ export function ExpandingSearch() {
           }}
           onFocus={openWide}
           onKeyDown={onKeyDown}
-          className={`min-w-0 flex-1 border-b border-border-strong bg-transparent px-1 text-sm text-text-primary outline-none transition-opacity duration-150 ${
+          className={`min-w-0 flex-1 border-none bg-transparent px-1 text-sm text-text-primary outline-none transition-opacity duration-150 ${
             expanded ? "opacity-100" : "pointer-events-none w-0 opacity-0"
           }`}
         />
