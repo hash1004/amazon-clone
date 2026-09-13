@@ -226,6 +226,28 @@ a {
   }
 }
 
+/* Hero carousel product-tile float — slow, small, alternating per tile so
+   they don't move in lockstep. Kept subtle on purpose (a few px, 5-7s) —
+   this is "feels alive," not a bounce animation. */
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-8px);
+  }
+}
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--tile-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-7px) rotate(var(--tile-rotate, 0deg));
+  }
+}
+
 /* The header search field opts out of the site-wide focus ring below —
    it has its own pill background as the "you're in this field" affordance,
    so the ring reads as a stray border. Needs a selector at least as

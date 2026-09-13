@@ -28,10 +28,7 @@ const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
  * a soft tint per slide stands in for the backdrop photo instead.
  *
  * Crossfades rather than swapping-on-remount: the old slide fades out,
- * content swaps while invisible, the new slide fades in. A key-triggered
- * CSS keyframe (the previous approach) has no exit phase, so a fast
- * interval reads as a hard cut with a fade tacked onto the entrance —
- * that's the "jerky" feeling this replaces.
+ * content swaps while invisible, the new slide fades in.
  */
 export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [i, setI] = useState(0);
@@ -107,53 +104,114 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
           className="relative mx-auto block h-[300px] w-[300px] shrink-0 sm:h-[360px] sm:w-[360px]"
           style={fade}
         >
-          <div
-            className="absolute inset-6 rounded-[2rem]"
-            style={{ background: slide.tint }}
+          <ProductCluster
+            key={i}
+            products={slide.products}
+            tint={slide.tint}
+            preset={i % LAYOUTS.length}
           />
-          {slide.products.slice(0, 3).map((p, k) => (
-            <ProductTile key={p.slug} product={p} position={k} />
-          ))}
         </Link>
       </div>
     </section>
   );
 }
 
-const TILE_POSITION = [
-  "left-0 top-2 h-28 w-28 -rotate-6 sm:h-32 sm:w-32",
-  "bottom-2 right-0 h-28 w-28 rotate-6 sm:h-32 sm:w-32",
-  "left-1/2 top-1/2 z-10 h-40 w-40 -translate-x-1/2 -translate-y-1/2 sm:h-48 sm:w-48",
+/**
+ * Cluster preset per slide index — varies the backdrop blob shape and each
+ * tile's position/size/rotation across slides, so the arrangement doesn't
+ * repeat identically every time it comes back around. Deterministic (keyed
+ * off the slide index, not Math.random()) so server and client render the
+ * same thing — real randomness here would just be a hydration mismatch.
+ */
+const LAYOUTS = [
+  {
+    blob: "60% 40% 30% 70% / 60% 30% 70% 40%",
+    tiles: [
+      { top: "18%", left: "14%", size: "h-28 w-28 sm:h-32 sm:w-32", rotate: -8 },
+      { top: "78%", left: "82%", size: "h-24 w-24 sm:h-28 sm:w-28", rotate: 10 },
+      { top: "52%", left: "58%", size: "h-40 w-40 sm:h-48 sm:w-48", rotate: 0 },
+    ],
+  },
+  {
+    blob: "40% 60% 65% 35% / 55% 45% 55% 45%",
+    tiles: [
+      { top: "22%", left: "68%", size: "h-24 w-24 sm:h-28 sm:w-28", rotate: 9 },
+      { top: "80%", left: "28%", size: "h-28 w-28 sm:h-32 sm:w-32", rotate: -7 },
+      { top: "45%", left: "42%", size: "h-40 w-40 sm:h-48 sm:w-48", rotate: 0 },
+    ],
+  },
+  {
+    blob: "35% 65% 55% 45% / 40% 60% 40% 60%",
+    tiles: [
+      { top: "16%", left: "48%", size: "h-24 w-24 sm:h-28 sm:w-28", rotate: -10 },
+      { top: "70%", left: "18%", size: "h-28 w-28 sm:h-32 sm:w-32", rotate: 8 },
+      { top: "58%", left: "68%", size: "h-40 w-40 sm:h-48 sm:w-48", rotate: 0 },
+    ],
+  },
 ] as const;
 
-/** Organic "blob" outlines instead of a rounded rectangle — different per
- * tile (reads as varied/material), same soft-blob family across all three
- * (reads as one consistent style). */
-const TILE_BLOB = [
-  "60% 40% 30% 70% / 60% 30% 70% 40%",
-  "30% 70% 70% 30% / 30% 30% 70% 70%",
-  "70% 30% 50% 50% / 40% 60% 40% 60%",
+const FLOAT = [
+  { anim: "float-b", duration: "5.5s", delay: "0s" },
+  { anim: "float-b", duration: "6.5s", delay: "1.1s" },
+  { anim: "float-a", duration: "7s", delay: "0.4s" },
 ] as const;
 
-function ProductTile({
-  product,
-  position,
+function ProductCluster({
+  products,
+  tint,
+  preset,
 }: {
-  product: { slug: string; title: string; images: string[] };
-  position: number;
+  products: { slug: string; title: string; images: string[] }[];
+  tint: string;
+  preset: number;
 }) {
+  const layout = LAYOUTS[preset];
+
   return (
-    <div
-      className={`absolute overflow-hidden border border-border-default bg-surface shadow-md ${TILE_POSITION[position]}`}
-      style={{ borderRadius: TILE_BLOB[position] }}
-    >
-      <Image
-        src={product.images[0]}
-        alt={product.title}
-        fill
-        sizes="200px"
-        className="object-contain p-3"
+    <>
+      <div
+        className="absolute inset-6"
+        style={{ background: tint, borderRadius: layout.blob }}
       />
-    </div>
+      {products.slice(0, 3).map((p, k) => {
+        const t = layout.tiles[k];
+        const f = FLOAT[k];
+        const isCenter = k === 2;
+        return (
+          <div
+            key={p.slug}
+            className={`absolute overflow-hidden border border-border-default bg-surface shadow-md ${t.size} ${
+              isCenter ? "z-10" : ""
+            }`}
+            style={{
+              top: t.top,
+              left: t.left,
+              borderRadius:
+                "60% 40% 30% 70% / 60% 30% 70% 40%",
+              // The center tile is anchored by its own midpoint (needs the
+              // -50%/-50% translate to stay centered on `top`/`left`); the
+              // two side tiles anchor by their corner instead. Either way,
+              // the float keyframe re-declares this same base transform
+              // each frame (that's what `--tile-rotate` is for) — an
+              // animation replaces the element's transform outright, so
+              // the base positioning has to live inside the keyframe too.
+              ["--tile-rotate" as string]: `${t.rotate}deg`,
+              transform: isCenter
+                ? "translate(-50%, -50%)"
+                : `rotate(${t.rotate}deg)`,
+              animation: `${f.anim} ${f.duration} ${EASE} ${f.delay} infinite`,
+            }}
+          >
+            <Image
+              src={p.images[0]}
+              alt={p.title}
+              fill
+              sizes="200px"
+              className="object-contain p-3"
+            />
+          </div>
+        );
+      })}
+    </>
   );
 }
