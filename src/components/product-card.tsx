@@ -38,7 +38,7 @@ export function ProductCard({
     <div className="flex h-full flex-col bg-surface p-4">
       <div className="group relative mb-3">
         <Link href={`/p/${product.slug}`} className="block">
-          <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-white">
+          <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-subtle">
             <Image
               src={product.images[0]}
               alt={product.title}

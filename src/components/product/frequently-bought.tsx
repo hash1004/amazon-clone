@@ -37,87 +37,105 @@ export function FrequentlyBought({
 
   return (
     <section className="mt-8 border-t border-border-default pt-5">
-      <h2 className="mb-3 text-lg font-bold">Frequently bought together</h2>
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
-        <div className="flex flex-wrap items-center gap-2">
-          {all.map((it, i) => (
-            <div key={it.productId} className="flex items-center gap-2">
-              <Link
-                href={`/p/${it.slug}`}
-                className="relative h-24 w-24 shrink-0 bg-white"
-              >
-                <Image
-                  src={it.image}
-                  alt={it.title}
-                  fill
-                  sizes="96px"
-                  className="object-contain p-1"
-                />
-              </Link>
-              {i < all.length - 1 && (
-                <span className="text-2xl text-text-secondary">+</span>
-              )}
-            </div>
-          ))}
-        </div>
+      <h2 className="mb-4 font-serif text-lg font-medium text-text-primary">
+        Frequently bought together
+      </h2>
 
-        <div className="lg:ml-4">
-          <p className="text-sm">
-            Total price:{" "}
-            <span className="text-lg font-bold text-text-deal">
-              {formatPrice(total)}
-            </span>
-          </p>
-          <button
-            type="button"
-            disabled={selected.length === 0}
-            onClick={() => {
-              selected.forEach((i) =>
-                add(
-                  {
-                    productId: i.productId,
-                    slug: i.slug,
-                    title: i.title,
-                    image: i.image,
-                    priceCents: i.priceCents,
-                  },
-                  1,
-                ),
-              );
-              toast(`${selected.length} items added to your Cart`);
-              setAdded(true);
-              setTimeout(() => setAdded(false), 2000);
-            }}
-            className="mt-1 rounded-pill bg-accent px-5 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
-          >
-            {added ? "✓ Added to Cart" : `Add ${selected.length} to Cart`}
-          </button>
-        </div>
+      <div className="flex flex-wrap items-center gap-3">
+        {all.map((it, i) => (
+          <div key={it.productId} className="flex items-center gap-3">
+            <FBTCard
+              item={it}
+              isMain={i === 0}
+              checked={!!checked[it.productId]}
+              onToggle={() =>
+                setChecked((c) => ({ ...c, [it.productId]: !c[it.productId] }))
+              }
+            />
+            {i < all.length - 1 && (
+              <span className="text-lg text-text-muted">+</span>
+            )}
+          </div>
+        ))}
       </div>
 
-      <ul className="mt-3 space-y-1 text-sm">
-        {all.map((it, i) => (
-          <li key={it.productId} className="flex items-start gap-2">
-            <input
-              type="checkbox"
-              checked={!!checked[it.productId]}
-              onChange={(e) =>
-                setChecked((c) => ({ ...c, [it.productId]: e.target.checked }))
-              }
-              className="mt-1 h-3.5 w-3.5"
-            />
-            <span>
-              {i === 0 ? (
-                <span className="font-medium">This item: </span>
-              ) : null}
-              <Link href={`/p/${it.slug}`} className="link">
-                {it.title}
-              </Link>{" "}
-              <span className="text-text-deal">{formatPrice(it.priceCents)}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
+      <div className="mt-4 flex flex-wrap items-center gap-4">
+        <p className="text-sm text-text-secondary">
+          Total:{" "}
+          <span className="text-lg font-semibold text-text-primary">
+            {formatPrice(total)}
+          </span>{" "}
+          for {selected.length} item{selected.length === 1 ? "" : "s"}
+        </p>
+        <button
+          type="button"
+          disabled={selected.length === 0}
+          onClick={() => {
+            selected.forEach((i) =>
+              add(
+                {
+                  productId: i.productId,
+                  slug: i.slug,
+                  title: i.title,
+                  image: i.image,
+                  priceCents: i.priceCents,
+                },
+                1,
+              ),
+            );
+            toast(`${selected.length} items added to your Cart`);
+            setAdded(true);
+            setTimeout(() => setAdded(false), 2000);
+          }}
+          className="rounded-pill bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg transition hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {added ? "✓ Added to Cart" : `Add ${selected.length} to Cart`}
+        </button>
+      </div>
     </section>
+  );
+}
+
+function FBTCard({
+  item,
+  isMain,
+  checked,
+  onToggle,
+}: {
+  item: FBTItem;
+  isMain: boolean;
+  checked: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div
+      className={`relative flex w-32 shrink-0 flex-col gap-2 rounded-lg border border-border-default bg-surface p-2.5 transition sm:w-36 ${
+        checked ? "" : "opacity-50"
+      }`}
+    >
+      <button
+        type="button"
+        aria-label={checked ? "Remove from bundle" : "Add to bundle"}
+        aria-pressed={checked}
+        onClick={onToggle}
+        className={`absolute right-1.5 top-1.5 z-10 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border text-[10px] transition ${
+          checked
+            ? "border-border-accent bg-accent text-accent-fg"
+            : "border-border-strong bg-surface text-transparent"
+        }`}
+      >
+        ✓
+      </button>
+      <Link href={`/p/${item.slug}`} className="relative aspect-square w-full overflow-hidden rounded-md bg-subtle">
+        <Image src={item.image} alt={item.title} fill sizes="144px" className="object-contain p-2" />
+      </Link>
+      <Link href={`/p/${item.slug}`} className="line-clamp-2 text-xs leading-tight text-text-primary hover:text-text-accent">
+        {isMain ? "This item: " : null}
+        {item.title}
+      </Link>
+      <p className="text-sm font-semibold text-text-primary">
+        {formatPrice(item.priceCents)}
+      </p>
+    </div>
   );
 }

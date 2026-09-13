@@ -42,7 +42,7 @@ export function WishlistButton({
           e.preventDefault();
           onToggle();
         }}
-        className="rounded-full border border-border-default bg-surface/90 p-1.5 shadow-sm hover:bg-subtle"
+        className="cursor-pointer rounded-full border border-border-default bg-surface/90 p-1.5 shadow-sm hover:bg-subtle"
       >
         <HeartIcon className={`h-4 w-4 ${saved ? "text-accent" : ""}`} filled={saved} />
       </button>
@@ -54,7 +54,7 @@ export function WishlistButton({
       type="button"
       onClick={onToggle}
       aria-pressed={saved}
-      className="flex w-full items-center justify-center gap-1.5 rounded-pill border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
+      className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-pill border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
     >
       <HeartIcon className={`h-4 w-4 ${saved ? "text-accent" : ""}`} filled={saved} />
       {saved ? "Added to List" : "Add to List"}

@@ -3,9 +3,8 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
 import { ProductCard } from "@/components/product-card";
-import { FilterRail } from "@/components/search/filter-rail";
 import { SortSelect } from "@/components/search/sort-select";
-import { MobileSearchControls } from "@/components/search/mobile-controls";
+import { SearchControls } from "@/components/search/search-controls";
 import { DEPARTMENT_BY_SLUG } from "@/lib/departments";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { SorryDog } from "@/components/ui/sorry-dog";
@@ -129,6 +128,10 @@ export default async function SearchPage({
       href: searchUrl(sp, { deals: undefined, page: undefined }),
     });
 
+  const activeCount = [sp.dept, sp.brand, sp.rating, sp.min || sp.max, sp.deals].filter(
+    Boolean,
+  ).length;
+
   return (
     <div className="bg-canvas">
       {/* Results bar */}
@@ -143,16 +146,15 @@ export default async function SearchPage({
               </>
             )}
           </p>
-          <SortSelect params={sp} />
+          <div className="flex items-center gap-3">
+            <SearchControls params={sp} brands={brands} activeCount={activeCount} />
+            <SortSelect params={sp} />
+          </div>
         </div>
       </div>
 
-      <MobileSearchControls params={sp} brands={brands} />
-
-      <div className="mx-auto flex max-w-[1500px] gap-6 px-4 py-4">
-        <FilterRail params={sp} brands={brands} />
-
-        <div className="min-w-0 flex-1">
+      <div className="mx-auto max-w-[1500px] px-4 py-4">
+        <div>
           <div className="mb-2 border-b border-border-default pb-2">
             <h1 className="font-serif text-xl font-medium text-text-primary">
               {sp.q ? `Results for "${sp.q}"` : heading}

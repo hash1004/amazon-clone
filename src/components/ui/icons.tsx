@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  SlidersHorizontal,
   X,
 } from "lucide-react";
 
@@ -47,6 +48,10 @@ export function CloseIcon({ className = "h-4 w-4" }: P) {
 
 export function ArrowUpIcon({ className = "h-5 w-5" }: P) {
   return <ArrowUp className={className} strokeWidth={2} aria-hidden />;
+}
+
+export function FilterIcon({ className = "h-4 w-4" }: P) {
+  return <SlidersHorizontal className={className} strokeWidth={2} aria-hidden />;
 }
 
 export function HeartIcon({
