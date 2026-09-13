@@ -80,6 +80,14 @@ const HERO_COPY: Record<
   },
 };
 
+const SECTION_BLURB: Record<string, string> = {
+  electronics: "The essentials, without the upsell.",
+  "home-kitchen": "For the kitchen you actually use.",
+  fashion: "Staples worth repeating.",
+  beauty: "A shorter routine, done well.",
+  "sports-outdoors": "Gear that keeps up.",
+};
+
 export default async function Home() {
   const session = await auth();
 
@@ -123,10 +131,23 @@ export default async function Home() {
         <CategorySection
           key={dept.slug}
           title={dept.label}
+          blurb={SECTION_BLURB[dept.slug]}
           href={`/s?dept=${dept.slug}`}
           items={items}
         />
       ))}
+
+      <section className="bg-accent px-6 py-16 text-center sm:px-10">
+        <h2 className="mx-auto max-w-lg font-serif text-3xl font-medium leading-tight text-accent-fg">
+          Everything you need, none of the noise.
+        </h2>
+        <Link
+          href="/s"
+          className="mt-6 inline-flex items-center rounded-pill bg-surface px-7 py-3 text-sm font-medium text-text-primary transition hover:bg-subtle"
+        >
+          Shop everything
+        </Link>
+      </section>
 
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10">
         <RecentlyViewedRow title="Inspired by your browsing history" />

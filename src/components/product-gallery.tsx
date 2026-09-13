@@ -25,17 +25,42 @@ export function ProductGallery({
   }
 
   return (
-    <div className="flex gap-3">
+    <div className="relative">
+      <div
+        ref={frameRef}
+        onMouseMove={onMove}
+        onMouseLeave={() => setZoom(null)}
+        className="relative aspect-square w-full cursor-crosshair overflow-hidden rounded-[1.75rem] border border-border-default bg-subtle"
+      >
+        <Image
+          src={list[active]}
+          alt={title}
+          fill
+          sizes="(max-width:1024px) 90vw, 560px"
+          priority
+          className="object-contain p-8"
+        />
+        {zoom && (
+          <span
+            className="pointer-events-none absolute h-24 w-24 border border-border-strong bg-black/10"
+            style={{
+              left: `calc(${zoom.x}% - 3rem)`,
+              top: `calc(${zoom.y}% - 3rem)`,
+            }}
+          />
+        )}
+      </div>
+
       {list.length > 1 && (
-        <div className="flex flex-col gap-2">
-          {list.map((src, i) => (
+        <div className="mt-3 grid grid-cols-4 gap-3">
+          {list.slice(0, 8).map((src, i) => (
             <button
               key={src + i}
               type="button"
               onMouseEnter={() => setActive(i)}
               onClick={() => setActive(i)}
               aria-label={`View image ${i + 1}`}
-              className={`relative h-11 w-11 shrink-0 overflow-hidden rounded-md border bg-white transition ${
+              className={`relative aspect-square overflow-hidden rounded-xl border bg-subtle transition ${
                 i === active
                   ? "border-border-accent ring-1 ring-border-accent"
                   : "border-border-default hover:border-border-strong"
@@ -45,55 +70,25 @@ export function ProductGallery({
                 src={src}
                 alt=""
                 fill
-                sizes="44px"
-                className="object-contain p-1"
+                sizes="120px"
+                className="object-contain p-2"
               />
             </button>
           ))}
         </div>
       )}
 
-      <div className="relative min-w-0 flex-1">
+      {/* Zoom panel (desktop) — overlays to the right, never widens the page */}
+      {zoom && (
         <div
-          ref={frameRef}
-          onMouseMove={onMove}
-          onMouseLeave={() => setZoom(null)}
-          className="relative mx-auto aspect-square w-full max-w-[500px] cursor-crosshair overflow-hidden rounded-lg border border-border-default bg-white"
-        >
-          <Image
-            src={list[active]}
-            alt={title}
-            fill
-            sizes="(max-width:1024px) 90vw, 440px"
-            priority
-            className="object-contain p-2"
-          />
-          {zoom && (
-            <span
-              className="pointer-events-none absolute h-24 w-24 border border-border-strong bg-black/10"
-              style={{
-                left: `calc(${zoom.x}% - 3rem)`,
-                top: `calc(${zoom.y}% - 3rem)`,
-              }}
-            />
-          )}
-        </div>
-        <p className="mt-1 text-center text-xs text-text-secondary lg:hidden">
-          Tap thumbnails to change image
-        </p>
-
-        {/* Zoom panel (desktop) — overlays the info column, never widens the page */}
-        {zoom && (
-          <div
-            className="pointer-events-none absolute left-full top-0 z-20 ml-3 hidden h-[460px] w-[380px] rounded-lg border border-border-default bg-white bg-no-repeat shadow-xl xl:block"
-            style={{
-              backgroundImage: `url(${list[active]})`,
-              backgroundSize: "220%",
-              backgroundPosition: `${zoom.x}% ${zoom.y}%`,
-            }}
-          />
-        )}
-      </div>
+          className="pointer-events-none absolute left-full top-0 z-20 ml-4 hidden h-[460px] w-[380px] rounded-2xl border border-border-default bg-surface bg-no-repeat shadow-xl xl:block"
+          style={{
+            backgroundImage: `url(${list[active]})`,
+            backgroundSize: "220%",
+            backgroundPosition: `${zoom.x}% ${zoom.y}%`,
+          }}
+        />
+      )}
     </div>
   );
 }
