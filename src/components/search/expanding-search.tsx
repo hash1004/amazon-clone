@@ -96,7 +96,10 @@ export function ExpandingSearch() {
   };
 
   const collapseIfIdle = () => {
-    if (document.activeElement !== inputRef.current) {
+    // A field with something in it (typed, or left over from a search)
+    // stays open when the pointer leaves — only an empty, unfocused field
+    // collapses back to just the icon.
+    if (document.activeElement !== inputRef.current && !q.trim()) {
       setOpen(false);
       setExpanded(false);
     }
@@ -116,6 +119,7 @@ export function ExpandingSearch() {
     if (active >= 0 && items[active]) return go(items[active]);
     if (!q.trim()) return;
     setOpen(false);
+    inputRef.current?.blur();
     router.push(`/s?q=${encodeURIComponent(q.trim())}`);
   };
 

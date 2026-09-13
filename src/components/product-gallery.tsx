@@ -84,7 +84,7 @@ export function ProductGallery({
       {/* Zoom panel (desktop) — overlays to the right, never widens the page */}
       {zoom && (
         <div
-          className="pointer-events-none absolute left-full top-0 z-20 ml-4 hidden h-[460px] w-[380px] rounded-2xl border border-border-default bg-surface bg-no-repeat shadow-xl xl:block"
+          className="pointer-events-none absolute left-full top-0 z-20 ml-4 hidden h-[460px] w-[380px] rounded-2xl border border-border-default bg-subtle bg-no-repeat shadow-xl xl:block"
           style={{
             backgroundImage: `url(${list[active]})`,
             backgroundSize: "220%",

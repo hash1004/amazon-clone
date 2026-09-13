@@ -21,6 +21,17 @@ const INTERVAL_MS = 3800;
 const FADE_MS = 260;
 const EASE = "cubic-bezier(0.4, 0, 0.2, 1)";
 
+function allImageUrls(slides: HeroSlide[]): string[] {
+  const seen = new Set<string>();
+  for (const s of slides) {
+    for (const p of s.products) {
+      const src = p.images[0];
+      if (src) seen.add(src);
+    }
+  }
+  return [...seen];
+}
+
 /**
  * Auto-advancing hero carousel — one slide per department, each fronted by
  * a small cluster of real products. Pauses on hover. No lifestyle-
@@ -65,6 +76,15 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* Only the active slide's images are in the DOM — without this, the
+          browser doesn't start fetching a slide's images until we advance
+          to it, which is exactly the pop-in/blank-flash this fixes. All 15
+          or so images across every slide are cheap to preload up front;
+          React hoists these <link> tags into <head> regardless of where
+          they're rendered. */}
+      {allImageUrls(slides).map((src) => (
+        <link key={src} rel="preload" as="image" href={src} />
+      ))}
       <div className="mx-auto flex max-w-[1400px] flex-col gap-12 px-6 py-14 sm:px-10 lg:flex-row lg:items-center lg:gap-16 lg:py-20">
         <div className="flex max-w-[480px] flex-col gap-4" style={fade}>
           <p className="text-sm text-text-secondary">{slide.eyebrow}</p>

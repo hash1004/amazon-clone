@@ -36,8 +36,8 @@ export function ProductCard({
 
   return (
     <div className="flex h-full flex-col bg-surface p-4">
-      <div className="relative mb-3">
-        <Link href={`/p/${product.slug}`} className="group block">
+      <div className="group relative mb-3">
+        <Link href={`/p/${product.slug}`} className="block">
           <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-white">
             <Image
               src={product.images[0]}
@@ -48,7 +48,7 @@ export function ProductCard({
             />
           </div>
         </Link>
-        <span className="absolute right-1 top-1">
+        <span className="absolute right-1 top-1 opacity-100 transition-opacity focus-within:opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
           <WishlistButton
             variant="icon"
             entry={{
