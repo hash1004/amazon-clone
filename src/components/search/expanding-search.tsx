@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { DEPARTMENTS, DEPARTMENT_BY_SLUG } from "@/lib/departments";
+import Image from "next/image";
 import { SearchIcon } from "@/components/ui/icons";
 
 type Suggestion =
@@ -12,20 +11,24 @@ type Suggestion =
   | { kind: "department"; slug: string; text: string }
   | { kind: "product"; slug: string; title: string; image: string };
 
-export function SearchBox() {
+/**
+ * Search icon that expands into an input on hover/focus, collapses back
+ * when it loses focus empty. Categories live in their own left-side menu
+ * now, so this is just query text + autocomplete — no department select.
+ */
+export function ExpandingSearch() {
   const router = useRouter();
   const listId = useId();
+  const [expanded, setExpanded] = useState(false);
   const [q, setQ] = useState("");
-  const [dept, setDept] = useState("");
   const [open, setOpen] = useState(false);
   const [results, setResults] = useState<Suggestion[]>([]);
   const [active, setActive] = useState(-1);
   const items = q.trim().length < 2 ? [] : results;
-  const boxRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const acRef = useRef<AbortController | null>(null);
 
-  // Debounced fetch
   useEffect(() => {
     const term = q.trim();
     if (term.length < 2) return;
@@ -35,9 +38,7 @@ export function SearchBox() {
       acRef.current = ac;
       try {
         const res = await fetch(
-          `/api/search/suggest?q=${encodeURIComponent(term)}${
-            dept ? `&dept=${dept}` : ""
-          }`,
+          `/api/search/suggest?q=${encodeURIComponent(term)}`,
           { signal: ac.signal },
         );
         const data = (await res.json()) as {
@@ -45,7 +46,7 @@ export function SearchBox() {
           brands: string[];
           departments: { slug: string; label: string }[];
         };
-        const next: Suggestion[] = [
+        setResults([
           { kind: "term", text: term },
           ...data.departments.map((d) => ({
             kind: "department" as const,
@@ -59,52 +60,53 @@ export function SearchBox() {
             title: p.title,
             image: p.image,
           })),
-        ];
-        setResults(next);
+        ]);
         setActive(-1);
       } catch {
         /* aborted or offline */
       }
     }, 140);
     return () => clearTimeout(t);
-  }, [q, dept]);
+  }, [q]);
 
-  // Close on outside click
   useEffect(() => {
+    if (!expanded) return;
     const onDoc = (e: MouseEvent) => {
-      if (!boxRef.current?.contains(e.target as Node)) setOpen(false);
+      if (!rootRef.current?.contains(e.target as Node)) {
+        setOpen(false);
+        if (!q.trim()) setExpanded(false);
+      }
     };
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
-  }, []);
+  }, [expanded, q]);
+
+  const openWide = () => {
+    setExpanded(true);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  };
 
   const go = (s: Suggestion) => {
     setOpen(false);
-    if (s.kind === "product") {
-      router.push(`/p/${s.slug}`);
-    } else if (s.kind === "department") {
-      router.push(`/s?dept=${s.slug}`);
-    } else {
-      const params = new URLSearchParams({ q: s.text });
-      if (dept) params.set("dept", dept);
-      router.push(`/s?${params.toString()}`);
-    }
+    if (s.kind === "product") router.push(`/p/${s.slug}`);
+    else if (s.kind === "department") router.push(`/s?dept=${s.slug}`);
+    else router.push(`/s?q=${encodeURIComponent(s.text)}`);
   };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (active >= 0 && items[active]) {
-      go(items[active]);
-      return;
-    }
+    if (active >= 0 && items[active]) return go(items[active]);
     if (!q.trim()) return;
     setOpen(false);
-    const params = new URLSearchParams({ q: q.trim() });
-    if (dept) params.set("dept", dept);
-    router.push(`/s?${params.toString()}`);
+    router.push(`/s?q=${encodeURIComponent(q.trim())}`);
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") {
+      setOpen(false);
+      if (!q.trim()) setExpanded(false);
+      return;
+    }
     if (!open || items.length === 0) return;
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -112,39 +114,29 @@ export function SearchBox() {
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActive((a) => (a <= 0 ? items.length - 1 : a - 1));
-    } else if (e.key === "Escape") {
-      setOpen(false);
     }
   };
 
   return (
     <div
-      ref={boxRef}
-      className="relative order-last w-full min-w-0 sm:order-none sm:w-auto sm:flex-1"
+      ref={rootRef}
+      onMouseEnter={openWide}
+      className={`relative flex items-center transition-[width] duration-200 ease-out ${
+        expanded ? "w-56 sm:w-72" : "w-9"
+      }`}
     >
-      <form
-        action="/s"
-        onSubmit={submit}
-        className="flex h-10 items-stretch overflow-hidden rounded-md ring-accent-buy focus-within:ring-3"
-      >
-        <select
-          name="dept"
-          value={dept}
-          onChange={(e) => setDept(e.target.value)}
-          aria-label="Search in department"
-          className="hidden shrink-0 border-r border-border-default bg-subtle px-2 text-xs text-text-primary outline-none hover:bg-chrome-belt-hover sm:block"
+      <form onSubmit={submit} className="flex w-full items-center">
+        <button
+          type={expanded ? "submit" : "button"}
+          aria-label="Search"
+          onClick={() => !expanded && openWide()}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full hover:bg-black/5"
         >
-          <option value="">All</option>
-          {DEPARTMENTS.map((d) => (
-            <option key={d.slug} value={d.slug}>
-              {d.label}
-            </option>
-          ))}
-        </select>
+          <SearchIcon className="h-5 w-5" />
+        </button>
         <input
           ref={inputRef}
           type="search"
-          name="q"
           value={q}
           autoComplete="off"
           role="combobox"
@@ -152,35 +144,28 @@ export function SearchBox() {
           aria-expanded={open && items.length > 0}
           aria-controls={listId}
           aria-autocomplete="list"
-          aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
           placeholder="Search Amazon"
           onChange={(e) => {
             setQ(e.target.value);
             setOpen(true);
           }}
-          onFocus={() => setOpen(true)}
+          onFocus={openWide}
           onKeyDown={onKeyDown}
-          className="min-w-0 flex-1 bg-white px-3 text-sm text-text-primary outline-none"
+          className={`min-w-0 flex-1 border-b border-border-strong bg-transparent px-1 text-sm text-text-primary outline-none transition-opacity duration-150 ${
+            expanded ? "opacity-100" : "pointer-events-none w-0 opacity-0"
+          }`}
         />
-        <button
-          type="submit"
-          aria-label="Go"
-          className="flex shrink-0 items-center bg-chrome-search-btn px-3.5 text-accent-fg hover:bg-chrome-search-btn-hover"
-        >
-          <SearchIcon className="h-5 w-5" />
-        </button>
       </form>
 
-      {open && items.length > 0 && (
+      {expanded && open && items.length > 0 && (
         <ul
           id={listId}
           role="listbox"
-          className="absolute left-0 right-0 top-full z-50 mt-0.5 overflow-hidden rounded-md border border-border-default bg-surface text-text-primary shadow-lg"
+          className="absolute right-0 top-full z-50 mt-1 w-72 overflow-hidden rounded-md border border-border-default bg-surface text-text-primary shadow-lg"
         >
           {items.map((s, i) => (
             <li
               key={i}
-              id={`${listId}-${i}`}
               role="option"
               aria-selected={i === active}
               onMouseEnter={() => setActive(i)}
@@ -196,13 +181,7 @@ export function SearchBox() {
                 <>
                   <span className="relative h-8 w-8 shrink-0 bg-white">
                     {s.image && (
-                      <Image
-                        src={s.image}
-                        alt=""
-                        fill
-                        sizes="32px"
-                        className="object-contain"
-                      />
+                      <Image src={s.image} alt="" fill sizes="32px" className="object-contain" />
                     )}
                   </span>
                   <span className="line-clamp-1">{s.title}</span>
@@ -213,19 +192,10 @@ export function SearchBox() {
                   <span>
                     {s.text}
                     {s.kind === "brand" && (
-                      <span className="ml-1 text-xs text-text-secondary">
-                        · brand
-                      </span>
+                      <span className="ml-1 text-xs text-text-secondary">· brand</span>
                     )}
                     {s.kind === "department" && (
-                      <span className="ml-1 text-xs text-text-secondary">
-                        · department
-                      </span>
-                    )}
-                    {s.kind === "term" && dept && DEPARTMENT_BY_SLUG[dept] && (
-                      <span className="ml-1 text-xs text-text-secondary">
-                        in {DEPARTMENT_BY_SLUG[dept].label}
-                      </span>
+                      <span className="ml-1 text-xs text-text-secondary">· department</span>
                     )}
                   </span>
                 </>

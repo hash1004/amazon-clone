@@ -26,13 +26,30 @@ extracted from its `Main.dc.html` artboard. Full source saved at
   mockup's header is visually sparser than this because it's a one-screen
   direction check, not a literal header spec.
 
+## Revision — accent reverted to orange (post-review)
+
+The first pass of this redesign used a deep forest green as the one accent.
+User feedback after seeing it live across the whole app (not just the one
+Home mockup screen): the green reads as an unrelated brand, not Amazon —
+reverted to Amazon's own orange (v1's "Buy Now" `#ffa41c`). The **one-accent
+architecture stays** (still a single source of truth, still used for CTAs,
+links, and quiet discount indicators) — only the hue changed, hex table below
+updated accordingly.
+
+One nuance worth recording: the vivid button orange (`#ffa41c`) fails WCAG
+text contrast on the light canvas (~2:1) — fine for a solid button fill with
+dark text on top (the real "Buy Now" button's own convention), not usable as
+link/body text. `--text-accent`/`--text-deal` use a darker rust shade of the
+*same* hue (`#c1440e`, ~5:1 contrast) instead. Two shades of one accent, not
+a second color — the green version had this same split, just green.
+
 ## Token system
 
 One accent, not three. Amazon's yellow CTA / orange buy-now / teal link were
-collapsed into a single considered accent (deep forest green) used for links,
-CTAs, and — this is the thesis made literal — **discount indicators**, which
-no longer get a separate alarm-red "deal" color. A quiet deal looks like the
-rest of the brand, not like a siren.
+collapsed into a single considered accent (Amazon's own orange) used for
+links, CTAs, and — this is the thesis made literal — **discount indicators**,
+which no longer get a separate alarm-red "deal" color. A quiet deal looks
+like the rest of the brand, not like a siren.
 
 | Token | Old (v1) | New (v2) | Note |
 |---|---|---|---|
@@ -44,19 +61,19 @@ rest of the brand, not like a siren.
 | `--chrome-belt` | `#232f3e` (steel) | `#f2f0ea` | nav belt / footer link bar |
 | `--chrome-belt-hover` | `#37475a` | `#e2e0d8` | |
 | `--chrome-footer-deep` | `#131a22` | `#16140e` | footer copyright band, kept dark for contrast |
-| `--chrome-search-btn` / hover | `#febd69` / `#f3a847` | `#284c32` / `#183b23` | search submit uses the one accent, not amber |
+| `--chrome-search-btn` / hover | `#febd69` / `#f3a847` | `#ffa41c` / `#fa8900` | search submit uses the one accent |
 | `--border-default` | `#d5d9d9` | `#dddbd5` | |
 | `--border-strong` | `#8d9096` | `#a7a49c` | |
-| `--border-accent` | `#e77600` | `#284c32` | focus rings, active states |
+| `--border-accent` | `#e77600` | `#c1440e` | focus rings, active states — the darker (contrast-safe) shade |
 | `--text-primary` | `#0f1111` | `#1f1d15` | warm ink, not cool black |
 | `--text-secondary` | `#565959` | `#605d56` | |
 | `--text-muted` | `#848688` | `#8b8982` | |
-| `--text-accent` / hover | `#007185` / `#c7511f` | `#284c32` / `#12361e` | one accent for links too |
-| `--text-deal` | `#cc0c39` (alarm red) | `#284c32` | **same as accent — the thesis** |
-| `--accent-primary` / hover / active | `#ffd814` / `#f7ca00` / — | `#284c32` / `#183b23` / `#0a2f17` | CTA fill; text goes light-on-dark now, not dark-on-yellow |
-| `--accent-foreground` | `#0f1111` | `#faf8f4` | inverse (was dark-on-yellow, now light-on-green) |
-| `--accent-subtle` | `#fef3d0` | `#def1e2` | badge/pill backgrounds |
-| `--accent-buy` / hover | `#ffa41c` / `#fa8900` | `#284c32` / `#183b23` | second CTA color retired, aliased to the one accent |
+| `--text-accent` / hover | `#007185` / `#c7511f` | `#c1440e` / `#9e380b` | one accent for links too — darker rust shade for contrast |
+| `--text-deal` | `#cc0c39` (alarm red) | `#c1440e` | **same as accent — the thesis** |
+| `--accent-primary` / hover | `#ffd814` / `#f7ca00` | `#ffa41c` / `#fa8900` | CTA fill — v1's own "Buy Now" orange, dark text on top |
+| `--accent-foreground` | `#0f1111` | `#1f1d15` | still dark-on-orange, same convention as v1 |
+| `--accent-subtle` | `#fef3d0` | `#fff4e4` | badge/pill backgrounds |
+| `--accent-buy` / hover | `#ffa41c` / `#fa8900` | `#ffa41c` / `#fa8900` | second CTA color retired, aliased to the one accent (same hex as before — it *was* this orange) |
 | `--status-success` | `#007600` | `#165626` | |
 | `--status-warning` | `#b12704` | `#9a6500` | amber, not red-orange |
 | `--status-danger` | `#c40000` | `#a12f2f` | kept genuinely distinct from the accent — real errors still read as errors |
@@ -115,6 +132,34 @@ restraint, not a rebuild:
   options" filler line removed); heading now sets `font-serif` to tie back
   to the Home display type.
 - Filter rail / sort / pagination structure unchanged — already minimal.
+
+## Header redesign (post-review, second pass)
+
+Feedback on the first pass: the reskinned header still read as "Amazon,
+recolored" — same deliver-to/language/search-bar/returns-and-orders shape as
+the original, just new colors. Rebuilt as a genuinely different structure,
+not a reskin, on explicit direction:
+
+- **Three zones**: categories (left) — wordmark (center) — icons (right).
+  Deliver-to, the language selector, and Returns & Orders are **dropped**,
+  not relocated.
+- **Left — `categories-menu.tsx`**: "Categories" trigger, hover-opens on
+  desktop / tap-toggles on touch, flat list of the 5 departments. This
+  replaces both the old nav belt and the old hamburger `MobileMenu` (deleted
+  — categories-menu handles both desktop and mobile now). Nested/leaf
+  categories (e.g. by brand within a department) are a later pass, not this
+  one — flagged as a real gap, not silently faked.
+- **Center**: `AmazonLogo`, unchanged from the first pass.
+- **Right — four icons only**: `expanding-search.tsx` (icon that expands to
+  an input on hover/focus, autocomplete kept, department selector dropped
+  since categories live on the left now), `account-menu.tsx` (same dropdown
+  content, trigger swapped from text to a person icon), `wishlist-badge.tsx`
+  (new — wishlist had no header entry point before), `cart-badge.tsx`
+  (text label and numeric count dropped for a pulsing dot — `ui/pulse-dot.tsx`
+  — shared by cart and wishlist, non-empty state only, `motion-safe:` so it
+  respects reduced-motion).
+- Old `search-box.tsx` and `mobile-menu.tsx` deleted (fully superseded, no
+  other callers).
 
 ## Explicitly out of scope this pass
 

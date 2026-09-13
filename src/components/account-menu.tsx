@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { signOut } from "next-auth/react";
-import { ChevronDownIcon } from "@/components/ui/icons";
+import { PersonIcon } from "@/components/ui/icons";
 
 export function AccountMenu({
   isAuthed,
@@ -38,13 +38,10 @@ export function AccountMenu({
         onClick={() => setOpen(false)}
         aria-haspopup="true"
         aria-expanded={open}
-        className="flex flex-col justify-center rounded-sm px-2 py-1 text-xs leading-tight hover:bg-black/5"
+        aria-label={isAuthed ? `Account, ${firstName}` : "Account, sign in"}
+        className="relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-black/5"
       >
-        <span>{isAuthed ? `Hello, ${firstName}` : "Hello, sign in"}</span>
-        <span className="flex items-center gap-0.5 text-sm font-bold">
-          Account &amp; Lists
-          <ChevronDownIcon className="h-3 w-3 text-text-muted" />
-        </span>
+        <PersonIcon className="h-5 w-5" />
       </Link>
 
       {open && (
