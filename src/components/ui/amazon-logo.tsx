@@ -46,15 +46,12 @@ export function AmazonLogo({
   );
 }
 
-function LogoSvg({
-  className,
-  tone,
-}: {
-  className: string;
-  tone: "light" | "dark";
-}) {
-  const fill =
-    tone === "light" ? "var(--text-inverse)" : "var(--text-primary)";
+function LogoSvg({ className }: { className: string; tone: "light" | "dark" }) {
+  // fill is currentColor on purpose, not a hardcoded per-tone value — every
+  // call site already sits in the right ambient text color (footer sets
+  // text-inverse on itself, body defaults to text-primary elsewhere), and
+  // this lets a wrapping link change the color on hover (see site-header.tsx)
+  // without the logo needing to know about that state itself.
   return (
     <svg
       viewBox="0 0 102 30"
@@ -73,7 +70,7 @@ function LogoSvg({
         }}
         fontSize="24"
         letterSpacing="-0.5"
-        fill={fill}
+        fill="currentColor"
       >
         amazon
       </text>

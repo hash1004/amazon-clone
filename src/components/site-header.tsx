@@ -25,7 +25,7 @@ export async function SiteHeader() {
 
         <Link
           href="/"
-          className="group relative justify-self-center overflow-hidden rounded-sm px-1"
+          className="group relative justify-self-center overflow-hidden rounded-sm px-1 text-text-primary transition-colors duration-300 hover:text-accent"
         >
           <AmazonLogo className="h-8 w-auto" />
           <span
@@ -37,8 +37,15 @@ export async function SiteHeader() {
         <div className="flex items-center gap-1 justify-self-end">
           <ExpandingSearch />
           <AccountMenu isAuthed={!!session?.user} firstName={session?.user?.name?.split(" ")[0] ?? session?.user?.email} />
-          <WishlistBadge />
-          <CartBadge />
+          {/* Cart/wishlist live under the account menu on phones (not enough
+              row width for 4 icons + an open search field) — still their
+              own icons at sm+, where there's room. */}
+          <span className="hidden sm:block">
+            <WishlistBadge />
+          </span>
+          <span className="hidden sm:block">
+            <CartBadge />
+          </span>
         </div>
       </div>
     </header>

@@ -75,6 +75,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
       className="border-b border-border-default"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
     >
       {/* Only the active slide's images are in the DOM — without this, the
           browser doesn't start fetching a slide's images until we advance
@@ -121,7 +122,7 @@ export function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
         <Link
           href={slide.href}
           aria-label={`Shop ${slide.eyebrow}`}
-          className="relative mx-auto block h-[300px] w-[300px] shrink-0 sm:h-[360px] sm:w-[360px]"
+          className="relative mx-auto block h-[min(78vw,300px)] w-[min(78vw,300px)] shrink-0 sm:h-[360px] sm:w-[360px]"
           style={fade}
         >
           <ProductCluster
