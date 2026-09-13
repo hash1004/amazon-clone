@@ -15,6 +15,11 @@ type Suggestion =
  * Search icon that expands into an input on hover/focus, collapses back
  * when it loses focus empty. Categories live in their own left-side menu
  * now, so this is just query text + autocomplete — no department select.
+ *
+ * `type="text"`, not `type="search"` — the native search input decorations
+ * (WebKit's round clear-button, the platform's own rounded chrome) aren't
+ * ours to style consistently across browsers, and read as a stray icon/
+ * border we didn't put there. Plain text input, our own pill background.
  */
 export function ExpandingSearch() {
   const router = useRouter();
@@ -81,7 +86,11 @@ export function ExpandingSearch() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [expanded, q]);
 
-  const openWide = () => {
+  // Hover only ever changes the *visual* width — it never steals focus.
+  // Only a deliberate click (or real keyboard-Tab focus) puts the caret
+  // in the field.
+  const expand = () => setExpanded(true);
+  const focusNow = () => {
     setExpanded(true);
     requestAnimationFrame(() => inputRef.current?.focus());
   };
@@ -128,9 +137,9 @@ export function ExpandingSearch() {
   return (
     <div
       ref={rootRef}
-      onMouseEnter={openWide}
+      onMouseEnter={expand}
       onMouseLeave={collapseIfIdle}
-      className={`relative flex items-center transition-[width] duration-200 ease-out ${
+      className={`relative flex items-center rounded-full bg-subtle transition-[width] duration-200 ease-out ${
         expanded ? "w-56 sm:w-72" : "w-9"
       }`}
     >
@@ -138,14 +147,14 @@ export function ExpandingSearch() {
         <button
           type={expanded ? "submit" : "button"}
           aria-label="Search"
-          onClick={() => !expanded && openWide()}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full hover:bg-black/5"
+          onClick={focusNow}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
         >
           <SearchIcon className="h-5 w-5" />
         </button>
         <input
           ref={inputRef}
-          type="search"
+          type="text"
           value={q}
           autoComplete="off"
           role="combobox"
@@ -158,9 +167,9 @@ export function ExpandingSearch() {
             setQ(e.target.value);
             setOpen(true);
           }}
-          onFocus={openWide}
+          onFocus={expand}
           onKeyDown={onKeyDown}
-          className={`min-w-0 flex-1 border-none bg-transparent px-1 text-sm text-text-primary outline-none transition-opacity duration-150 ${
+          className={`min-w-0 flex-1 border-none bg-transparent px-1 pr-3 text-sm text-text-primary outline-none transition-opacity duration-150 ${
             expanded ? "opacity-100" : "pointer-events-none w-0 opacity-0"
           }`}
         />

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
-import { DEPARTMENTS, DEPARTMENT_BY_SLUG } from "@/lib/departments";
-import { Spotlight, type SpotlightProduct } from "@/components/home/spotlight";
+import { DEPARTMENTS } from "@/lib/departments";
+import { HeroCarousel, type HeroSlide } from "@/components/home/hero-carousel";
 import {
   CategorySection,
   type CategoryProduct,
@@ -28,43 +28,88 @@ function discountFrac(p: Row) {
   return p.listPriceCents ? (p.listPriceCents - p.priceCents) / p.listPriceCents : 0;
 }
 
+/** Best pick within one department: meaningfully discounted *and*
+ * well-reviewed, falling back to highest-rated if nothing qualifies. */
+function pickBest(items: Row[]): Row | undefined {
+  const discounted = [...items]
+    .filter((p) => p.listPriceCents)
+    .sort((a, b) => discountFrac(b) - discountFrac(a));
+  return (
+    discounted.find((p) => discountFrac(p) > 0.08 && p.ratingCount >= 50) ??
+    discounted[0] ??
+    [...items].sort((a, b) => b.ratingCount - a.ratingCount)[0]
+  );
+}
+
+const HERO_COPY: Record<
+  string,
+  { eyebrow: string; headline: string; tint: string }
+> = {
+  electronics: {
+    eyebrow: "Electronics, considered",
+    headline: "Fewer things,\nchosen well.",
+    tint: "#eef1ea",
+  },
+  "home-kitchen": {
+    eyebrow: "For slower mornings",
+    headline: "Quiet mornings\nstart here.",
+    tint: "#f3ece2",
+  },
+  fashion: {
+    eyebrow: "Built to keep",
+    headline: "Wear what\nactually lasts.",
+    tint: "#f0e6e6",
+  },
+  beauty: {
+    eyebrow: "Less, but better",
+    headline: "Simple rituals,\nreal results.",
+    tint: "#f4e9ef",
+  },
+  "sports-outdoors": {
+    eyebrow: "Made to move",
+    headline: "Built for how\nyou actually move.",
+    tint: "#e7eee9",
+  },
+};
+
 export default async function Home() {
   const session = await auth();
 
   const all = (await db.product.findMany({ select: SELECT })) as Row[];
-
   const bySales = [...all].sort((a, b) => b.ratingCount - a.ratingCount);
-  const byDiscount = [...all]
-    .filter((p) => p.listPriceCents)
-    .sort((a, b) => discountFrac(b) - discountFrac(a));
 
-  // One considered pick for the spotlight: meaningfully discounted *and*
-  // well-reviewed, not just whatever has the deepest markdown.
-  const spotlightSource =
-    byDiscount.find((p) => p.ratingCount >= 400 && discountFrac(p) > 0.1) ??
-    byDiscount[0] ??
-    bySales[0];
-  const spotlightDept = DEPARTMENT_BY_SLUG[spotlightSource.department];
-  const spotlight: SpotlightProduct = spotlightSource;
+  // One pick per department for the hero carousel.
+  const picks = DEPARTMENTS.map((d) => ({
+    dept: d,
+    pick: pickBest(all.filter((p) => p.department === d.slug)),
+  })).filter((x): x is { dept: (typeof DEPARTMENTS)[number]; pick: Row } => !!x.pick);
 
-  // Rest of each department, spotlight pick pushed to the back so it isn't
-  // duplicated in its own category grid.
+  const heroSlides: HeroSlide[] = picks.map(({ dept, pick }) => {
+    const copy = HERO_COPY[dept.slug];
+    return {
+      eyebrow: copy?.eyebrow ?? dept.label,
+      headline: copy?.headline ?? dept.label,
+      ctaLabel: "Shop now",
+      href: `/s?dept=${dept.slug}`,
+      tint: copy?.tint ?? "#f2f0ea",
+      product: { slug: pick.slug, title: pick.title, images: pick.images },
+    };
+  });
+
+  const pickedIds = new Set(picks.map(({ pick }) => pick.id));
+
+  // Rest of each department, that department's own hero pick pushed to the
+  // back so it isn't duplicated at the top of its own category grid.
   const byDept = DEPARTMENTS.map((d) => ({
     dept: d,
     items: bySales
       .filter((p) => p.department === d.slug)
-      .sort((a, b) =>
-        a.id === spotlightSource.id ? 1 : b.id === spotlightSource.id ? -1 : 0,
-      ),
+      .sort((a, b) => Number(pickedIds.has(a.id)) - Number(pickedIds.has(b.id))),
   })).filter((r) => r.items.length > 0);
 
   return (
     <div className="pb-8">
-      <Spotlight
-        deptLabel={spotlightDept?.label ?? "This week"}
-        deptHref={`/s?dept=${spotlightSource.department}`}
-        product={spotlight}
-      />
+      {heroSlides.length > 0 && <HeroCarousel slides={heroSlides} />}
 
       {byDept.map(({ dept, items }) => (
         <CategorySection
