@@ -8,6 +8,7 @@ import { estimateDelivery, formatDeliveryDate } from "@/lib/delivery";
 import { RatingStars } from "@/components/rating-stars";
 import { PriceTag } from "@/components/ui/price-tag";
 import { ProductGallery } from "@/components/product-gallery";
+import { Accordion } from "@/components/ui/accordion";
 import { AddToCart } from "@/components/add-to-cart";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductCard } from "@/components/product-card";
@@ -117,6 +118,18 @@ export default async function ProductPage({
             Visit the {product.brand} Store
           </Link>
 
+          <div className="mt-4 inline-flex items-center gap-3 rounded-lg bg-subtle px-4 py-3">
+            <span className="text-3xl font-semibold leading-none text-text-primary">
+              {product.rating.toFixed(1)}
+            </span>
+            <div className="flex flex-col gap-1">
+              <RatingStars rating={product.rating} />
+              <span className="text-xs text-text-secondary">
+                {product.ratingCount.toLocaleString()} reviews
+              </span>
+            </div>
+          </div>
+
           <div className="mt-4 flex flex-wrap items-baseline gap-3">
             <PriceTag cents={product.priceCents} size="lg" />
             {pct > 0 && (
@@ -129,12 +142,6 @@ export default async function ProductPage({
                 </span>
               </>
             )}
-            <span className="flex items-center gap-1.5">
-              <RatingStars rating={product.rating} />
-              <span className="text-sm text-text-secondary">
-                ({product.ratingCount.toLocaleString()} reviews)
-              </span>
-            </span>
           </div>
 
           <p className="mt-2 text-sm">
@@ -158,50 +165,45 @@ export default async function ProductPage({
           <div className="mt-5">
             <AddToCart inStock={inStock} product={cartLine} />
           </div>
+        </div>
+      </div>
 
-          <hr className="my-6 border-border-default" />
-
-          <h2 className="mb-2 font-serif text-lg font-medium text-text-primary">
-            Product description
-          </h2>
+      <div className="mt-8">
+        <Accordion title="Product description" defaultOpen>
           <p className="max-w-[70ch] text-sm leading-relaxed text-text-secondary">
             {product.description}
           </p>
+        </Accordion>
 
-          {product.bullets.length > 0 && (
-            <>
-              <h2 className="mb-2 mt-6 font-serif text-lg font-medium text-text-primary">
-                Highlights
-              </h2>
-              <ul className="max-w-[70ch] list-disc space-y-1.5 pl-5 text-sm text-text-secondary">
-                {product.bullets.map((b, i) => {
-                  const idx = b.indexOf(":");
-                  return (
-                    <li key={i}>
-                      {idx > 0 ? (
-                        <>
-                          <span className="font-medium text-text-primary">
-                            {b.slice(0, idx)}
-                          </span>
-                          {b.slice(idx)}
-                        </>
-                      ) : (
-                        b
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </>
-          )}
+        {product.bullets.length > 0 && (
+          <Accordion title="Highlights">
+            <ul className="max-w-[70ch] list-disc space-y-1.5 pl-5 text-sm text-text-secondary">
+              {product.bullets.map((b, i) => {
+                const idx = b.indexOf(":");
+                return (
+                  <li key={i}>
+                    {idx > 0 ? (
+                      <>
+                        <span className="font-medium text-text-primary">
+                          {b.slice(0, idx)}
+                        </span>
+                        {b.slice(idx)}
+                      </>
+                    ) : (
+                      b
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </Accordion>
+        )}
 
-          <h2 className="mb-2 mt-6 font-serif text-lg font-medium text-text-primary">
-            Product details
-          </h2>
+        <Accordion title="Product details">
           <table className="w-full max-w-[70ch] text-sm">
             <tbody>
               {specs.map(([k, v]) => (
-                <tr key={k} className="border-b border-border-default">
+                <tr key={k} className="border-b border-border-default last:border-0">
                   <th className="w-40 py-2 text-left align-top font-medium text-text-primary">
                     {k}
                   </th>
@@ -210,7 +212,7 @@ export default async function ProductPage({
               ))}
             </tbody>
           </table>
-        </div>
+        </Accordion>
       </div>
 
       <FrequentlyBought

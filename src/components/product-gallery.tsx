@@ -2,6 +2,9 @@
 
 import { SafeImage as Image } from "@/components/ui/safe-image";
 import { useRef, useState } from "react";
+import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
+
+const SWIPE_THRESHOLD_PX = 40;
 
 export function ProductGallery({
   images,
@@ -13,7 +16,9 @@ export function ProductGallery({
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
   const frameRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
   const list = images.length ? images : ["/icon.svg"];
+  const n = list.length;
 
   function onMove(e: React.MouseEvent) {
     const el = frameRef.current;
@@ -24,13 +29,29 @@ export function ProductGallery({
     setZoom({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) });
   }
 
+  const go = (d: number) => setActive((p) => (p + d + n) % n);
+
+  // Manual only — no auto-advance. A product photo isn't a marketing
+  // banner; someone examining it needs to control the pace themselves.
+  function onTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+  function onTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) > SWIPE_THRESHOLD_PX) go(dx < 0 ? 1 : -1);
+  }
+
   return (
     <div className="relative">
       <div
         ref={frameRef}
         onMouseMove={onMove}
         onMouseLeave={() => setZoom(null)}
-        className="relative aspect-square w-full cursor-crosshair overflow-hidden rounded-[1.75rem] border border-border-default bg-subtle"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        className="group relative aspect-square w-full cursor-crosshair touch-pan-y overflow-hidden rounded-[1.75rem] border border-border-default bg-subtle"
       >
         <Image
           src={list[active]}
@@ -48,6 +69,27 @@ export function ProductGallery({
               top: `calc(${zoom.y}% - 3rem)`,
             }}
           />
+        )}
+
+        {n > 1 && (
+          <>
+            <button
+              type="button"
+              aria-label="Previous image"
+              onClick={() => go(-1)}
+              className="absolute left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-surface/90 p-2 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 hover:bg-surface sm:flex"
+            >
+              <ArrowLeftIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next image"
+              onClick={() => go(1)}
+              className="absolute right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-surface/90 p-2 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 hover:bg-surface sm:flex"
+            >
+              <ArrowRightIcon className="h-4 w-4" />
+            </button>
+          </>
         )}
       </div>
 

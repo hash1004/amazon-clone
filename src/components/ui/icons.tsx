@@ -8,6 +8,7 @@ import {
   ArrowRight,
   ArrowUp,
   SlidersHorizontal,
+  ChevronDown,
   X,
 } from "lucide-react";
 
@@ -52,6 +53,10 @@ export function ArrowUpIcon({ className = "h-5 w-5" }: P) {
 
 export function FilterIcon({ className = "h-4 w-4" }: P) {
   return <SlidersHorizontal className={className} strokeWidth={2} aria-hidden />;
+}
+
+export function ChevronDownIcon({ className = "h-4 w-4" }: P) {
+  return <ChevronDown className={className} strokeWidth={2} aria-hidden />;
 }
 
 export function HeartIcon({
