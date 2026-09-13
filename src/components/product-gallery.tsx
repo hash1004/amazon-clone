@@ -51,7 +51,7 @@ export function ProductGallery({
         onMouseLeave={() => setZoom(null)}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        className="group relative aspect-square w-full cursor-crosshair touch-pan-y overflow-hidden rounded-[1.75rem] border border-border-default bg-subtle"
+        className="group relative aspect-square w-full max-w-[550px] cursor-crosshair touch-pan-y overflow-hidden rounded-xl border border-border-default bg-subtle"
       >
         <Image
           src={list[active]}
@@ -94,7 +94,7 @@ export function ProductGallery({
       </div>
 
       {list.length > 1 && (
-        <div className="mt-3 flex flex-wrap gap-2.5">
+        <div className="mt-3 flex max-w-[550px] flex-wrap gap-2.5">
           {list.slice(0, 8).map((src, i) => (
             <button
               key={src + i}

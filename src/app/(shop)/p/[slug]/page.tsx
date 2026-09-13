@@ -12,7 +12,6 @@ import { Accordion } from "@/components/ui/accordion";
 import { AddToCart } from "@/components/add-to-cart";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductCard } from "@/components/product-card";
-import { FrequentlyBought } from "@/components/product/frequently-bought";
 import { MobileBuyBar } from "@/components/product/mobile-buy-bar";
 import { RecordView } from "@/lib/recently-viewed";
 
@@ -47,7 +46,6 @@ export default async function ProductPage({
     orderBy: { ratingCount: "desc" },
     take: 10,
   });
-  const companions = related.slice(0, 2);
 
   const specs: [string, string][] = [
     ["SKU", sku],
@@ -118,18 +116,6 @@ export default async function ProductPage({
             Visit the {product.brand} Store
           </Link>
 
-          <div className="mt-4 inline-flex items-center gap-3 rounded-lg bg-subtle px-4 py-3">
-            <span className="text-3xl font-semibold leading-none text-text-primary">
-              {product.rating.toFixed(1)}
-            </span>
-            <div className="flex flex-col gap-1">
-              <RatingStars rating={product.rating} />
-              <span className="text-xs text-text-secondary">
-                {product.ratingCount.toLocaleString()} reviews
-              </span>
-            </div>
-          </div>
-
           <div className="mt-4 flex flex-wrap items-baseline gap-3">
             <PriceTag cents={product.priceCents} size="lg" />
             {pct > 0 && (
@@ -164,6 +150,18 @@ export default async function ProductPage({
 
           <div className="mt-5">
             <AddToCart inStock={inStock} product={cartLine} />
+          </div>
+
+          <div className="mt-6 inline-flex items-center gap-3 rounded-lg bg-subtle px-4 py-3">
+            <span className="text-3xl font-semibold leading-none text-text-primary">
+              {product.rating.toFixed(1)}
+            </span>
+            <div className="flex flex-col gap-1">
+              <RatingStars rating={product.rating} />
+              <span className="text-xs text-text-secondary">
+                {product.ratingCount.toLocaleString()} reviews
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -214,17 +212,6 @@ export default async function ProductPage({
           </table>
         </Accordion>
       </div>
-
-      <FrequentlyBought
-        main={cartLine}
-        companions={companions.map((p) => ({
-          productId: p.id,
-          slug: p.slug,
-          title: p.title,
-          image: p.images[0] ?? "",
-          priceCents: p.priceCents,
-        }))}
-      />
 
       {related.length > 0 && (
         <section className="mt-8 border-t border-border-default pt-5">
