@@ -105,6 +105,7 @@ export function ExpandingSearch() {
   const go = (s: Suggestion) => {
     setOpen(false);
     setQ(s.kind === "product" ? s.title : s.text);
+    inputRef.current?.blur();
     if (s.kind === "product") router.push(`/p/${s.slug}`);
     else if (s.kind === "department") router.push(`/s?dept=${s.slug}`);
     else router.push(`/s?q=${encodeURIComponent(s.text)}`);
