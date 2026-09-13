@@ -28,17 +28,25 @@ function discountFrac(p: Row) {
   return p.listPriceCents ? (p.listPriceCents - p.priceCents) / p.listPriceCents : 0;
 }
 
-/** Best pick within one department: meaningfully discounted *and*
- * well-reviewed, falling back to highest-rated if nothing qualifies. */
-function pickBest(items: Row[]): Row | undefined {
+/** Up to 3 representative products within one department — meaningfully
+ * discounted *and* well-reviewed first, topped up with top-sellers. The
+ * hero links to the whole department, so it should read as a cluster of
+ * things, not one item. */
+function pickTop3(items: Row[]): Row[] {
   const discounted = [...items]
-    .filter((p) => p.listPriceCents)
+    .filter((p) => p.listPriceCents && discountFrac(p) > 0.08 && p.ratingCount >= 50)
     .sort((a, b) => discountFrac(b) - discountFrac(a));
-  return (
-    discounted.find((p) => discountFrac(p) > 0.08 && p.ratingCount >= 50) ??
-    discounted[0] ??
-    [...items].sort((a, b) => b.ratingCount - a.ratingCount)[0]
-  );
+  const bySalesLocal = [...items].sort((a, b) => b.ratingCount - a.ratingCount);
+
+  const seen = new Set<string>();
+  const out: Row[] = [];
+  for (const p of [...discounted, ...bySalesLocal]) {
+    if (seen.has(p.id)) continue;
+    seen.add(p.id);
+    out.push(p);
+    if (out.length >= 3) break;
+  }
+  return out;
 }
 
 const HERO_COPY: Record<
@@ -78,13 +86,13 @@ export default async function Home() {
   const all = (await db.product.findMany({ select: SELECT })) as Row[];
   const bySales = [...all].sort((a, b) => b.ratingCount - a.ratingCount);
 
-  // One pick per department for the hero carousel.
+  // Up to 3 picks per department for the hero carousel.
   const picks = DEPARTMENTS.map((d) => ({
     dept: d,
-    pick: pickBest(all.filter((p) => p.department === d.slug)),
-  })).filter((x): x is { dept: (typeof DEPARTMENTS)[number]; pick: Row } => !!x.pick);
+    items: pickTop3(all.filter((p) => p.department === d.slug)),
+  })).filter((x) => x.items.length > 0);
 
-  const heroSlides: HeroSlide[] = picks.map(({ dept, pick }) => {
+  const heroSlides: HeroSlide[] = picks.map(({ dept, items }) => {
     const copy = HERO_COPY[dept.slug];
     return {
       eyebrow: copy?.eyebrow ?? dept.label,
@@ -92,11 +100,11 @@ export default async function Home() {
       ctaLabel: "Shop now",
       href: `/s?dept=${dept.slug}`,
       tint: copy?.tint ?? "#f2f0ea",
-      product: { slug: pick.slug, title: pick.title, images: pick.images },
+      products: items.map((p) => ({ slug: p.slug, title: p.title, images: p.images })),
     };
   });
 
-  const pickedIds = new Set(picks.map(({ pick }) => pick.id));
+  const pickedIds = new Set(picks.flatMap(({ items }) => items.map((p) => p.id)));
 
   // Rest of each department, that department's own hero pick pushed to the
   // back so it isn't duplicated at the top of its own category grid.

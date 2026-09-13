@@ -225,3 +225,12 @@ a {
     transform: none;
   }
 }
+
+/* The header search field opts out of the site-wide focus ring below —
+   it has its own pill background as the "you're in this field" affordance,
+   so the ring reads as a stray border. Needs a selector at least as
+   specific as `:focus-visible` (and placed after it) to win regardless of
+   Tailwind utility injection order. */
+.search-input:focus-visible {
+  outline: none;
+}

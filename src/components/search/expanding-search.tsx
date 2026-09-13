@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import Image from "next/image";
-import { SearchIcon } from "@/components/ui/icons";
+import { SearchIcon, CloseIcon } from "@/components/ui/icons";
 
 type Suggestion =
   | { kind: "term"; text: string }
@@ -169,10 +169,25 @@ export function ExpandingSearch() {
           }}
           onFocus={expand}
           onKeyDown={onKeyDown}
-          className={`min-w-0 flex-1 border-none bg-transparent px-1 pr-3 text-sm text-text-primary outline-none transition-opacity duration-150 ${
+          className={`search-input min-w-0 flex-1 border-none bg-transparent px-1 text-sm text-text-primary outline-none transition-opacity duration-150 ${
             expanded ? "opacity-100" : "pointer-events-none w-0 opacity-0"
           }`}
         />
+        {expanded && q && (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => {
+              setQ("");
+              setOpen(false);
+              inputRef.current?.focus();
+            }}
+            className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-black/5 hover:text-text-primary"
+          >
+            <CloseIcon className="h-3.5 w-3.5" />
+          </button>
+        )}
       </form>
 
       {expanded && open && items.length > 0 && (
