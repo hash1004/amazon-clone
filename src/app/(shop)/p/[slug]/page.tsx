@@ -49,6 +49,7 @@ export default async function ProductPage({
   const companions = related.slice(0, 2);
 
   const specs: [string, string][] = [
+    ["SKU", sku],
     ["Brand", product.brand],
     ["Category", dept?.label ?? product.department],
     ["Model name", product.title.split(" ").slice(0, 4).join(" ")],
@@ -65,22 +66,18 @@ export default async function ProductPage({
   };
 
   return (
-    <div className="mx-auto max-w-[1200px] bg-surface px-4 py-6 sm:px-8">
+    <div className="w-full bg-surface px-4 py-6 sm:px-8 lg:px-12">
       <RecordView entry={cartLine} />
 
       <nav className="mb-4 text-xs text-text-secondary">
-        <Link href="/s" className="link">
-          All
-        </Link>
         {dept && (
           <>
-            {" › "}
             <Link href={`/s?dept=${dept.slug}`} className="link">
               {dept.label}
             </Link>
+            {" › "}
           </>
         )}
-        {" › "}
         <Link href={`/s?q=${encodeURIComponent(product.brand)}`} className="link">
           {product.brand}
         </Link>
@@ -113,13 +110,12 @@ export default async function ProductPage({
           <h1 className="font-serif text-3xl font-medium leading-tight text-text-primary sm:text-[2.5rem]">
             {product.title}
           </h1>
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary">
-            <span>SKU: {sku}</span>
-            <span className="text-border-strong">·</span>
-            <Link href={`/s?q=${encodeURIComponent(product.brand)}`} className="link">
-              Visit the {product.brand} Store
-            </Link>
-          </div>
+          <Link
+            href={`/s?q=${encodeURIComponent(product.brand)}`}
+            className="link mt-2 inline-block text-sm"
+          >
+            Visit the {product.brand} Store
+          </Link>
 
           <div className="mt-4 flex flex-wrap items-baseline gap-3">
             <PriceTag cents={product.priceCents} size="lg" />
@@ -168,7 +164,7 @@ export default async function ProductPage({
           <h2 className="mb-2 font-serif text-lg font-medium text-text-primary">
             Product description
           </h2>
-          <p className="text-sm leading-relaxed text-text-secondary">
+          <p className="max-w-[70ch] text-sm leading-relaxed text-text-secondary">
             {product.description}
           </p>
 
@@ -177,7 +173,7 @@ export default async function ProductPage({
               <h2 className="mb-2 mt-6 font-serif text-lg font-medium text-text-primary">
                 Highlights
               </h2>
-              <ul className="list-disc space-y-1.5 pl-5 text-sm text-text-secondary">
+              <ul className="max-w-[70ch] list-disc space-y-1.5 pl-5 text-sm text-text-secondary">
                 {product.bullets.map((b, i) => {
                   const idx = b.indexOf(":");
                   return (
@@ -202,7 +198,7 @@ export default async function ProductPage({
           <h2 className="mb-2 mt-6 font-serif text-lg font-medium text-text-primary">
             Product details
           </h2>
-          <table className="w-full text-sm">
+          <table className="w-full max-w-[70ch] text-sm">
             <tbody>
               {specs.map(([k, v]) => (
                 <tr key={k} className="border-b border-border-default">

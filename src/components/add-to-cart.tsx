@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart, type CartLine } from "@/lib/cart-store";
 import { useToast } from "@/lib/toast";
@@ -15,10 +14,8 @@ export function AddToCart({
 }) {
   const { add } = useCart();
   const { toast } = useToast();
-  const router = useRouter();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
-  const [buying, setBuying] = useState(false);
 
   if (!inStock) {
     return (
@@ -63,19 +60,6 @@ export function AddToCart({
         className="flex-1 rounded-pill bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition-all duration-200 hover:scale-[1.02] hover:bg-accent-hover active:scale-[0.98]"
       >
         {added ? "✓ Added to Cart" : `Add to Cart · ${formatPrice(product.priceCents * qty)}`}
-      </button>
-
-      <button
-        type="button"
-        disabled={buying}
-        onClick={() => {
-          setBuying(true);
-          add(product, qty);
-          router.push("/checkout");
-        }}
-        className="text-sm font-medium text-text-accent hover:text-text-accent-hover hover:underline disabled:opacity-60"
-      >
-        {buying ? "…" : "Buy it now"}
       </button>
     </div>
   );

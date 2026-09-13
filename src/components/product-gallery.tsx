@@ -52,7 +52,7 @@ export function ProductGallery({
       </div>
 
       {list.length > 1 && (
-        <div className="mt-3 grid grid-cols-4 gap-3">
+        <div className="mt-3 flex flex-wrap gap-2.5">
           {list.slice(0, 8).map((src, i) => (
             <button
               key={src + i}
@@ -60,7 +60,7 @@ export function ProductGallery({
               onMouseEnter={() => setActive(i)}
               onClick={() => setActive(i)}
               aria-label={`View image ${i + 1}`}
-              className={`relative aspect-square overflow-hidden rounded-xl border bg-subtle transition ${
+              className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border bg-subtle transition sm:h-16 sm:w-16 ${
                 i === active
                   ? "border-border-accent ring-1 ring-border-accent"
                   : "border-border-default hover:border-border-strong"
@@ -70,9 +70,12 @@ export function ProductGallery({
                 src={src}
                 alt=""
                 fill
-                sizes="120px"
-                className="object-contain p-2"
+                sizes="64px"
+                className="object-contain p-1.5"
               />
+              {i !== active && (
+                <span className="absolute inset-0 bg-surface/50" />
+              )}
             </button>
           ))}
         </div>
