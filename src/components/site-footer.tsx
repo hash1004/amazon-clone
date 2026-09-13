@@ -35,14 +35,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
 export function SiteFooter() {
   return (
     <footer className="mt-10 bg-chrome-footer-deep text-text-inverse">
-      <Link
-        href="#top"
-        className="block border-b border-white/10 py-3 text-center text-sm hover:bg-white/5"
-      >
-        Back to top
-      </Link>
-
-      <div className="mx-auto max-w-[1100px] px-6 py-14 sm:px-10">
+      <div className="px-6 py-14 sm:px-10">
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-4">
           <div>
             <AmazonLogo className="h-7 w-auto" tone="light" />
@@ -66,37 +59,19 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-
-        <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-white/10 pt-8">
-          <span className="rounded-full border border-white/15 px-3 py-1 text-xs">
-            English
-          </span>
-          <span className="rounded-full border border-white/15 px-3 py-1 text-xs">
-            USD - U.S. Dollar
-          </span>
-          <span className="rounded-full border border-white/15 px-3 py-1 text-xs">
-            United States
-          </span>
-        </div>
       </div>
 
       <div className="border-t border-white/10 px-6 py-6 text-center text-xs text-neutral-500 sm:px-10">
-        <p className="space-x-3">
-          <Link href="/info/conditions-of-use" className="hover:underline">
-            Conditions of Use
-          </Link>
+        <p className="flex flex-wrap items-center justify-center gap-x-2">
           <Link href="/info/privacy-notice" className="hover:underline">
-            Privacy Notice
+            Privacy Policy
           </Link>
-          <Link href="/info/ad-choices" className="hover:underline">
-            Your Ads Privacy Choices
+          <span aria-hidden>·</span>
+          <Link href="/info/conditions-of-use" className="hover:underline">
+            Terms of Use
           </Link>
         </p>
         <p className="mt-2">© 1996–2026, Amazon.com, Inc. or its affiliates</p>
-        <p className="mt-1 text-neutral-600">
-          Demonstration build for a coding assignment · not affiliated with
-          Amazon.com, Inc.
-        </p>
       </div>
     </footer>
   );

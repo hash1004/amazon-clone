@@ -6,6 +6,7 @@ import {
   Menu,
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   X,
 } from "lucide-react";
 
@@ -42,6 +43,10 @@ export function ArrowRightIcon({ className = "h-4 w-4" }: P) {
 
 export function CloseIcon({ className = "h-4 w-4" }: P) {
   return <X className={className} strokeWidth={2} aria-hidden />;
+}
+
+export function ArrowUpIcon({ className = "h-5 w-5" }: P) {
+  return <ArrowUp className={className} strokeWidth={2} aria-hidden />;
 }
 
 export function HeartIcon({
