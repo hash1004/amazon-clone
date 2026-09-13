@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SafeImage as Image } from "@/components/ui/safe-image";
 import { discountPct, priceParts } from "@/lib/format";
 import { QuickAdd } from "@/components/search/quick-add";
+import { WishlistButton } from "@/components/wishlist-button";
 
 export type CategoryProduct = {
   id: string;
@@ -68,9 +69,9 @@ function ProductTile({ product: p }: { product: CategoryProduct }) {
   const { whole, frac } = priceParts(p.priceCents);
 
   return (
-    <div className="group flex flex-col gap-2.5 rounded-lg border border-border-default bg-surface p-4 transition hover:border-border-strong">
+    <div className="group relative flex flex-col gap-2.5 bg-surface p-4">
       <Link href={`/p/${p.slug}`} className="flex flex-col gap-2.5">
-        <div className="relative aspect-square w-full overflow-hidden rounded-md bg-subtle">
+        <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-subtle">
           <Image
             src={p.images[0]}
             alt={p.title}
@@ -104,6 +105,22 @@ function ProductTile({ product: p }: { product: CategoryProduct }) {
           </span>
         </div>
       </Link>
+      <span className="absolute right-5 top-5 opacity-100 transition-opacity focus-within:opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+        <WishlistButton
+          variant="icon"
+          entry={{
+            productId: p.id,
+            slug: p.slug,
+            title: p.title,
+            image: p.images[0] ?? "",
+            priceCents: p.priceCents,
+            listPriceCents: p.listPriceCents,
+            rating: p.rating,
+            ratingCount: p.ratingCount,
+            inStock: true,
+          }}
+        />
+      </span>
       <QuickAdd
         product={{
           productId: p.id,

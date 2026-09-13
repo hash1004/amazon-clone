@@ -18,7 +18,9 @@ export default async function ShopLayout({
         <SiteHeader />
       </HeaderShell>
       <main className="w-full min-w-0 flex-1 overflow-x-clip">{children}</main>
-      <SiteFooter />
+      <div className="hidden sm:block">
+        <SiteFooter />
+      </div>
       <BackToTop />
     </AuthedProvider>
   );

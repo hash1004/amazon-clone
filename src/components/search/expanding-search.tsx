@@ -172,8 +172,8 @@ export function ExpandingSearch() {
         ref={rootRef}
         onMouseEnter={expand}
         onMouseLeave={collapseIfIdle}
-        className={`relative flex items-center rounded-full bg-subtle transition-[width] duration-200 ease-out ${
-          expanded ? "w-56 sm:w-72" : "w-9"
+        className={`relative flex items-center rounded-full bg-subtle transition-[width] duration-200 ease-out w-9 ${
+          expanded ? "sm:w-72" : ""
         }`}
       >
         <form onSubmit={submit} className="flex w-full items-center">
@@ -202,8 +202,8 @@ export function ExpandingSearch() {
             }}
             onFocus={expand}
             onKeyDown={onKeyDown}
-            className={`search-input min-w-0 flex-1 border-none bg-transparent px-1 text-sm text-text-primary outline-none transition-opacity duration-150 ${
-              expanded ? "opacity-100" : "pointer-events-none w-0 opacity-0"
+            className={`search-input pointer-events-none min-w-0 w-0 flex-1 border-none bg-transparent px-1 text-sm text-text-primary opacity-0 outline-none transition-opacity duration-150 ${
+              expanded ? "sm:pointer-events-auto sm:w-auto sm:opacity-100" : ""
             }`}
           />
           {expanded && q && (
@@ -216,7 +216,7 @@ export function ExpandingSearch() {
                 setOpen(false);
                 inputRef.current?.focus();
               }}
-              className="mr-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-black/5 hover:text-text-primary"
+              className="mr-1 hidden h-6 w-6 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-black/5 hover:text-text-primary sm:flex"
             >
               <CloseIcon className="h-3.5 w-3.5" />
             </button>
@@ -224,14 +224,16 @@ export function ExpandingSearch() {
         </form>
 
         {expanded && open && items.length > 0 && (
-          <SuggestionList
-            listId={listId}
-            items={items}
-            active={active}
-            compact
-            onHover={setActive}
-            onPick={go}
-          />
+          <div className="hidden sm:block">
+            <SuggestionList
+              listId={listId}
+              items={items}
+              active={active}
+              compact
+              onHover={setActive}
+              onPick={go}
+            />
+          </div>
         )}
       </div>
 

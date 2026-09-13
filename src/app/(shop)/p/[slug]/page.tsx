@@ -214,7 +214,10 @@ export default async function ProductPage({
       </div>
 
       {related.length > 0 && (
-        <section className="mt-8 border-t border-border-default pt-5">
+        <section className="mt-8">
+          {/* No border-t here — the last accordion above already ends in
+              its own border-bottom; adding another divider + its own
+              padding on top of that read as a doubled gap. */}
           <h2 className="mb-3 font-serif text-lg font-medium text-text-primary">
             Products related to this item
           </h2>
