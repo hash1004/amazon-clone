@@ -23,8 +23,15 @@ export async function SiteHeader() {
           <CategoriesMenu />
         </div>
 
-        <Link href="/" className="justify-self-center">
+        <Link
+          href="/"
+          className="group relative justify-self-center overflow-hidden rounded-sm px-1"
+        >
           <AmazonLogo className="h-8 w-auto" />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 w-1/3 -translate-x-full -skew-x-12 bg-gradient-to-r from-transparent via-white/80 to-transparent mix-blend-overlay transition-transform duration-700 ease-out group-hover:translate-x-[400%]"
+          />
         </Link>
 
         <div className="flex items-center gap-1 justify-self-end">
