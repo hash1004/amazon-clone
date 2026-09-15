@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { DEPARTMENTS } from "@/lib/departments";
 import { PRICE_BUCKETS } from "@/lib/product-display";
@@ -8,13 +8,11 @@ import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { FilterIcon, CloseIcon } from "@/components/ui/icons";
 
 /**
- * Filters as a click-toggled panel (a button that opens it, closes on an
- * explicit action) instead of an always-visible sidebar — at every screen
- * size now, not just mobile. Sort already works fine as a native <select>
- * at any width, so this only replaces the old desktop FilterRail sidebar
- * (and the mobile-only version of this same panel); active filters stay
- * visible via the chips row on the results page regardless of whether
- * this panel is open.
+ * Filters as a click-toggled panel anchored to the trigger (like the
+ * header's Categories/Account menus) instead of a full-page dimmed
+ * overlay — it opens over the results area, not the whole page (header/
+ * nav stay untouched and reachable). Text+icon trigger, no border — the
+ * hover color/underline is the affordance instead of a bordered chip.
  */
 export function SearchControls({
   params,
@@ -26,21 +24,30 @@ export function SearchControls({
   activeCount: number;
 }) {
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   const close = () => setOpen(false);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    const onDoc = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) close();
+    };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDoc);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDoc);
+    };
   }, [open]);
 
   return (
-    <>
+    <div ref={rootRef} className="relative">
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-border-strong px-3.5 py-1.5 text-sm font-medium hover:bg-subtle"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-text-primary transition hover:text-text-accent"
       >
         <FilterIcon className="h-3.5 w-3.5" />
         Filters
@@ -52,121 +59,118 @@ export function SearchControls({
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/50" onClick={close} />
-          <div className="absolute inset-x-0 bottom-0 max-h-[80vh] w-full overflow-y-auto overscroll-contain rounded-t-2xl bg-surface p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-96 sm:max-h-none sm:rounded-t-none sm:rounded-l-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-serif text-lg font-medium">Filters</h2>
-              <button
-                type="button"
-                aria-label="Close filters"
-                onClick={close}
-                className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-subtle"
-              >
-                <CloseIcon className="h-4 w-4" />
-              </button>
-            </div>
+        <div className="absolute left-0 top-full z-40 mt-2 max-h-[70vh] w-80 overflow-y-auto overscroll-contain rounded-lg border border-border-default bg-surface p-5 shadow-lg">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="font-serif text-lg font-medium">Filters</h2>
+            <button
+              type="button"
+              aria-label="Close filters"
+              onClick={close}
+              className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-subtle"
+            >
+              <CloseIcon className="h-4 w-4" />
+            </button>
+          </div>
 
-            <div className="space-y-5 text-sm">
-              <FGroup title="Department">
+          <div className="space-y-5 text-sm">
+            <FGroup title="Department">
+              <FLink
+                href={searchUrl(params, { dept: undefined, page: undefined })}
+                active={!params.dept}
+                onNav={close}
+              >
+                All
+              </FLink>
+              {DEPARTMENTS.map((d) => (
                 <FLink
-                  href={searchUrl(params, { dept: undefined, page: undefined })}
-                  active={!params.dept}
+                  key={d.slug}
+                  href={searchUrl(params, { dept: d.slug, page: undefined })}
+                  active={params.dept === d.slug}
                   onNav={close}
                 >
-                  All
+                  {d.label}
                 </FLink>
-                {DEPARTMENTS.map((d) => (
-                  <FLink
-                    key={d.slug}
-                    href={searchUrl(params, { dept: d.slug, page: undefined })}
-                    active={params.dept === d.slug}
-                    onNav={close}
-                  >
-                    {d.label}
-                  </FLink>
-                ))}
-              </FGroup>
+              ))}
+            </FGroup>
 
-              <FGroup title="Customer reviews">
-                {[4, 3].map((r) => (
-                  <FLink
-                    key={r}
-                    href={searchUrl(params, {
-                      rating: params.rating === String(r) ? undefined : String(r),
-                      page: undefined,
-                    })}
-                    active={params.rating === String(r)}
-                    onNav={close}
-                  >
-                    {"★".repeat(r)} & Up
-                  </FLink>
-                ))}
-              </FGroup>
-
-              <FGroup title="Price">
-                {PRICE_BUCKETS.map((b) => (
-                  <FLink
-                    key={b.label}
-                    href={searchUrl(params, {
-                      min: b.min ? String(b.min) : undefined,
-                      max: b.max ? String(b.max) : undefined,
-                      page: undefined,
-                    })}
-                    active={
-                      params.min === (b.min ? String(b.min) : undefined) &&
-                      params.max === (b.max ? String(b.max) : undefined)
-                    }
-                    onNav={close}
-                  >
-                    {b.label}
-                  </FLink>
-                ))}
-              </FGroup>
-
-              {brands.length > 0 && (
-                <FGroup title="Brands">
-                  {brands.map((b) => (
-                    <FLink
-                      key={b.brand}
-                      href={searchUrl(params, {
-                        brand: params.brand === b.brand ? undefined : b.brand,
-                        page: undefined,
-                      })}
-                      active={params.brand === b.brand}
-                      onNav={close}
-                    >
-                      {b.brand}
-                    </FLink>
-                  ))}
-                </FGroup>
-              )}
-
-              <FGroup title="Deals">
+            <FGroup title="Customer reviews">
+              {[4, 3].map((r) => (
                 <FLink
+                  key={r}
                   href={searchUrl(params, {
-                    deals: params.deals ? undefined : "1",
+                    rating: params.rating === String(r) ? undefined : String(r),
                     page: undefined,
                   })}
-                  active={!!params.deals}
+                  active={params.rating === String(r)}
                   onNav={close}
                 >
-                  On sale only
+                  {"★".repeat(r)} & Up
                 </FLink>
-              </FGroup>
+              ))}
+            </FGroup>
 
-              <Link
-                href={searchUrl({ q: params.q }, {})}
-                onClick={close}
-                className="block rounded-pill bg-accent px-4 py-2 text-center font-medium text-accent-fg hover:bg-accent-hover"
+            <FGroup title="Price">
+              {PRICE_BUCKETS.map((b) => (
+                <FLink
+                  key={b.label}
+                  href={searchUrl(params, {
+                    min: b.min ? String(b.min) : undefined,
+                    max: b.max ? String(b.max) : undefined,
+                    page: undefined,
+                  })}
+                  active={
+                    params.min === (b.min ? String(b.min) : undefined) &&
+                    params.max === (b.max ? String(b.max) : undefined)
+                  }
+                  onNav={close}
+                >
+                  {b.label}
+                </FLink>
+              ))}
+            </FGroup>
+
+            {brands.length > 0 && (
+              <FGroup title="Brands">
+                {brands.map((b) => (
+                  <FLink
+                    key={b.brand}
+                    href={searchUrl(params, {
+                      brand: params.brand === b.brand ? undefined : b.brand,
+                      page: undefined,
+                    })}
+                    active={params.brand === b.brand}
+                    onNav={close}
+                  >
+                    {b.brand}
+                  </FLink>
+                ))}
+              </FGroup>
+            )}
+
+            <FGroup title="Deals">
+              <FLink
+                href={searchUrl(params, {
+                  deals: params.deals ? undefined : "1",
+                  page: undefined,
+                })}
+                active={!!params.deals}
+                onNav={close}
               >
-                Clear all filters
-              </Link>
-            </div>
+                On sale only
+              </FLink>
+            </FGroup>
+
+            <Link
+              href={searchUrl({ q: params.q }, {})}
+              onClick={close}
+              className="block rounded-pill bg-accent px-4 py-2 text-center font-medium text-accent-fg hover:bg-accent-hover"
+            >
+              Clear all filters
+            </Link>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

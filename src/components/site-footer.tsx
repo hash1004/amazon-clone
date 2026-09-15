@@ -37,7 +37,9 @@ export function SiteFooter() {
           <div className="flex flex-wrap gap-10 sm:gap-16">
             {COLUMNS.map((col) => (
               <div key={col.heading}>
-                <h3 className="mb-3 text-sm font-semibold">{col.heading}</h3>
+                <h3 className="mb-3 text-xs font-medium uppercase tracking-wide text-neutral-500">
+                  {col.heading}
+                </h3>
                 <ul className="space-y-2 text-sm text-neutral-400">
                   {col.links.map((l) => (
                     <li key={l.label}>

@@ -35,7 +35,7 @@ export function ProductCard({
   const inStock = product.stock === undefined ? true : product.stock > 0;
 
   return (
-    <div className="flex h-full flex-col bg-surface p-4">
+    <div className="flex h-full flex-col rounded-lg bg-surface p-4">
       <div className="group relative mb-3">
         <Link href={`/p/${product.slug}`} className="block">
           <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-subtle">

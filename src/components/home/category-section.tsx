@@ -69,7 +69,7 @@ function ProductTile({ product: p }: { product: CategoryProduct }) {
   const { whole, frac } = priceParts(p.priceCents);
 
   return (
-    <div className="group relative flex flex-col gap-2.5 bg-surface p-4">
+    <div className="group relative flex flex-col gap-2.5 rounded-lg bg-surface p-4">
       <Link href={`/p/${p.slug}`} className="flex flex-col gap-2.5">
         <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-subtle">
           <Image

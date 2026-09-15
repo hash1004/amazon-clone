@@ -137,6 +137,10 @@ export default async function SearchPage({
       {/* Results bar */}
       <div className="border-b border-border-default bg-surface">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-2 px-4 py-2">
+          <div className="flex items-center gap-5">
+            <SearchControls params={sp} brands={brands} activeCount={activeCount} />
+            <SortSelect params={sp} />
+          </div>
           <p className="text-sm text-text-secondary">
             {from}-{to} of {total.toLocaleString()} results
             {sp.q && (
@@ -146,10 +150,6 @@ export default async function SearchPage({
               </>
             )}
           </p>
-          <div className="flex items-center gap-3">
-            <SearchControls params={sp} brands={brands} activeCount={activeCount} />
-            <SortSelect params={sp} />
-          </div>
         </div>
       </div>
 
