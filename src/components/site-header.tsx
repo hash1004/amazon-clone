@@ -25,7 +25,7 @@ export async function SiteHeader() {
 
         <Link
           href="/"
-          className="group relative justify-self-center overflow-hidden rounded-sm px-1 text-text-primary transition-colors duration-300 hover:text-accent"
+          className="group relative justify-self-center overflow-hidden rounded-sm px-1"
         >
           <AmazonLogo className="h-8 w-auto" />
           <span

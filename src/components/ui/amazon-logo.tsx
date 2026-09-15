@@ -11,9 +11,15 @@ import { useState } from "react";
  * Render with a height class only (e.g. `h-8`); width follows the ratio.
  *
  * v2: plain italic serif wordmark (Newsreader) — the smile-swoosh mark was
- * dropped along with the rest of Amazon's own visual identity. `tone` now
- * just switches ink vs. inverse text color via tokens instead of a
- * hardcoded hex per tone. See design/redesign-v2-spec.md.
+ * dropped along with the rest of Amazon's own visual identity. Always the
+ * brand accent now, not ink — but not one identical hex either: the vivid
+ * button-orange (--accent-primary) fails text contrast on our light
+ * backgrounds (~2:1), which is exactly why link/discount text already uses
+ * a darker rust shade (--text-accent) instead of the button color. `tone`
+ * picks the right one of those two shades for the background it's on:
+ * "dark" (default — header, auth, light backgrounds) gets the rust shade;
+ * "light" (footer, dark backgrounds) gets the vivid one, which needs the
+ * brightness to read against near-black. See design/redesign-v2-spec.md.
  */
 export function AmazonLogo({
   className = "",
@@ -46,12 +52,14 @@ export function AmazonLogo({
   );
 }
 
-function LogoSvg({ className }: { className: string; tone: "light" | "dark" }) {
-  // fill is currentColor on purpose, not a hardcoded per-tone value — every
-  // call site already sits in the right ambient text color (footer sets
-  // text-inverse on itself, body defaults to text-primary elsewhere), and
-  // this lets a wrapping link change the color on hover (see site-header.tsx)
-  // without the logo needing to know about that state itself.
+function LogoSvg({
+  className,
+  tone,
+}: {
+  className: string;
+  tone: "light" | "dark";
+}) {
+  const fill = tone === "light" ? "var(--accent-primary)" : "var(--text-accent)";
   return (
     <svg
       viewBox="0 0 102 30"
@@ -70,7 +78,7 @@ function LogoSvg({ className }: { className: string; tone: "light" | "dark" }) {
         }}
         fontSize="24"
         letterSpacing="-0.5"
-        fill="currentColor"
+        fill={fill}
       >
         amazon
       </text>
