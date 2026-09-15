@@ -9,11 +9,13 @@ import { CloseIcon } from "@/components/ui/icons";
 import { useSearchFilter } from "@/components/search/search-filter-context";
 
 /**
- * Covers only the results section below the toolbar (not the header/nav
- * above it) — the parent wrapping this + the results content in
- * s/page.tsx is `relative` and starts right after the toolbar row, so
- * this panel's `absolute inset-0` lands exactly on the results area.
- * Sort lives in here too now — one trigger, one panel, instead of a
+ * A narrow (max ~1/4 of the results width) side panel, not a full-bleed
+ * takeover — it slides in from the left and sits over the results grid,
+ * which is dimmed behind it. The parent wrapping this + the results
+ * content in s/page.tsx is `relative` and starts right below the
+ * toolbar row, so `absolute inset-y-0 left-0` lands exactly on the
+ * results area without covering the header/nav above it.
+ * Sort lives in here too — one trigger, one panel, instead of a
  * separate control for each.
  */
 export function SearchFilterPanel({
@@ -25,13 +27,13 @@ export function SearchFilterPanel({
 }) {
   const { open, setOpen } = useSearchFilter();
   const close = () => setOpen(false);
-  const rootRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     const onDoc = (e: MouseEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) close();
+      if (!panelRef.current?.contains(e.target as Node)) close();
     };
     window.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onDoc);
@@ -45,26 +47,29 @@ export function SearchFilterPanel({
   if (!open) return null;
 
   return (
-    <div
-      ref={rootRef}
-      className="absolute inset-0 z-20 overflow-y-auto rounded-lg border border-border-default bg-surface"
-    >
-      <div className="mx-auto max-w-[1300px] p-6 sm:p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-serif text-xl font-medium text-text-primary">
+    <div className="absolute inset-y-0 left-0 right-0 z-20">
+      {/* Backdrop dims the results grid behind the panel */}
+      <div className="absolute inset-0 bg-black/10" aria-hidden />
+
+      <div
+        ref={panelRef}
+        className="absolute inset-y-0 left-0 w-full max-w-[320px] overflow-y-auto border-r border-border-default bg-surface p-6 shadow-xl"
+      >
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="font-serif text-lg font-medium text-text-primary">
             Filters &amp; Sort
           </h2>
           <button
             type="button"
             aria-label="Close"
             onClick={close}
-            className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-subtle"
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-subtle"
           >
             <CloseIcon className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-x-8 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="flex flex-col gap-6">
           <FGroup title="Sort by">
             {SORTS.map((s) => (
               <FLink
