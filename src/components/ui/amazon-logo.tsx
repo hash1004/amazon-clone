@@ -11,9 +11,15 @@ import { useState } from "react";
  * Render with a height class only (e.g. `h-8`); width follows the ratio.
  *
  * v2: plain italic serif wordmark (Newsreader) — the smile-swoosh mark was
- * dropped along with the rest of Amazon's own visual identity. `tone` now
- * just switches ink vs. inverse text color via tokens instead of a
- * hardcoded hex per tone. See design/redesign-v2-spec.md.
+ * dropped along with the rest of Amazon's own visual identity. Always the
+ * brand accent now, not ink — but not one identical hex either: the vivid
+ * button-orange (--accent-primary) fails text contrast on our light
+ * backgrounds (~2:1), which is exactly why link/discount text already uses
+ * a darker rust shade (--text-accent) instead of the button color. `tone`
+ * picks the right one of those two shades for the background it's on:
+ * "dark" (default — header, auth, light backgrounds) gets the rust shade;
+ * "light" (footer, dark backgrounds) gets the vivid one, which needs the
+ * brightness to read against near-black. See design/redesign-v2-spec.md.
  */
 export function AmazonLogo({
   className = "",
@@ -53,8 +59,7 @@ function LogoSvg({
   className: string;
   tone: "light" | "dark";
 }) {
-  const fill =
-    tone === "light" ? "var(--text-inverse)" : "var(--text-primary)";
+  const fill = tone === "light" ? "var(--accent-primary)" : "var(--text-accent)";
   return (
     <svg
       viewBox="0 0 102 30"

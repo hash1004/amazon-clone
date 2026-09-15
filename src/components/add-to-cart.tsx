@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart, type CartLine } from "@/lib/cart-store";
 import { useToast } from "@/lib/toast";
+import { formatPrice } from "@/lib/format";
 
 export function AddToCart({
   product,
@@ -14,10 +14,8 @@ export function AddToCart({
 }) {
   const { add } = useCart();
   const { toast } = useToast();
-  const router = useRouter();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
-  const [buying, setBuying] = useState(false);
 
   if (!inStock) {
     return (
@@ -28,21 +26,28 @@ export function AddToCart({
   }
 
   return (
-    <div className="space-y-2">
-      <label className="flex items-center gap-2 text-sm">
-        Quantity:
-        <select
-          value={qty}
-          onChange={(e) => setQty(Number(e.target.value))}
-          className="rounded-md border border-border-strong bg-subtle px-2 py-1"
+    <div className="flex flex-wrap items-center gap-3">
+      <div className="flex items-center gap-3 rounded-pill border border-border-strong px-1 py-1">
+        <button
+          type="button"
+          aria-label="Decrease quantity"
+          onClick={() => setQty((q) => Math.max(1, q - 1))}
+          className="flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition hover:bg-subtle active:scale-95"
         >
-          {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
-      </label>
+          −
+        </button>
+        <span className="w-5 text-center text-sm font-semibold tabular-nums">
+          {String(qty).padStart(2, "0")}
+        </span>
+        <button
+          type="button"
+          aria-label="Increase quantity"
+          onClick={() => setQty((q) => Math.min(10, q + 1))}
+          className="flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition hover:bg-subtle active:scale-95"
+        >
+          +
+        </button>
+      </div>
 
       <button
         type="button"
@@ -52,22 +57,9 @@ export function AddToCart({
           setAdded(true);
           setTimeout(() => setAdded(false), 2000);
         }}
-        className="w-full rounded-pill bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+        className="flex-1 rounded-pill bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition-all duration-200 hover:scale-[1.02] hover:bg-accent-hover active:scale-[0.98]"
       >
-        {added ? "✓ Added to Cart" : "Add to Cart"}
-      </button>
-
-      <button
-        type="button"
-        disabled={buying}
-        onClick={() => {
-          setBuying(true);
-          add(product, qty);
-          router.push("/checkout");
-        }}
-        className="w-full rounded-pill bg-accent-buy px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-buy-hover disabled:opacity-70"
-      >
-        {buying ? "…" : "Buy Now"}
+        {added ? "✓ Added to Cart" : `Add to Cart · ${formatPrice(product.priceCents * qty)}`}
       </button>
     </div>
   );

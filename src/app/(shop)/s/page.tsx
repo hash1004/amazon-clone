@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
 import { ProductCard } from "@/components/product-card";
-import { FilterRail } from "@/components/search/filter-rail";
-import { SortSelect } from "@/components/search/sort-select";
-import { MobileSearchControls } from "@/components/search/mobile-controls";
+import { SearchFilterProvider } from "@/components/search/search-filter-context";
+import { SearchFilterToggle } from "@/components/search/search-filter-toggle";
+import { SearchFilterPanel } from "@/components/search/search-filter-panel";
 import { DEPARTMENT_BY_SLUG } from "@/lib/departments";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { SorryDog } from "@/components/ui/sorry-dog";
@@ -129,11 +129,17 @@ export default async function SearchPage({
       href: searchUrl(sp, { deals: undefined, page: undefined }),
     });
 
+  const activeCount = [sp.dept, sp.brand, sp.rating, sp.min || sp.max, sp.deals].filter(
+    Boolean,
+  ).length;
+
   return (
+    <SearchFilterProvider>
     <div className="bg-canvas">
       {/* Results bar */}
       <div className="border-b border-border-default bg-surface">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-2 px-4 py-2">
+          <SearchFilterToggle activeCount={activeCount} />
           <p className="text-sm text-text-secondary">
             {from}-{to} of {total.toLocaleString()} results
             {sp.q && (
@@ -143,16 +149,12 @@ export default async function SearchPage({
               </>
             )}
           </p>
-          <SortSelect params={sp} />
         </div>
       </div>
 
-      <MobileSearchControls params={sp} brands={brands} />
-
-      <div className="mx-auto flex max-w-[1500px] gap-6 px-4 py-4">
-        <FilterRail params={sp} brands={brands} />
-
-        <div className="min-w-0 flex-1">
+      <div className="mx-auto max-w-[1500px] px-4 py-4">
+        <div className="relative">
+          <SearchFilterPanel params={sp} brands={brands} />
           <div className="mb-2 border-b border-border-default pb-2">
             <h1 className="font-serif text-xl font-medium text-text-primary">
               {sp.q ? `Results for "${sp.q}"` : heading}
@@ -241,5 +243,6 @@ export default async function SearchPage({
         </div>
       </div>
     </div>
+    </SearchFilterProvider>
   );
 }

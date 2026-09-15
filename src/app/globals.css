@@ -213,3 +213,51 @@ a {
   background: var(--border-strong);
   border-radius: 999px;
 }
+
+/* Hero carousel slide transition — subtle, not a whoosh. */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero carousel product-tile float — slow, small, alternating per tile so
+   they don't move in lockstep. Kept subtle on purpose (a few px, 5-7s) —
+   this is "feels alive," not a bounce animation. */
+/* Both keyframes replace the tile's `transform` outright while running, so
+   each one has to re-declare the full base transform (the translate(-50%,
+   -50%) center-anchor every tile now uses, plus its rotation) — not just
+   the translateY bob — or the tile snaps to a different anchor the moment
+   the animation starts and fights its own base position every cycle. */
+@keyframes float-a {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(-8px);
+  }
+}
+@keyframes float-b {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(-7px);
+  }
+}
+
+/* The header search field opts out of the site-wide focus ring below —
+   it has its own pill background as the "you're in this field" affordance,
+   so the ring reads as a stray border. Needs a selector at least as
+   specific as `:focus-visible` (and placed after it) to win regardless of
+   Tailwind utility injection order. */
+.search-input:focus-visible {
+  outline: none;
+}
