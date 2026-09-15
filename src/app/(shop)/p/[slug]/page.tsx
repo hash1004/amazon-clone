@@ -151,8 +151,6 @@ export default async function ProductPage({
           <div className="mt-5">
             <AddToCart inStock={inStock} product={cartLine} />
           </div>
-
-          <RatingSummary rating={product.rating} ratingCount={product.ratingCount} />
         </div>
       </div>
 
@@ -162,6 +160,8 @@ export default async function ProductPage({
             {product.description}
           </p>
         </Accordion>
+
+        <RatingSummary rating={product.rating} ratingCount={product.ratingCount} />
 
         {product.bullets.length > 0 && (
           <Accordion title="Highlights">
