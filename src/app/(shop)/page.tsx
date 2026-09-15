@@ -137,18 +137,6 @@ export default async function Home() {
         />
       ))}
 
-      <section className="bg-accent px-6 py-16 text-center sm:px-10">
-        <h2 className="mx-auto max-w-lg font-serif text-3xl font-medium leading-tight text-accent-fg">
-          Everything you need, none of the noise.
-        </h2>
-        <Link
-          href="/s"
-          className="mt-6 inline-flex items-center rounded-pill bg-surface px-7 py-3 text-sm font-medium text-text-primary transition hover:bg-subtle"
-        >
-          Shop everything
-        </Link>
-      </section>
-
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10">
         <RecentlyViewedRow title="Inspired by your browsing history" />
       </div>

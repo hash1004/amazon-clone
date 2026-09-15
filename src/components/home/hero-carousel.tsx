@@ -246,8 +246,16 @@ const FLOAT = [
 
 const TILE_BLOB = "60% 40% 30% 70% / 60% 30% 70% 40%";
 
-function tileTransform(rotate: number, isCenter: boolean) {
-  return isCenter ? "translate(-50%, -50%)" : `rotate(${rotate}deg)`;
+/**
+ * Every tile's top/left is meant as its center point, not a corner — all
+ * three need the same translate(-50%, -50%) anchoring, or a tile placed
+ * near the high end of the range (e.g. top: 78%, left: 82%) has its
+ * unanchored corner push the box past the container edge with nothing to
+ * clip it on desktop. (Previously only the center tile got this
+ * treatment, which is what let one tile land in that "extreme" spot.)
+ */
+function tileTransform(rotate: number) {
+  return `translate(-50%, -50%) rotate(${rotate}deg)`;
 }
 
 function ProductCluster({
@@ -289,7 +297,7 @@ function ProductCluster({
               // animation replaces the element's transform outright, so
               // the base positioning has to live inside the keyframe too.
               ["--tile-rotate" as string]: `${t.rotate}deg`,
-              transform: tileTransform(t.rotate, isCenter),
+              transform: tileTransform(t.rotate),
               animation: `${f.anim} ${f.duration} ${EASE} ${f.delay} infinite`,
             }}
           >
@@ -330,7 +338,7 @@ function MobileTile({
         left: t.left,
         borderRadius: TILE_BLOB,
         ["--tile-rotate" as string]: `${t.rotate}deg`,
-        transform: tileTransform(t.rotate, isCenter),
+        transform: tileTransform(t.rotate),
         animation: `${f.anim} ${f.duration} ${EASE} ${f.delay} infinite`,
       }}
     >

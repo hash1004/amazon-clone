@@ -1,20 +1,7 @@
 import Link from "next/link";
-import { SafeImage as Image } from "@/components/ui/safe-image";
-import { discountPct, priceParts } from "@/lib/format";
-import { QuickAdd } from "@/components/search/quick-add";
-import { WishlistButton } from "@/components/wishlist-button";
+import { ProductCard, type ProductCardData } from "@/components/product-card";
 
-export type CategoryProduct = {
-  id: string;
-  slug: string;
-  title: string;
-  brand: string;
-  images: string[];
-  priceCents: number;
-  listPriceCents: number | null;
-  rating: number;
-  ratingCount: number;
-};
+export type CategoryProduct = ProductCardData;
 
 /**
  * One static 4-up grid per department — replaces v1's horizontally
@@ -23,6 +10,12 @@ export type CategoryProduct = {
  * Discounts show inline on the card, quietly, instead of in a separate
  * red-ribboned deals rail. No bestseller rank chips — rating + review
  * count is the signal. See design/redesign-v2-spec.md.
+ *
+ * Uses the same ProductCard as Search results and the PDP's related
+ * items — this used to be its own one-off tile with a different price
+ * layout, rating style and an unconditional QuickAdd, which meant cards
+ * looked different depending on which page you were on. One component,
+ * one look, everywhere.
  */
 export function CategorySection({
   title,
@@ -49,7 +42,7 @@ export function CategorySection({
       </div>
       <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
         {items.slice(0, 4).map((p) => (
-          <ProductTile key={p.id} product={p} />
+          <ProductCard key={p.id} product={p} withCart />
         ))}
       </div>
       <div className="mt-8 text-center">
@@ -61,83 +54,5 @@ export function CategorySection({
         </Link>
       </div>
     </section>
-  );
-}
-
-function ProductTile({ product: p }: { product: CategoryProduct }) {
-  const pct = discountPct(p.priceCents, p.listPriceCents);
-  const { whole, frac } = priceParts(p.priceCents);
-
-  return (
-    <div className="group relative flex flex-col gap-2.5 rounded-lg bg-surface p-4">
-      <Link href={`/p/${p.slug}`} className="flex flex-col gap-2.5">
-        <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-subtle">
-          <Image
-            src={p.images[0]}
-            alt={p.title}
-            fill
-            sizes="(max-width: 640px) 45vw, 240px"
-            className="object-contain p-4 transition-transform duration-200 group-hover:scale-105"
-          />
-        </div>
-        <p className="text-[11px] uppercase tracking-wide text-text-muted">
-          {p.brand}
-        </p>
-        <p className="line-clamp-2 min-h-[2.4em] text-[13px] leading-tight text-text-primary">
-          {p.title}
-        </p>
-        <div className="flex flex-wrap items-baseline gap-x-1.5">
-          <span className="text-[15px] font-semibold text-text-primary">
-            <span className="align-super text-[10px]">$</span>
-            {whole}
-            <span className="align-super text-[10px]">{frac}</span>
-          </span>
-          {pct > 0 && (
-            <span className="rounded-full bg-accent-subtle px-1.5 py-0.5 text-[10px] font-bold text-text-accent">
-              {pct}% off
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-1 text-[11px] text-text-muted">
-          <StarGlyph />
-          <span>
-            {p.rating.toFixed(1)} ({p.ratingCount.toLocaleString()})
-          </span>
-        </div>
-      </Link>
-      <span className="absolute right-5 top-5 opacity-100 transition-opacity focus-within:opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
-        <WishlistButton
-          variant="icon"
-          entry={{
-            productId: p.id,
-            slug: p.slug,
-            title: p.title,
-            image: p.images[0] ?? "",
-            priceCents: p.priceCents,
-            listPriceCents: p.listPriceCents,
-            rating: p.rating,
-            ratingCount: p.ratingCount,
-            inStock: true,
-          }}
-        />
-      </span>
-      <QuickAdd
-        product={{
-          productId: p.id,
-          slug: p.slug,
-          title: p.title,
-          image: p.images[0] ?? "",
-          priceCents: p.priceCents,
-        }}
-      />
-    </div>
-  );
-}
-
-function StarGlyph() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.8-6.2 3.8 1.6-7L2 9.2l7.1-.6z" />
-    </svg>
   );
 }
