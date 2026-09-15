@@ -65,7 +65,7 @@ export default async function ProductPage({
   };
 
   return (
-    <div className="w-full bg-surface px-4 py-6 sm:px-8 lg:px-12">
+    <div className="w-full bg-canvas px-4 py-6 sm:px-8 lg:px-12">
       <RecordView entry={cartLine} />
 
       <nav className="mb-4 text-xs text-text-secondary">

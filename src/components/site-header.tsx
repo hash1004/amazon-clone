@@ -8,28 +8,30 @@ import { AccountMenu } from "@/components/account-menu";
 import { auth } from "@/auth";
 
 /**
- * Three-zone header: categories flyout (left) — wordmark (center) — search
- * + account + wishlist + cart icons (right). Deliver-to, the language
- * selector, and Returns & Orders are dropped, not relocated — see
- * design/redesign-v2-spec.md.
+ * Desktop (sm+): three-zone header — categories flyout (left) — wordmark
+ * (center) — search + account + wishlist + cart icons (right). Deliver-to,
+ * the language selector, and Returns & Orders are dropped, not relocated —
+ * see design/redesign-v2-spec.md.
  *
- * On phones the header slims down to just the wordmark + search —
- * Categories, Account, Cart and Wishlist all move to the bottom nav
- * (see mobile-bottom-nav.tsx) instead of being duplicated up here too.
+ * Phones: just two zones — wordmark (left) + search (right). Categories,
+ * Account, Cart and Wishlist all live in the bottom nav instead (see
+ * mobile-bottom-nav.tsx), so the desktop grid's left column would otherwise
+ * be permanently empty dead space with the logo forced into a false
+ * "center" against it — a plain left/right split uses that space instead.
  */
 export async function SiteHeader() {
   const session = await auth();
 
   return (
     <header className="border-b border-border-default bg-chrome-nav text-text-primary">
-      <div className="mx-auto grid max-w-[1500px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2.5 sm:px-6">
+      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-2 px-3 py-2.5 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:px-6">
         <div className="hidden justify-self-start sm:block">
           <CategoriesMenu />
         </div>
 
         <Link
           href="/"
-          className="group relative justify-self-center overflow-hidden rounded-sm px-1"
+          className="group relative overflow-hidden rounded-sm px-1 sm:justify-self-center"
         >
           <AmazonLogo className="h-8 w-auto" />
           <span
@@ -38,7 +40,7 @@ export async function SiteHeader() {
           />
         </Link>
 
-        <div className="flex items-center gap-1 justify-self-end">
+        <div className="flex items-center gap-1 sm:justify-self-end">
           <ExpandingSearch />
           <span className="hidden sm:block">
             <AccountMenu

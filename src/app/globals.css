@@ -229,22 +229,27 @@ a {
 /* Hero carousel product-tile float — slow, small, alternating per tile so
    they don't move in lockstep. Kept subtle on purpose (a few px, 5-7s) —
    this is "feels alive," not a bounce animation. */
+/* Both keyframes replace the tile's `transform` outright while running, so
+   each one has to re-declare the full base transform (the translate(-50%,
+   -50%) center-anchor every tile now uses, plus its rotation) — not just
+   the translateY bob — or the tile snaps to a different anchor the moment
+   the animation starts and fights its own base position every cycle. */
 @keyframes float-a {
   0%,
   100% {
-    transform: translate(-50%, -50%) translateY(0);
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(0);
   }
   50% {
-    transform: translate(-50%, -50%) translateY(-8px);
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(-8px);
   }
 }
 @keyframes float-b {
   0%,
   100% {
-    transform: translateY(0) rotate(var(--tile-rotate, 0deg));
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(0);
   }
   50% {
-    transform: translateY(-7px) rotate(var(--tile-rotate, 0deg));
+    transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(-7px);
   }
 }
 
