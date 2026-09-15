@@ -151,18 +151,19 @@ export default async function ProductPage({
           <div className="mt-5">
             <AddToCart inStock={inStock} product={cartLine} />
           </div>
+
+          <h2 className="mb-2 mt-6 font-serif text-lg font-medium text-text-primary">
+            Product description
+          </h2>
+          <p className="text-sm leading-relaxed text-text-secondary">
+            {product.description}
+          </p>
+
+          <RatingSummary rating={product.rating} ratingCount={product.ratingCount} />
         </div>
       </div>
 
       <div className="mt-8">
-        <Accordion title="Product description" defaultOpen>
-          <p className="max-w-[70ch] text-sm leading-relaxed text-text-secondary">
-            {product.description}
-          </p>
-        </Accordion>
-
-        <RatingSummary rating={product.rating} ratingCount={product.ratingCount} />
-
         {product.bullets.length > 0 && (
           <Accordion title="Highlights">
             <ul className="max-w-[70ch] list-disc space-y-1.5 pl-5 text-sm text-text-secondary">
