@@ -5,13 +5,13 @@ import { db } from "@/lib/db";
 import { discountPct, formatPrice } from "@/lib/format";
 import { DEPARTMENT_BY_SLUG } from "@/lib/departments";
 import { estimateDelivery, formatDeliveryDate } from "@/lib/delivery";
-import { RatingStars } from "@/components/rating-stars";
 import { PriceTag } from "@/components/ui/price-tag";
 import { ProductGallery } from "@/components/product-gallery";
 import { Accordion } from "@/components/ui/accordion";
 import { AddToCart } from "@/components/add-to-cart";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductCard } from "@/components/product-card";
+import { RatingSummary } from "@/components/product/rating-summary";
 import { MobileBuyBar } from "@/components/product/mobile-buy-bar";
 import { RecordView } from "@/lib/recently-viewed";
 
@@ -152,17 +152,7 @@ export default async function ProductPage({
             <AddToCart inStock={inStock} product={cartLine} />
           </div>
 
-          <div className="mt-6 inline-flex items-center gap-3 rounded-lg bg-subtle px-4 py-3">
-            <span className="text-3xl font-semibold leading-none text-text-primary">
-              {product.rating.toFixed(1)}
-            </span>
-            <div className="flex flex-col gap-1">
-              <RatingStars rating={product.rating} />
-              <span className="text-xs text-text-secondary">
-                {product.ratingCount.toLocaleString()} reviews
-              </span>
-            </div>
-          </div>
+          <RatingSummary rating={product.rating} ratingCount={product.ratingCount} />
         </div>
       </div>
 
@@ -223,7 +213,7 @@ export default async function ProductPage({
           </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {related.slice(0, 5).map((p) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} withCart />
             ))}
           </div>
         </section>
