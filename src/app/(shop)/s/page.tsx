@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
 import { ProductCard } from "@/components/product-card";
-import { SortSelect } from "@/components/search/sort-select";
-import { SearchControls } from "@/components/search/search-controls";
+import { SearchFilterProvider } from "@/components/search/search-filter-context";
+import { SearchFilterToggle } from "@/components/search/search-filter-toggle";
+import { SearchFilterPanel } from "@/components/search/search-filter-panel";
 import { DEPARTMENT_BY_SLUG } from "@/lib/departments";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { SorryDog } from "@/components/ui/sorry-dog";
@@ -133,14 +134,12 @@ export default async function SearchPage({
   ).length;
 
   return (
+    <SearchFilterProvider>
     <div className="bg-canvas">
       {/* Results bar */}
       <div className="border-b border-border-default bg-surface">
         <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-2 px-4 py-2">
-          <div className="flex items-center gap-5">
-            <SearchControls params={sp} brands={brands} activeCount={activeCount} />
-            <SortSelect params={sp} />
-          </div>
+          <SearchFilterToggle activeCount={activeCount} />
           <p className="text-sm text-text-secondary">
             {from}-{to} of {total.toLocaleString()} results
             {sp.q && (
@@ -154,7 +153,8 @@ export default async function SearchPage({
       </div>
 
       <div className="mx-auto max-w-[1500px] px-4 py-4">
-        <div>
+        <div className="relative">
+          <SearchFilterPanel params={sp} brands={brands} />
           <div className="mb-2 border-b border-border-default pb-2">
             <h1 className="font-serif text-xl font-medium text-text-primary">
               {sp.q ? `Results for "${sp.q}"` : heading}
@@ -243,5 +243,6 @@ export default async function SearchPage({
         </div>
       </div>
     </div>
+    </SearchFilterProvider>
   );
 }

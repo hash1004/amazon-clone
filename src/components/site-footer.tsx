@@ -28,7 +28,9 @@ export function SiteFooter() {
       <div className="px-6 py-14 sm:px-10">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div>
-            <AmazonLogo className="h-7 w-auto" tone="light" />
+            <Link href="/" className="inline-block">
+              <AmazonLogo className="h-7 w-auto" tone="light" />
+            </Link>
             <p className="mt-3 max-w-[22ch] text-sm text-neutral-400">
               A calmer way to shop — categorization and quiet deals-in-context,
               not banners.
