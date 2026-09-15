@@ -47,13 +47,13 @@ export function SearchFilterPanel({
   if (!open) return null;
 
   return (
-    <div className="absolute inset-y-0 left-0 right-0 z-20">
+    <div className="absolute inset-0 z-20">
       {/* Backdrop dims the results grid behind the panel */}
       <div className="absolute inset-0 bg-black/10" aria-hidden />
 
       <div
         ref={panelRef}
-        className="absolute inset-y-0 left-0 w-full max-w-[320px] overflow-y-auto border-r border-border-default bg-surface p-6 shadow-xl"
+        className="absolute left-0 top-0 max-h-full w-full max-w-[320px] overflow-y-auto rounded-br-lg border-r border-b border-border-default bg-surface p-6"
       >
         <div className="mb-5 flex items-center justify-between">
           <h2 className="font-serif text-lg font-medium text-text-primary">
