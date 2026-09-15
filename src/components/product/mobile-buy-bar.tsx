@@ -15,7 +15,7 @@ export function MobileBuyBar({
   const { toast } = useToast();
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-2 border-t border-border-default bg-surface px-3 py-2 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] lg:hidden">
+    <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 flex items-center gap-2 border-t border-border-default bg-surface px-3 py-2 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] sm:bottom-0 lg:hidden">
       <span className="shrink-0 text-lg font-bold">
         {formatPrice(product.priceCents)}
       </span>

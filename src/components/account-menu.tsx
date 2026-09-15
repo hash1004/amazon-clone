@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { signOut } from "next-auth/react";
 import { PersonIcon } from "@/components/ui/icons";
+import { SignOutButton } from "@/components/sign-out-button";
 
 export function AccountMenu({
   isAuthed,
@@ -118,16 +118,7 @@ export function AccountMenu({
                 </li>
                 {isAuthed && (
                   <li>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        close();
-                        signOut({ callbackUrl: "/" });
-                      }}
-                      className="text-left hover:text-text-accent hover:underline"
-                    >
-                      Sign Out
-                    </button>
+                    <SignOutButton className="text-left hover:text-text-accent hover:underline" />
                   </li>
                 )}
               </ul>

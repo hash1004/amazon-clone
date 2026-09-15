@@ -9,6 +9,8 @@ import {
   ArrowUp,
   SlidersHorizontal,
   ChevronDown,
+  ChevronRight,
+  House,
   X,
 } from "lucide-react";
 
@@ -57,6 +59,14 @@ export function FilterIcon({ className = "h-4 w-4" }: P) {
 
 export function ChevronDownIcon({ className = "h-4 w-4" }: P) {
   return <ChevronDown className={className} strokeWidth={2} aria-hidden />;
+}
+
+export function ChevronRightIcon({ className = "h-4 w-4" }: P) {
+  return <ChevronRight className={className} strokeWidth={2} aria-hidden />;
+}
+
+export function HomeIcon({ className = "h-5 w-5" }: P) {
+  return <House className={className} strokeWidth={1.8} aria-hidden />;
 }
 
 export function HeartIcon({

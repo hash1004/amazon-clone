@@ -9,12 +9,15 @@ import { CloseIcon } from "@/components/ui/icons";
 import { useSearchFilter } from "@/components/search/search-filter-context";
 
 /**
- * A narrow (max ~1/4 of the results width) side panel, not a full-bleed
- * takeover — it slides in from the left and sits over the results grid,
- * which is dimmed behind it. The parent wrapping this + the results
- * content in s/page.tsx is `relative` and starts right below the
- * toolbar row, so `absolute inset-y-0 left-0` lands exactly on the
- * results area without covering the header/nav above it.
+ * Responsive: on phones this is a complete full-screen overlay (there's
+ * no spare width to make a partial panel read as intentional rather than
+ * an accidental sliver) — same treatment as the search modal. At sm+ it's
+ * a narrow (max ~1/4 of the results width) side panel, not a full-bleed
+ * takeover — it sits over the results grid, which is dimmed behind it.
+ * The parent wrapping this + the results content in s/page.tsx is
+ * `relative` and starts right below the toolbar row, so the sm+ panel's
+ * `absolute` positioning lands exactly on the results area without
+ * covering the header/nav above it.
  * Sort lives in here too — one trigger, one panel, instead of a
  * separate control for each.
  */
@@ -47,15 +50,17 @@ export function SearchFilterPanel({
   if (!open) return null;
 
   return (
-    <div className="absolute inset-0 z-20">
-      {/* Backdrop dims the results grid behind the panel */}
-      <div className="absolute inset-0 bg-black/10" aria-hidden />
+    <div className="fixed inset-0 z-[60] sm:absolute sm:z-20">
+      {/* Backdrop dims the results grid behind the panel — desktop only,
+          the mobile panel is a full opaque screen so there's nothing to
+          dim behind it. */}
+      <div className="absolute inset-0 hidden bg-black/10 sm:block" aria-hidden />
 
       <div
         ref={panelRef}
-        className="absolute left-0 top-0 max-h-full w-full max-w-[320px] overflow-y-auto rounded-br-lg border-r border-b border-border-default bg-surface p-6"
+        className="flex h-dvh w-full flex-col overflow-y-auto bg-surface sm:absolute sm:left-0 sm:top-0 sm:h-auto sm:max-h-full sm:max-w-[320px] sm:rounded-br-lg sm:border-r sm:border-b sm:border-border-default"
       >
-        <div className="mb-5 flex items-center justify-between">
+        <div className="flex shrink-0 items-center justify-between border-b border-border-default p-4 sm:mb-5 sm:border-0 sm:p-6 sm:pb-0">
           <h2 className="font-serif text-lg font-medium text-text-primary">
             Filters &amp; Sort
           </h2>
@@ -69,7 +74,7 @@ export function SearchFilterPanel({
           </button>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 p-4 sm:p-6 sm:pt-0">
           <FGroup title="Sort by">
             {SORTS.map((s) => (
               <FLink
@@ -174,7 +179,7 @@ export function SearchFilterPanel({
         <Link
           href={searchUrl({ q: params.q }, {})}
           onClick={close}
-          className="mt-8 inline-block rounded-pill bg-accent px-5 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          className="mx-4 mb-4 mt-2 inline-block rounded-pill bg-accent px-5 py-2 text-center text-sm font-medium text-accent-fg hover:bg-accent-hover sm:mx-6 sm:mb-6"
         >
           Clear all filters
         </Link>

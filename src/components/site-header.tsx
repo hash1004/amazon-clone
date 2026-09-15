@@ -12,6 +12,10 @@ import { auth } from "@/auth";
  * + account + wishlist + cart icons (right). Deliver-to, the language
  * selector, and Returns & Orders are dropped, not relocated — see
  * design/redesign-v2-spec.md.
+ *
+ * On phones the header slims down to just the wordmark + search —
+ * Categories, Account, Cart and Wishlist all move to the bottom nav
+ * (see mobile-bottom-nav.tsx) instead of being duplicated up here too.
  */
 export async function SiteHeader() {
   const session = await auth();
@@ -19,7 +23,7 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-border-default bg-chrome-nav text-text-primary">
       <div className="mx-auto grid max-w-[1500px] grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 py-2.5 sm:px-6">
-        <div className="justify-self-start">
+        <div className="hidden justify-self-start sm:block">
           <CategoriesMenu />
         </div>
 
@@ -36,10 +40,12 @@ export async function SiteHeader() {
 
         <div className="flex items-center gap-1 justify-self-end">
           <ExpandingSearch />
-          <AccountMenu isAuthed={!!session?.user} firstName={session?.user?.name?.split(" ")[0] ?? session?.user?.email} />
-          {/* Cart/wishlist live under the account menu on phones (not enough
-              row width for 4 icons + an open search field) — still their
-              own icons at sm+, where there's room. */}
+          <span className="hidden sm:block">
+            <AccountMenu
+              isAuthed={!!session?.user}
+              firstName={session?.user?.name?.split(" ")[0] ?? session?.user?.email}
+            />
+          </span>
           <span className="hidden sm:block">
             <WishlistBadge />
           </span>
