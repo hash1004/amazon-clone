@@ -1,9 +1,9 @@
+**Live:** https://amazon.svdistributor.com
+
 # amazon-clone
 
 A working slice of [amazon.com](https://amazon.com), built as a timed
 assignment: chrome, home, search, product, cart, checkout, orders.
-
-**Live:** https://amazon-clone-sgtc.vercel.app
 
 ## Design direction (v2 — resubmission)
 
