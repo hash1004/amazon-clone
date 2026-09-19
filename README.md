@@ -66,10 +66,11 @@ cross-device cart sync.
 
 ## Stack
 
-- **Next.js 16** (App Router, TypeScript, Turbopack) on **Vercel**
+- **Next.js 16** (App Router, TypeScript, Turbopack), containerized and
+  deployed on a self-hosted Docker Swarm host
 - **Tailwind CSS v4** — CSS-first design tokens (`src/app/globals.css`);
   one accent color, Work Sans + Newsreader. See the design doc above.
-- **Prisma 7 + PostgreSQL** (Neon), driver adapter (`@prisma/adapter-pg`)
+- **Prisma 7 + PostgreSQL**, driver adapter (`@prisma/adapter-pg`)
 - **Auth.js** (credentials, JWT sessions)
 
 ## Local development
