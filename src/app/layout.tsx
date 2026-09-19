@@ -25,7 +25,7 @@ const display = Newsreader({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://amazon-clone-sgtc.vercel.app",
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://amazon.svdistributor.com",
   ),
   title: {
     default: "Amazon.com. Spend less. Smile more.",
