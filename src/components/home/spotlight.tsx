@@ -22,10 +22,13 @@ const SWIPE_THRESHOLD_PX = 40;
  * Auto-advancing carousel over the featured coffees — a handful of slides,
  * not nine rails; each one is the full brown block (not a tint + floating
  * product cutout) so the identity stays consistent slide to slide. Pauses
- * on hover/touch; swipe on phones, arrows + dots on desktop. Full-height
- * on phones and smaller laptops (min-h-dvh, not vh — avoids the mobile
- * address-bar resize jump); released back to content height at lg since a
- * forced full screen on a big desktop monitor just means more empty space,
+ * on hover/touch; swipe on phones, arrows + dots on desktop. Fills the first
+ * screen under the sticky header (3.5rem) on phones, tablets and laptops —
+ * dvh, not vh, so the mobile address bar showing/hiding doesn't resize it.
+ * Below lg the image takes whatever height the text leaves; on laptops the
+ * square image is capped at the viewport height so the whole slide fits.
+ * Released back to content height at 3xl (1800px, past the widest laptops),
+ * where a forced full screen on a big monitor just means more empty space,
  * not more drama.
  */
 export function Spotlight({ products }: { products: SpotlightProduct[] }) {
@@ -66,7 +69,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
 
   return (
     <section
-      className="grain flex min-h-dvh items-center bg-chrome-nav text-text-on-brown lg:min-h-0"
+      className="grain flex min-h-[calc(100dvh-3.5rem)] flex-col bg-chrome-nav text-text-on-brown 3xl:min-h-0"
       style={{ ["--icon-hover-bg" as string]: "rgba(243, 234, 217, 0.14)" }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -74,12 +77,12 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
       onTouchEnd={onTouchEnd}
     >
       <div
-        className="mx-auto grid w-full max-w-[1400px] gap-4 px-6 py-8 sm:gap-8 sm:px-10 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16"
+        className="mx-auto grid w-full max-w-[1400px] flex-1 grid-rows-[minmax(11rem,1fr)_auto] gap-4 px-6 py-6 sm:gap-8 sm:px-10 sm:py-10 lg:grid-cols-2 lg:grid-rows-none lg:items-center lg:gap-16 lg:py-12 3xl:py-20"
         style={{ opacity: visible ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-out` }}
       >
         <Link
           href={`/p/${product.slug}`}
-          className="group relative block aspect-[16/11] w-full overflow-hidden border border-border-on-brown sm:aspect-[4/3] lg:order-2 lg:aspect-square"
+          className="group relative block w-full overflow-hidden border border-border-on-brown lg:order-2 lg:aspect-square lg:max-h-[calc(100dvh-3.5rem-6rem)] 3xl:max-h-none"
         >
           <Image
             src={product.images[0]}

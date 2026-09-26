@@ -153,6 +153,10 @@
   --color-warning-subtle: var(--status-warning-subtle);
   --color-info-subtle: var(--status-info-subtle);
 
+  /* 3xl: past the widest laptops (16" MacBook is 1728 CSS px) — where
+     "big desktop monitor" layouts start. */
+  --breakpoint-3xl: 112.5rem;
+
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
