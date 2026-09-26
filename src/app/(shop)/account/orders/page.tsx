@@ -13,6 +13,9 @@ import { SorryMug } from "@/components/ui/sorry-mug";
 
 export const metadata: Metadata = { title: "Your Orders" };
 
+// Thumbnails shown per order before the rest collapse into a "+N" tile.
+const THUMBS = 4;
+
 export default async function OrdersPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login?callbackUrl=/account/orders");
@@ -89,36 +92,57 @@ export default async function OrdersPage() {
                     </div>
                   )}
 
-                  <ul className="mt-4 flex flex-wrap gap-4">
-                    {order.items.map((it) => (
-                      <li key={it.id}>
-                        <Link href={`/p/${it.product.slug}`} className="group flex items-center gap-3">
-                          <span className="relative h-16 w-16 shrink-0 border border-border-default bg-subtle">
+                  {/* Fixed-size strip however many coffees are in the order: a few
+                      thumbnails, a "+N" tile for the rest, and the names as one
+                      clamped line. Full item list is on the order page. */}
+                  <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                    <ul className="flex shrink-0 gap-2">
+                      {order.items.slice(0, THUMBS).map((it) => (
+                        <li key={it.id}>
+                          <Link
+                            href={`/p/${it.product.slug}`}
+                            title={it.titleSnapshot}
+                            className="relative block h-14 w-14 border border-border-default bg-subtle"
+                          >
                             {it.imageSnapshot && (
                               <Image
                                 src={it.imageSnapshot}
                                 alt={it.titleSnapshot}
                                 fill
-                                sizes="64px"
+                                sizes="56px"
                                 className="object-cover"
                               />
                             )}
                             {it.quantity > 1 && (
-                              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center bg-text-accent px-1 text-[10px] font-bold text-text-inverse">
+                              <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center bg-text-accent px-1 text-[10px] font-bold text-text-inverse">
                                 ×{it.quantity}
                               </span>
                             )}
-                          </span>
-                          <span className="max-w-[180px] text-sm group-hover:text-text-accent">
-                            <span className="line-clamp-2">{it.titleSnapshot}</span>
-                            <span className="text-xs text-text-secondary">
-                              {formatPrice(it.priceCentsSnapshot)} / bag
-                            </span>
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                          </Link>
+                        </li>
+                      ))}
+                      {order.items.length > THUMBS && (
+                        <li>
+                          <Link
+                            href={`/orders/${order.id}`}
+                            className="flex h-14 w-14 items-center justify-center border border-border-default bg-subtle text-sm font-semibold text-text-secondary hover:text-text-accent"
+                            aria-label={`${order.items.length - THUMBS} more items`}
+                          >
+                            +{order.items.length - THUMBS}
+                          </Link>
+                        </li>
+                      )}
+                    </ul>
+                    <p className="line-clamp-2 min-w-0 text-sm text-text-secondary">
+                      {order.items.map((it, i) => (
+                        <span key={it.id}>
+                          {i > 0 && ", "}
+                          <span className="text-text-primary">{it.titleSnapshot}</span>
+                          {it.quantity > 1 && ` ×${it.quantity}`}
+                        </span>
+                      ))}
+                    </p>
+                  </div>
 
                   <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border-default pt-4">
                     <Link
