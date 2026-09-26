@@ -20,18 +20,24 @@ const SHOP_LINKS = [
   { label: "Our Story", href: "/info/about" },
 ];
 
+const MOBILE_QUERY = "(max-width: 639px)";
+
 type View = "menu" | "search";
 
 /**
- * Left-side hamburger — opens a menu list first (Search is just the top
- * item, not an input shoved in your face immediately); tapping it drills
- * into a second full-screen view with the actual search input +
- * autocomplete. Two steps, not one panel doing both jobs at once.
+ * Left-side hamburger. On phones: full-screen (no room for a contained
+ * dropdown, and nothing else to see behind it anyway). On wider screens:
+ * a compact panel anchored under the icon instead of taking over the
+ * whole viewport for a 6-item list. Both use the same brown/grain block
+ * as the header — a plain white panel read as a generic modal that had
+ * nothing to do with the rest of the site.
  */
 export function BrowseMenu() {
   const router = useRouter();
   const listId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
+  const [entered, setEntered] = useState(false);
   const [view, setView] = useState<View>("menu");
   const [q, setQ] = useState("");
   const [results, setResults] = useState<Suggestion[]>([]);
@@ -41,6 +47,7 @@ export function BrowseMenu() {
 
   const close = () => {
     setOpen(false);
+    setEntered(false);
     setView("menu");
     setQ("");
   };
@@ -95,23 +102,60 @@ export function BrowseMenu() {
     return () => clearTimeout(t);
   }, [q]);
 
+  // Enter transition — mount first, then flip the visible class a frame
+  // later so the opacity/translate change actually animates instead of
+  // snapping straight to its end state.
   useEffect(() => {
     if (!open) return;
-    document.body.classList.add("scroll-locked");
+    const raf = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
+
+  // Scroll lock only matters for the full-screen mobile version — a
+  // compact desktop dropdown shouldn't freeze the whole page.
+  useEffect(() => {
+    if (!open) return;
+    const isMobile = window.matchMedia(MOBILE_QUERY).matches;
+    if (isMobile) document.body.classList.add("scroll-locked");
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.classList.remove("scroll-locked");
       window.removeEventListener("keydown", onKey);
     };
+     
+  }, [open]);
+
+  // Desktop only: click outside closes it. On mobile the panel is a
+  // full-screen takeover, so there's no "outside" to click.
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (window.matchMedia(MOBILE_QUERY).matches) return;
+      if (!rootRef.current?.contains(e.target as Node)) close();
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+     
   }, [open]);
 
   useEffect(() => {
     if (open && view === "search") requestAnimationFrame(() => inputRef.current?.focus());
   }, [open, view]);
 
+  const panelBase =
+    "grain flex flex-col bg-chrome-nav text-text-on-brown transition-all duration-200 ease-out " +
+    "fixed inset-0 h-dvh w-full " +
+    "sm:absolute sm:inset-auto sm:left-0 sm:top-full sm:mt-2 sm:h-auto sm:max-h-[70vh] sm:w-80 " +
+    "sm:overflow-hidden sm:border sm:border-border-on-brown sm:shadow-lg " +
+    (entered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1");
+
   return (
-    <>
+    <div
+      ref={rootRef}
+      className="relative"
+      style={{ ["--icon-hover-bg" as string]: "rgba(243, 234, 217, 0.14)" }}
+    >
       <button
         type="button"
         aria-label="Menu"
@@ -122,37 +166,37 @@ export function BrowseMenu() {
       </button>
 
       {open && view === "menu" && (
-        <div className="fixed inset-0 z-[70] flex flex-col bg-surface">
-          <div className="flex shrink-0 items-center justify-between border-b border-border-default px-4 py-3">
-            <span className="font-serif text-lg font-medium text-text-primary">Menu</span>
+        <div className={`${panelBase} z-[70]`}>
+          <div className="flex shrink-0 items-center justify-between border-b border-border-on-brown px-4 py-3">
+            <span className="font-serif text-lg font-medium">Menu</span>
             <button
               type="button"
               aria-label="Close"
               onClick={close}
-              className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-subtle"
+              className="icon-hover flex h-9 w-9 items-center justify-center rounded-full"
             >
               <CloseIcon className="h-4 w-4" />
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-4 py-4">
+          <nav className="flex-1 overflow-y-auto px-4 py-2 sm:flex-none">
             <ul className="flex flex-col">
               <li>
                 <button
                   type="button"
                   onClick={openSearch}
-                  className="flex w-full items-center gap-3 border-b border-border-default py-3 text-left font-serif text-xl text-text-primary hover:text-text-accent"
+                  className="flex w-full items-center gap-3 border-b border-border-on-brown py-3 text-left font-serif text-lg hover:text-accent-primary sm:text-base"
                 >
-                  <SearchIcon className="h-5 w-5 shrink-0 text-text-muted" />
+                  <SearchIcon className="h-4 w-4 shrink-0 text-text-on-brown-muted" />
                   Search
                 </button>
               </li>
               {SHOP_LINKS.map((l) => (
-                <li key={l.href} className="border-b border-border-default last:border-0">
+                <li key={l.href} className="border-b border-border-on-brown last:border-0">
                   <Link
                     href={l.href}
                     onClick={close}
-                    className="block py-3 font-serif text-xl text-text-primary hover:text-text-accent"
+                    className="block py-3 font-serif text-lg hover:text-accent-primary sm:text-base"
                   >
                     {l.label}
                   </Link>
@@ -164,16 +208,16 @@ export function BrowseMenu() {
       )}
 
       {open && view === "search" && (
-        <div className="fixed inset-0 z-[70] flex flex-col bg-surface">
+        <div className={`${panelBase} z-[70]`}>
           <form
             onSubmit={submit}
-            className="flex shrink-0 items-center gap-2 border-b border-border-default px-4 py-3"
+            className="flex shrink-0 items-center gap-2 border-b border-border-on-brown px-4 py-3"
           >
             <button
               type="button"
               aria-label="Back"
               onClick={backToMenu}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full hover:bg-subtle"
+              className="icon-hover flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
             >
               <ArrowLeftIcon className="h-4 w-4" />
             </button>
@@ -191,21 +235,21 @@ export function BrowseMenu() {
                 aria-controls={listId}
                 aria-autocomplete="list"
                 placeholder="Search coffee"
-                className="min-w-0 flex-1 border-none bg-transparent py-2.5 text-base text-text-primary outline-none"
+                className="min-w-0 flex-1 border-none bg-transparent py-2 text-sm text-text-primary outline-none"
               />
             </div>
             <button
               type="button"
               aria-label="Close"
               onClick={close}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full hover:bg-subtle"
+              className="icon-hover flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
             >
               <CloseIcon className="h-4 w-4" />
             </button>
           </form>
 
           {items.length > 0 ? (
-            <ul id={listId} role="listbox" className="flex-1 overflow-y-auto">
+            <ul id={listId} role="listbox" className="flex-1 overflow-y-auto sm:max-h-[50vh]">
               {items.map((s, i) => (
                 <li
                   key={i}
@@ -215,7 +259,7 @@ export function BrowseMenu() {
                     e.preventDefault();
                     go(s);
                   }}
-                  className="flex cursor-pointer items-center gap-3 px-4 py-3 text-sm hover:bg-subtle"
+                  className="flex cursor-pointer items-center gap-3 px-4 py-3 text-sm hover:bg-white/10"
                 >
                   {s.kind === "product" ? (
                     <>
@@ -228,14 +272,14 @@ export function BrowseMenu() {
                     </>
                   ) : (
                     <>
-                      <SearchIcon className="h-4 w-4 shrink-0 text-text-muted" />
+                      <SearchIcon className="h-4 w-4 shrink-0 text-text-on-brown-muted" />
                       <span>
                         {s.text}
                         {s.kind === "origin" && (
-                          <span className="ml-1 text-xs text-text-secondary">· origin</span>
+                          <span className="ml-1 text-xs text-text-on-brown-muted">· origin</span>
                         )}
                         {s.kind === "roast" && (
-                          <span className="ml-1 text-xs text-text-secondary">· roast</span>
+                          <span className="ml-1 text-xs text-text-on-brown-muted">· roast</span>
                         )}
                       </span>
                     </>
@@ -244,12 +288,12 @@ export function BrowseMenu() {
               ))}
             </ul>
           ) : (
-            <p className="flex-1 px-4 py-6 text-center text-sm text-text-secondary">
+            <p className="flex-1 px-4 py-6 text-center text-sm text-text-on-brown-muted sm:flex-none">
               {q.trim().length >= 2 ? "No matches yet." : "Search by coffee, origin, or roast level."}
             </p>
           )}
         </div>
       )}
-    </>
+    </div>
   );
 }
