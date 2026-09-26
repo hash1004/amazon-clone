@@ -23,7 +23,7 @@ export default async function AccountPage() {
 
   return (
     <div className="mx-auto max-w-[900px] px-4 py-6">
-      <h1 className="mb-1 font-serif text-2xl italic font-medium text-text-primary">
+      <h1 className="mb-1 font-serif text-2xl font-medium text-text-primary">
         Your account
       </h1>
       <p className="mb-5 text-sm text-text-secondary">

@@ -6,7 +6,6 @@ import { useWishlist } from "@/lib/wishlist-store";
 import { useCart } from "@/lib/cart-store";
 import { useToast } from "@/lib/toast";
 import { formatPrice, discountPct } from "@/lib/format";
-import { RatingStars } from "@/components/rating-stars";
 
 export function WishlistClient() {
   const { items, ready, remove } = useWishlist();
@@ -15,38 +14,40 @@ export function WishlistClient() {
 
   if (ready && items.length === 0) {
     return (
-      <div className="mx-auto max-w-[800px] px-4 py-10 text-center">
-        <h1 className="text-2xl font-bold">Your List is empty</h1>
+      <div className="mx-auto max-w-[600px] px-4 py-16 text-center">
+        <h1 className="font-serif text-2xl font-medium text-text-primary">
+          Your list is empty
+        </h1>
         <p className="mt-2 text-sm text-text-secondary">
           Tap “Add to List” on any product to save it here for later.
         </p>
         <Link
           href="/s"
-          className="mt-4 inline-block rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          className="mt-5 inline-block rounded-pill bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
         >
-          Browse products
+          Browse coffee
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-[1000px] px-4 py-6">
-      <h1 className="mb-4 border-b border-border-default pb-3 text-2xl font-bold">
-        Your List{" "}
-        <span className="text-sm font-normal text-text-secondary">
+    <div className="mx-auto max-w-[1000px] px-4 py-8">
+      <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">
+        Your list{" "}
+        <span className="font-sans text-sm text-text-secondary">
           ({items.length} {items.length === 1 ? "item" : "items"})
         </span>
       </h1>
 
-      <ul className="divide-y divide-border-default">
+      <ul className="divide-y divide-border-default rounded-lg border border-border-default bg-surface">
         {items.map((it) => {
           const pct = discountPct(it.priceCents, it.listPriceCents);
           return (
-            <li key={it.productId} className="flex gap-4 py-4">
+            <li key={it.productId} className="flex gap-4 p-4">
               <Link
                 href={`/p/${it.slug}`}
-                className="relative h-28 w-28 shrink-0 bg-white"
+                className="relative h-28 w-28 shrink-0 overflow-hidden border border-border-default bg-subtle"
               >
                 {it.image && (
                   <Image
@@ -54,7 +55,7 @@ export function WishlistClient() {
                     alt={it.title}
                     fill
                     sizes="112px"
-                    className="object-contain p-1"
+                    className="object-cover"
                   />
                 )}
               </Link>
@@ -66,10 +67,7 @@ export function WishlistClient() {
                 >
                   {it.title}
                 </Link>
-                <div className="mt-1">
-                  <RatingStars rating={it.rating} count={it.ratingCount} />
-                </div>
-                <p className="mt-1 flex items-baseline gap-2">
+                <p className="mt-1.5 flex items-baseline gap-2">
                   {pct > 0 && (
                     <span className="text-sm font-bold text-text-deal">
                       -{pct}%

@@ -131,7 +131,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
 
   return (
     <div className="mx-auto max-w-[1100px] px-4 py-6">
-      <h1 className="mb-5 font-serif text-2xl italic font-medium text-text-primary">
+      <h1 className="mb-5 font-serif text-2xl font-medium text-text-primary">
         Checkout{" "}
         <span className="font-sans text-sm not-italic text-text-secondary">
           ({lines.reduce((n, l) => n + l.quantity, 0)} items)

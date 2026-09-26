@@ -1,24 +1,29 @@
 import type { Metadata } from "next";
-import { Work_Sans, Newsreader } from "next/font/google";
+import { Archivo, Fraunces } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart-store";
 import { WishlistProvider } from "@/lib/wishlist-store";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed";
 import { ToastProvider } from "@/lib/toast";
 
-const body = Work_Sans({
+// Sharper, more structural than the old Work Sans — squarer terminals,
+// pairs with the sharp-corner UI instead of fighting it.
+const body = Archivo({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
-// Display/serif — wordmark + Home's headline only.
-const display = Newsreader({
+// Display — wordmark + headlines. Upright, not italic: Fraunces' pointed,
+// high-contrast serif reads as confident/edged at weight, where the old
+// italic Newsreader read soft and literary — same "considered" register,
+// less "soft old-style curves."
+const display = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
+  weight: ["500", "600"],
+  style: ["normal"],
   display: "swap",
 });
 

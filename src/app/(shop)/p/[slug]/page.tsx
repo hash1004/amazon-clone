@@ -9,7 +9,6 @@ import { ProductGallery } from "@/components/product-gallery";
 import { AddToCart } from "@/components/add-to-cart";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductCard } from "@/components/product-card";
-import { RatingSummary } from "@/components/product/rating-summary";
 import { MobileBuyBar } from "@/components/product/mobile-buy-bar";
 import { Reveal } from "@/components/ui/reveal";
 import { RecordView } from "@/lib/recently-viewed";
@@ -83,7 +82,7 @@ export default async function ProductPage({
   };
 
   return (
-    <div className="w-full bg-canvas px-4 py-6 sm:px-8 lg:px-12">
+    <div className="mx-auto max-w-[1400px] bg-canvas px-4 py-6 sm:px-8 lg:px-12">
       <RecordView entry={cartLine} />
 
       <nav className="mb-4 text-xs text-text-secondary">
@@ -194,7 +193,9 @@ export default async function ProductPage({
             </ul>
           )}
 
-          <RatingSummary rating={product.rating} ratingCount={product.ratingCount} />
+          <p className="mt-6 text-xs text-text-muted">
+            {product.rating.toFixed(1)} · {product.ratingCount.toLocaleString()} reviews
+          </p>
         </div>
       </div>
 

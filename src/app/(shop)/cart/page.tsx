@@ -14,7 +14,7 @@ export default function CartPage() {
   if (ready && lines.length === 0) {
     return (
       <div className="mx-auto max-w-[600px] px-4 py-16 text-center">
-        <h1 className="font-serif text-2xl italic font-medium text-text-primary">
+        <h1 className="font-serif text-2xl font-medium text-text-primary">
           Your cart is empty
         </h1>
         <p className="mt-2 text-sm text-text-secondary">
@@ -33,7 +33,7 @@ export default function CartPage() {
   return (
     <Reveal className="mx-auto grid max-w-[1200px] gap-6 px-4 py-8 lg:grid-cols-[1fr_320px]">
       <div>
-        <h1 className="font-serif text-2xl italic font-medium text-text-primary">
+        <h1 className="font-serif text-2xl font-medium text-text-primary">
           Your cart
         </h1>
 

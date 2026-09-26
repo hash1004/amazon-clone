@@ -39,7 +39,7 @@ export function Spotlight({ product }: { product: SpotlightProduct }) {
 
         <div className="lg:order-1">
           <p className="text-sm text-text-on-brown-muted">This week&apos;s roast</p>
-          <h1 className="mt-2 font-serif text-[2.5rem] font-medium italic leading-[1.05] tracking-tight text-text-on-brown sm:text-[3.5rem]">
+          <h1 className="mt-2 font-serif text-[2.5rem] font-medium leading-[1.05] tracking-tight text-text-on-brown sm:text-[3.5rem]">
             {product.title}
           </h1>
           <p className="mt-3 text-sm text-text-on-brown-muted">

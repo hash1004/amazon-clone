@@ -51,7 +51,7 @@ export default async function Home() {
       )}
 
       <Reveal className="mx-auto max-w-[700px] px-6 py-14 text-center sm:py-20">
-        <p className="font-serif text-2xl italic leading-snug text-text-primary sm:text-3xl">
+        <p className="font-serif text-2xl leading-snug text-text-primary sm:text-3xl">
           One coffee, done well — small-batch roasted, and shipped within 48
           hours so it never sits on a shelf.
         </p>

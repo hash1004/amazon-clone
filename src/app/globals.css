@@ -78,12 +78,16 @@
   --status-danger-subtle: #ffe7e4;
   --status-info-subtle: #e3f1fb;
 
-  /* ── Radius — unchanged; the mockup's card/thumb radii already
-         matched this scale ───────────────────────────────────────── */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  /* ── Radius — pointed everywhere except pills. Cards, panels, images,
+         inputs all go to 0; --radius-pill stays 9999px on purpose as the
+         one soft shape left, reserved for CTAs and filter chips so
+         "clickable" keeps a distinct signature. rounded-full (circular
+         icon buttons) is a separate Tailwind builtin, unaffected either
+         way. ──────────────────────────────────────────────────────── */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
   --radius-pill: 9999px;
 
   /* ── Shadow — quieter everywhere; Home's own new modules skip
@@ -160,8 +164,8 @@
   --shadow-md: var(--shadow-md);
   --shadow-lg: var(--shadow-lg);
 
-  --font-sans: var(--font-body), "Work Sans", Arial, Helvetica, sans-serif;
-  --font-serif: var(--font-display), Georgia, serif;
+  --font-sans: var(--font-body), Arial, Helvetica, sans-serif;
+  --font-serif: var(--font-display), "Times New Roman", serif;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -181,7 +185,7 @@ html {
 body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: var(--font-body), "Work Sans", Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;

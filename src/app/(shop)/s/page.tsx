@@ -161,7 +161,7 @@ export default async function SearchPage({
         <div className="relative">
           <SearchFilterPanel params={sp} origins={origins} />
           <div className="mb-2 border-b border-border-default pb-2">
-            <h1 className="font-serif text-2xl italic font-medium text-text-primary">
+            <h1 className="font-serif text-2xl font-medium text-text-primary">
               {sp.q ? `Results for "${sp.q}"` : heading}
             </h1>
             {chips.length > 0 && (

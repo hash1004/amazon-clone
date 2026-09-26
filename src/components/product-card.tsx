@@ -1,10 +1,7 @@
 import { SafeImage as Image } from "@/components/ui/safe-image";
 import Link from "next/link";
 import { discountPct, formatPrice } from "@/lib/format";
-import { RatingStars } from "@/components/rating-stars";
 import { PriceTag } from "@/components/ui/price-tag";
-import { HouseFavoriteBadge } from "@/components/ui/badge";
-import { boughtInPastMonth, deliveryEstimate } from "@/lib/product-display";
 import { QuickAdd } from "@/components/search/quick-add";
 import { WishlistButton } from "@/components/wishlist-button";
 
@@ -29,6 +26,13 @@ const ROAST_LABEL: Record<ProductCardData["roastLevel"], string> = {
   DARK: "Dark roast",
 };
 
+/**
+ * Deliberately spare: image, roast+origin, title, price, add-to-cart.
+ * No stars, no review count, no "bought in past month," no per-card
+ * delivery estimate, no badge — those are the Amazon-shaped signals that
+ * turn a card into a wall of text. One considered coffee doesn't need a
+ * sales pitch on every tile.
+ */
 export function ProductCard({
   product,
   withCart = false,
@@ -37,14 +41,13 @@ export function ProductCard({
   withCart?: boolean;
 }) {
   const pct = discountPct(product.priceCents, product.listPriceCents);
-  const bought = boughtInPastMonth(product.ratingCount);
   const inStock = product.stock === undefined ? true : product.stock > 0;
 
   return (
-    <div className="flex h-full flex-col rounded-lg bg-surface p-4">
+    <div className="flex h-full flex-col bg-surface p-4">
       <div className="group relative mb-3">
         <Link href={`/p/${product.slug}`} className="block">
-          <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border-default bg-subtle">
+          <div className="relative aspect-square w-full overflow-hidden border border-border-default bg-subtle">
             <Image
               src={product.images[0]}
               alt={product.title}
@@ -76,12 +79,6 @@ export function ProductCard({
         {ROAST_LABEL[product.roastLevel]} · {product.origin}
       </p>
 
-      {product.featured && (
-        <div className="mb-1">
-          <HouseFavoriteBadge />
-        </div>
-      )}
-
       <Link
         href={`/p/${product.slug}`}
         className="line-clamp-2 min-h-[2.5rem] text-sm text-text-primary hover:text-text-accent-hover"
@@ -89,24 +86,14 @@ export function ProductCard({
         {product.title}
       </Link>
 
-      <div className="mt-1 min-h-[1rem]">
-        <RatingStars rating={product.rating} count={product.ratingCount} />
-      </div>
-
-      {withCart && (
-        <p className="mt-0.5 min-h-[1rem] text-xs text-text-secondary">
-          {bought ?? ""}
-        </p>
-      )}
-
-      <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
+      <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
         <PriceTag cents={product.priceCents} size="md" />
         {pct > 0 && (
           <>
             <span className="text-xs text-text-secondary line-through">
               {formatPrice(product.listPriceCents!)}
             </span>
-            <span className="rounded-full bg-accent-subtle px-1.5 py-0.5 text-[0.7rem] font-bold text-text-accent">
+            <span className="bg-accent-subtle px-1.5 py-0.5 text-[0.7rem] font-bold text-text-accent">
               {pct}% off
             </span>
           </>
@@ -114,10 +101,7 @@ export function ProductCard({
       </div>
 
       {withCart && (
-        <div className="mt-auto pt-1.5">
-          <p className="flex min-h-[1.75rem] items-start gap-1 text-xs leading-tight text-text-secondary">
-            <span>{deliveryEstimate()}</span>
-          </p>
+        <div className="mt-auto pt-2">
           <p className="min-h-[1rem] text-xs font-medium text-text-deal">
             {!inStock ? "Currently unavailable" : ""}
           </p>

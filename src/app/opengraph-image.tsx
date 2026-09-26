@@ -19,10 +19,9 @@ export default function OpengraphImage() {
           background: "#f8f5ef",
           color: "#221a12",
           fontFamily: "serif",
-          fontStyle: "italic",
         }}
       >
-        <div style={{ display: "flex", fontSize: 100, fontWeight: 500 }}>
+        <div style={{ display: "flex", fontSize: 100, fontWeight: 600 }}>
           <span>still</span>
         </div>
         <div

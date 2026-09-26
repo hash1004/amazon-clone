@@ -1,6 +1,6 @@
 /**
- * Wordmark — "Still", italic serif (Newsreader), lowercase, one accent.
- * `tone` picks the shade for the background it sits on: "dark" (default —
+ * Wordmark — "Still", upright Fraunces, lowercase, one accent. `tone`
+ * picks the shade for the background it sits on: "dark" (default —
  * header, auth, light backgrounds) gets the darker espresso-rust shade;
  * "light" (footer, dark backgrounds) gets the brighter caramel accent,
  * which needs the extra brightness to read against near-black.
@@ -25,9 +25,8 @@ export function BrandLogo({
         x="1"
         y="22"
         style={{
-          fontFamily: "var(--font-display), Georgia, serif",
-          fontStyle: "italic",
-          fontWeight: 500,
+          fontFamily: "var(--font-display), serif",
+          fontWeight: 600,
         }}
         fontSize="24"
         letterSpacing="-0.5"

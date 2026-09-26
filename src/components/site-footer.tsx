@@ -27,7 +27,7 @@ export function SiteFooter() {
   return (
     <footer className="grain bg-brown-gradient mt-10 text-text-on-brown">
       <Reveal className="px-6 pb-14 pt-16 sm:px-10 sm:pt-20">
-        <p className="max-w-[18ch] font-serif text-3xl italic leading-[1.15] tracking-tight sm:max-w-[22ch] sm:text-4xl">
+        <p className="max-w-[18ch] font-serif text-3xl leading-[1.15] tracking-tight sm:max-w-[22ch] sm:text-4xl">
           Coffee, slowly considered.
         </p>
 
