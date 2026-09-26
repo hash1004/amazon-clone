@@ -150,7 +150,7 @@ export default async function SearchPage({
                 <Link
                   key={c.label}
                   href={c.href}
-                  className="inline-flex items-center gap-1 rounded-full border border-border-strong bg-subtle px-2.5 py-1 text-xs hover:bg-elevated"
+                  className="inline-flex items-center gap-1 border border-border-strong bg-subtle px-2.5 py-1 text-xs hover:bg-elevated"
                 >
                   {c.label}
                   <span aria-hidden className="text-text-secondary">

@@ -177,7 +177,7 @@ export function BrowseMenu() {
         type="button"
         aria-label="Menu"
         onClick={toggleMenu}
-        className="icon-hover flex h-9 w-9 items-center justify-center rounded-full"
+        className="icon-hover flex h-9 w-9 items-center justify-center"
       >
         <CategoriesIcon className="h-5 w-5" />
       </button>
@@ -192,7 +192,7 @@ export function BrowseMenu() {
                 type="button"
                 aria-label="Close"
                 onClick={close}
-                className="icon-hover flex h-9 w-9 items-center justify-center rounded-full"
+                className="icon-hover flex h-9 w-9 items-center justify-center"
               >
                 <CloseIcon className="h-4 w-4" />
               </button>
@@ -239,7 +239,7 @@ export function BrowseMenu() {
                 type="button"
                 aria-label="Back"
                 onClick={backToMenu}
-                className="icon-hover flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                className="icon-hover flex h-9 w-9 shrink-0 items-center justify-center"
               >
                 <ArrowLeftIcon className="h-4 w-4" />
               </button>
@@ -264,7 +264,7 @@ export function BrowseMenu() {
                 type="button"
                 aria-label="Close"
                 onClick={close}
-                className="icon-hover flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                className="icon-hover flex h-9 w-9 shrink-0 items-center justify-center"
               >
                 <CloseIcon className="h-4 w-4" />
               </button>

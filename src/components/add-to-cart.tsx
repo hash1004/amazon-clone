@@ -32,7 +32,7 @@ export function AddToCart({
           type="button"
           aria-label="Decrease quantity"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition hover:bg-subtle active:scale-95"
+          className="flex h-8 w-8 items-center justify-center text-lg leading-none transition hover:bg-subtle active:scale-95"
         >
           −
         </button>
@@ -43,7 +43,7 @@ export function AddToCart({
           type="button"
           aria-label="Increase quantity"
           onClick={() => setQty((q) => Math.min(10, q + 1))}
-          className="flex h-8 w-8 items-center justify-center rounded-full text-lg leading-none transition hover:bg-subtle active:scale-95"
+          className="flex h-8 w-8 items-center justify-center text-lg leading-none transition hover:bg-subtle active:scale-95"
         >
           +
         </button>

@@ -86,7 +86,7 @@ export function ProductGallery({
               type="button"
               aria-label="Previous image"
               onClick={() => go(-1)}
-              className="absolute left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-surface/90 p-2 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 hover:bg-surface sm:flex"
+              className="absolute left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center border border-border-default bg-surface/90 p-2 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 hover:bg-surface sm:flex"
             >
               <ArrowLeftIcon className="h-4 w-4" />
             </button>
@@ -94,7 +94,7 @@ export function ProductGallery({
               type="button"
               aria-label="Next image"
               onClick={() => go(1)}
-              className="absolute right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-border-default bg-surface/90 p-2 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 hover:bg-surface sm:flex"
+              className="absolute right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center border border-border-default bg-surface/90 p-2 opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 hover:bg-surface sm:flex"
             >
               <ArrowRightIcon className="h-4 w-4" />
             </button>

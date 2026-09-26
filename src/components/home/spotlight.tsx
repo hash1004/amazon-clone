@@ -140,7 +140,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
                 type="button"
                 aria-label="Previous"
                 onClick={() => go(-1)}
-                className="icon-hover flex h-8 w-8 items-center justify-center rounded-full border border-border-on-brown"
+                className="icon-hover flex h-8 w-8 items-center justify-center border border-border-on-brown"
               >
                 <ArrowLeftIcon className="h-3.5 w-3.5" />
               </button>
@@ -148,7 +148,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
                 type="button"
                 aria-label="Next"
                 onClick={() => go(1)}
-                className="icon-hover flex h-8 w-8 items-center justify-center rounded-full border border-border-on-brown"
+                className="icon-hover flex h-8 w-8 items-center justify-center border border-border-on-brown"
               >
                 <ArrowRightIcon className="h-3.5 w-3.5" />
               </button>

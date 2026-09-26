@@ -42,7 +42,7 @@ export function WishlistButton({
           e.preventDefault();
           onToggle();
         }}
-        className="cursor-pointer rounded-full border border-border-default bg-surface/90 p-1.5 shadow-sm hover:bg-subtle"
+        className="cursor-pointer border border-border-default bg-surface/90 p-1.5 shadow-sm hover:bg-subtle"
       >
         <HeartIcon className={`h-4 w-4 ${saved ? "text-accent" : ""}`} filled={saved} />
       </button>

@@ -63,7 +63,7 @@ export function ShopMenu({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label={`Cart, wishlist and account${hasCartItems ? `, ${cartCount} items in cart` : ""}`}
-        className="icon-hover relative flex h-9 w-9 items-center justify-center rounded-full"
+        className="icon-hover relative flex h-9 w-9 items-center justify-center"
       >
         <CartIcon className="h-5 w-5" />
         {(hasCartItems || hasWishItems) && <PulseDot />}

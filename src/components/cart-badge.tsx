@@ -12,7 +12,7 @@ export function CartBadge() {
     <Link
       href="/cart"
       aria-label={nonEmpty ? `Cart, ${count} items` : "Cart"}
-      className="icon-hover relative flex h-9 w-9 items-center justify-center rounded-full"
+      className="icon-hover relative flex h-9 w-9 items-center justify-center"
     >
       <CartIcon className="h-5 w-5" />
       {nonEmpty && <PulseDot />}

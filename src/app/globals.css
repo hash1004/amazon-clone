@@ -78,17 +78,16 @@
   --status-danger-subtle: #ffe7e4;
   --status-info-subtle: #e3f1fb;
 
-  /* ── Radius — pointed everywhere except pills. Cards, panels, images,
-         inputs all go to 0; --radius-pill stays 9999px on purpose as the
-         one soft shape left, reserved for CTAs and filter chips so
-         "clickable" keeps a distinct signature. rounded-full (circular
-         icon buttons) is a separate Tailwind builtin, unaffected either
-         way. ──────────────────────────────────────────────────────── */
+  /* ── Radius — pointed everywhere, buttons included. --radius-pill is
+         0 too, so every rounded-pill CTA and chip renders square; the
+         name is kept only so existing classes don't all need renaming.
+         rounded-full is reserved for small non-interactive shapes
+         (status dots, count badges, step markers). ────────────────── */
   --radius-sm: 0px;
   --radius-md: 0px;
   --radius-lg: 0px;
   --radius-xl: 0px;
-  --radius-pill: 9999px;
+  --radius-pill: 0px;
 
   /* ── Shadow — quieter everywhere; Home's own new modules skip
          shadow entirely in favor of a 1px border (per mockup) ───── */

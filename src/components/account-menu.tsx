@@ -53,7 +53,7 @@ export function AccountMenu({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label={isAuthed ? `Account, ${firstName}` : "Account, sign in"}
-        className="icon-hover flex h-9 w-9 items-center justify-center rounded-full"
+        className="icon-hover flex h-9 w-9 items-center justify-center"
       >
         <PersonIcon className="h-5 w-5" />
       </button>

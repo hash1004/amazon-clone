@@ -12,7 +12,7 @@ export function WishlistBadge() {
     <Link
       href="/wishlist"
       aria-label={nonEmpty ? `Your List, ${count} items` : "Your List"}
-      className="icon-hover relative flex h-9 w-9 items-center justify-center rounded-full"
+      className="icon-hover relative flex h-9 w-9 items-center justify-center"
     >
       <HeartIcon className="h-5 w-5" />
       {nonEmpty && <PulseDot />}
