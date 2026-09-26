@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/ui/brand-logo";
 import { Reveal } from "@/components/ui/reveal";
 
@@ -24,6 +27,9 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
 ];
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  const onProductPage = pathname?.startsWith("/p/") ?? false;
+
   return (
     <footer className="grain bg-brown-gradient mt-10 text-text-on-brown">
       <Reveal className="mx-auto max-w-[1400px] px-6 pb-14 pt-16 sm:px-10 sm:pt-20">
@@ -73,12 +79,14 @@ export function SiteFooter() {
         <p className="mt-2">© 2026 Still Coffee and Co.</p>
       </div>
 
-      {/* Product pages pin a buy bar to the bottom of the screen on phones
-          (MobileBuyBar) — being `fixed`, it covers whatever's underneath
-          it regardless of how much content came before, so without this
-          the footer's last line ends up hidden behind it once you scroll
-          all the way down. Harmless empty space on pages without that bar. */}
-      <div className="h-20 lg:hidden" aria-hidden />
+      {/* Only product pages pin a buy bar to the bottom of the screen on
+          phones (MobileBuyBar) — being `fixed`, it covers whatever's
+          underneath it regardless of how much content came before, so
+          without this the footer's last line ends up hidden behind it
+          once you scroll all the way down. Scoped to /p/ specifically
+          (rather than always present) since every other page doesn't
+          have that bar and was carrying the same dead space for nothing. */}
+      {onProductPage && <div className="h-16 lg:hidden" aria-hidden />}
     </footer>
   );
 }
