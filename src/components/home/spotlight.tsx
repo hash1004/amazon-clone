@@ -74,12 +74,12 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
       onTouchEnd={onTouchEnd}
     >
       <div
-        className="mx-auto grid w-full max-w-[1400px] gap-8 px-6 py-14 sm:px-10 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16"
+        className="mx-auto grid w-full max-w-[1400px] gap-4 px-6 py-8 sm:gap-8 sm:px-10 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16"
         style={{ opacity: visible ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-out` }}
       >
         <Link
           href={`/p/${product.slug}`}
-          className="group relative block aspect-[4/3] w-full overflow-hidden border border-border-on-brown lg:order-2 lg:aspect-square"
+          className="group relative block aspect-[16/11] w-full overflow-hidden border border-border-on-brown sm:aspect-[4/3] lg:order-2 lg:aspect-square"
         >
           <Image
             src={product.images[0]}
@@ -92,19 +92,19 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
         </Link>
 
         <div className="lg:order-1">
-          <p className="text-sm text-text-on-brown-muted">This week&apos;s roast</p>
-          <h1 className="mt-2 font-serif text-[2.5rem] font-medium leading-[1.05] tracking-tight text-text-on-brown sm:text-[3.5rem]">
+          <p className="text-xs text-text-on-brown-muted sm:text-sm">This week&apos;s roast</p>
+          <h1 className="mt-1 font-serif text-[1.75rem] font-medium leading-[1.05] tracking-tight text-text-on-brown sm:mt-2 sm:text-[2.5rem] lg:text-[3.5rem]">
             {product.title}
           </h1>
-          <p className="mt-3 text-sm text-text-on-brown-muted">
+          <p className="mt-2 text-xs text-text-on-brown-muted sm:mt-3 sm:text-sm">
             {product.origin} · {product.process} process
           </p>
 
-          <ul className="mt-5 flex flex-wrap gap-2">
+          <ul className="mt-3 flex flex-wrap gap-1.5 sm:mt-5 sm:gap-2">
             {product.tastingNotes.map((note) => (
               <li
                 key={note}
-                className="rounded-pill border border-border-on-brown px-3 py-1 text-xs text-text-on-brown-muted"
+                className="rounded-pill border border-border-on-brown px-2.5 py-0.5 text-[0.7rem] text-text-on-brown-muted sm:px-3 sm:py-1 sm:text-xs"
               >
                 {note}
               </li>
@@ -113,13 +113,16 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
 
           <Link
             href={`/p/${product.slug}`}
-            className="mt-7 inline-flex items-center rounded-pill bg-accent px-7 py-3 text-sm font-medium text-accent-fg transition-all duration-200 ease-out hover:scale-[1.03] hover:bg-accent-hover active:scale-[0.98]"
+            className="mt-4 inline-flex items-center rounded-pill bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg transition-all duration-200 ease-out hover:scale-[1.03] hover:bg-accent-hover active:scale-[0.98] sm:mt-7 sm:px-7 sm:py-3"
           >
             Shop this roast
           </Link>
 
+          {/* Dots/arrows only from sm: up — phones swipe instead (see
+              onTouchStart/End above), and this row was the biggest single
+              contributor to the mobile layout overflowing one screen. */}
           {n > 1 && (
-            <div className="mt-8 flex items-center gap-4">
+            <div className="mt-8 hidden items-center gap-4 sm:flex">
               <div className="flex items-center gap-2">
                 {products.map((p, k) => (
                   <button

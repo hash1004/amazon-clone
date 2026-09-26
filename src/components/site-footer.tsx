@@ -72,6 +72,13 @@ export function SiteFooter() {
         </p>
         <p className="mt-2">© 2026 Still Coffee and Co.</p>
       </div>
+
+      {/* Product pages pin a buy bar to the bottom of the screen on phones
+          (MobileBuyBar) — being `fixed`, it covers whatever's underneath
+          it regardless of how much content came before, so without this
+          the footer's last line ends up hidden behind it once you scroll
+          all the way down. Harmless empty space on pages without that bar. */}
+      <div className="h-20 lg:hidden" aria-hidden />
     </footer>
   );
 }
