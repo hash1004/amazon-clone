@@ -41,10 +41,10 @@ export default function NotFound() {
             Back to Still Coffee and Co.
           </Link>
           <Link
-            href="/s?deals=1"
+            href="/s"
             className="rounded-pill border border-border-strong px-6 py-2 text-sm hover:bg-subtle"
           >
-            On Sale
+            Browse All Coffee
           </Link>
         </div>
       </div>

@@ -51,7 +51,7 @@ export function BrowseMenu() {
     setView("menu");
     setQ("");
   };
-  const openMenu = () => setOpen(true);
+  const toggleMenu = () => (open ? close() : setOpen(true));
   const openSearch = () => setView("search");
   const backToMenu = () => setView("menu");
 
@@ -143,10 +143,16 @@ export function BrowseMenu() {
     if (open && view === "search") requestAnimationFrame(() => inputRef.current?.focus());
   }, [open, view]);
 
+  // `fixed` with explicit viewport offsets on every breakpoint (not
+  // `absolute` anchored to the button's own narrow wrapper) — the button
+  // sits in a `grid-cols-[auto_...]` cell sized to its own 36px, and an
+  // absolutely-positioned dropdown off that box was landing in the wrong
+  // place. Fixed positioning sidesteps the containing-block question
+  // entirely: it's always relative to the viewport, full stop.
   const panelBase =
     "grain flex flex-col bg-chrome-nav text-text-on-brown transition-all duration-200 ease-out " +
     "fixed inset-0 h-dvh w-full " +
-    "sm:absolute sm:inset-auto sm:left-0 sm:top-full sm:mt-2 sm:h-auto sm:max-h-[70vh] sm:w-80 " +
+    "sm:inset-auto sm:left-6 sm:right-auto sm:bottom-auto sm:top-16 sm:h-auto sm:max-h-[70vh] sm:w-80 " +
     "sm:overflow-hidden sm:border sm:border-border-on-brown sm:shadow-lg " +
     (entered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1");
 
@@ -159,7 +165,7 @@ export function BrowseMenu() {
       <button
         type="button"
         aria-label="Menu"
-        onClick={openMenu}
+        onClick={toggleMenu}
         className="icon-hover flex h-9 w-9 items-center justify-center rounded-full"
       >
         <CategoriesIcon className="h-5 w-5" />

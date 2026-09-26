@@ -2,7 +2,6 @@ export type SearchParams = {
   q?: string;
   roast?: string;
   origin?: string;
-  deals?: string;
   rating?: string;
   min?: string;
   max?: string;
