@@ -7,6 +7,7 @@ import { SearchFilters } from "@/components/search/search-filters";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { SorryMug } from "@/components/ui/sorry-mug";
 import { Reveal } from "@/components/ui/reveal";
+import { searchProducts } from "@/lib/product-search";
 
 const PAGE_SIZE = 24;
 
@@ -36,14 +37,9 @@ export async function generateMetadata({
 }
 
 function buildWhere(sp: SearchParams): Prisma.ProductWhereInput {
+  // The text query (sp.q) isn't a DB filter — it's ranked in memory by
+  // searchProducts, see loadResults.
   const where: Prisma.ProductWhereInput = {};
-  if (sp.q) {
-    where.OR = [
-      { title: { contains: sp.q, mode: "insensitive" } },
-      { description: { contains: sp.q, mode: "insensitive" } },
-      { origin: { contains: sp.q, mode: "insensitive" } },
-    ];
-  }
   if (sp.roast && ROAST_LABEL[sp.roast]) where.roastLevel = sp.roast.toUpperCase() as never;
   if (sp.origin) where.origin = sp.origin;
   if (sp.rating) where.rating = { gte: Number(sp.rating) };
@@ -55,6 +51,71 @@ function buildWhere(sp: SearchParams): Prisma.ProductWhereInput {
   return where;
 }
 
+type Product = Awaited<ReturnType<typeof db.product.findMany>>[number];
+
+const COMPARE: Record<string, (a: Product, b: Product) => number> = {
+  "price-asc": (a, b) => a.priceCents - b.priceCents,
+  "price-desc": (a, b) => b.priceCents - a.priceCents,
+  rating: (a, b) => b.rating - a.rating,
+  newest: (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+};
+
+async function loadResults(sp: SearchParams, page: number, sortKey: string) {
+  // No text query: let the database filter, sort and paginate.
+  if (!sp.q) {
+    const where = buildWhere(sp);
+    // Origin facet ignores the current origin filter so you can switch origins.
+    const originWhere = buildWhere({ ...sp, origin: undefined });
+    const [products, total, originGroups] = await Promise.all([
+      db.product.findMany({
+        where,
+        orderBy: ORDER_BY[sortKey],
+        skip: (page - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+      }),
+      db.product.count({ where }),
+      db.product.groupBy({
+        by: ["origin"],
+        where: originWhere,
+        _count: { origin: true },
+        orderBy: { _count: { origin: "desc" } },
+        take: 10,
+      }),
+    ]);
+    return {
+      products,
+      total,
+      origins: originGroups.map((g) => ({ origin: g.origin, count: g._count.origin })),
+    };
+  }
+
+  // Text query: apply the non-text filters in the DB (minus origin, for the
+  // facet), then rank what's left by relevance in memory.
+  // Pre-sorted by the "featured" order so equal-relevance matches keep it.
+  const candidates = await db.product.findMany({
+    where: buildWhere({ ...sp, origin: undefined }),
+    orderBy: ORDER_BY.featured,
+  });
+  const matched = searchProducts(candidates, sp.q).map((h) => h.product);
+
+  const counts = new Map<string, number>();
+  for (const p of matched) counts.set(p.origin, (counts.get(p.origin) ?? 0) + 1);
+  const origins = [...counts]
+    .map(([origin, count]) => ({ origin, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 10);
+
+  const filtered = sp.origin ? matched.filter((p) => p.origin === sp.origin) : matched;
+  // "Featured" keeps relevance order; the other sorts reorder the matches.
+  const sorted = COMPARE[sortKey] ? [...filtered].sort(COMPARE[sortKey]) : filtered;
+
+  return {
+    products: sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    total: filtered.length,
+    origins,
+  };
+}
+
 export default async function SearchPage({
   searchParams,
 }: {
@@ -63,32 +124,7 @@ export default async function SearchPage({
   const sp = await searchParams;
   const page = Math.max(1, Number(sp.page) || 1);
   const sortKey = sp.sort && ORDER_BY[sp.sort] ? sp.sort : "featured";
-  const where = buildWhere(sp);
-
-  // Origin facet ignores the current origin filter so you can switch origins.
-  const originWhere = buildWhere({ ...sp, origin: undefined });
-
-  const [products, total, originGroups] = await Promise.all([
-    db.product.findMany({
-      where,
-      orderBy: ORDER_BY[sortKey],
-      skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
-    }),
-    db.product.count({ where }),
-    db.product.groupBy({
-      by: ["origin"],
-      where: originWhere,
-      _count: { origin: true },
-      orderBy: { _count: { origin: "desc" } },
-      take: 10,
-    }),
-  ]);
-
-  const origins = originGroups.map((g) => ({
-    origin: g.origin,
-    count: g._count.origin,
-  }));
+  const { products, total, origins } = await loadResults(sp, page, sortKey);
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(page * PAGE_SIZE, total);

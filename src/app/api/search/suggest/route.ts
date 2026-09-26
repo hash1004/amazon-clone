@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { searchProducts } from "@/lib/product-search";
 
 const ROAST_LEVELS = [
   { slug: "light", label: "Light Roasts" },
@@ -15,37 +16,37 @@ export async function GET(req: Request) {
     return NextResponse.json({ products: [], origins: [], roastLevels: [] });
   }
 
-  const where = {
-    OR: [
-      { title: { contains: q, mode: "insensitive" as const } },
-      { origin: { contains: q, mode: "insensitive" as const } },
-    ],
-  };
+  // Same relevance search as the results page, so a suggestion never
+  // promises something the results page then can't find.
+  const catalog = await db.product.findMany({
+    orderBy: { ratingCount: "desc" },
+    select: {
+      slug: true,
+      title: true,
+      images: true,
+      origin: true,
+      process: true,
+      roastLevel: true,
+      tastingNotes: true,
+      description: true,
+    },
+  });
+  const hits = searchProducts(catalog, q);
 
-  const [products, originRows] = await Promise.all([
-    db.product.findMany({
-      where,
-      orderBy: { ratingCount: "desc" },
-      take: 7,
-      select: { slug: true, title: true, images: true },
-    }),
-    db.product.groupBy({
-      by: ["origin"],
-      where: { origin: { contains: q, mode: "insensitive" as const } },
-      _count: { origin: true },
-      orderBy: { _count: { origin: "desc" } },
-      take: 3,
-    }),
-  ]);
-
-  const roastLevels = ROAST_LEVELS.filter((r) =>
-    r.label.toLowerCase().includes(q.toLowerCase()),
-  ).slice(0, 2);
+  // Suggest an origin / roast level only when the query actually hit that
+  // field, not just because a matching product happens to have one.
+  const origins = [
+    ...new Set(hits.filter((h) => h.fields.has("origin")).map((h) => h.product.origin)),
+  ].slice(0, 3);
+  const roastSlugs = new Set(
+    hits.filter((h) => h.fields.has("roast")).map((h) => h.product.roastLevel.toLowerCase()),
+  );
+  const roastLevels = ROAST_LEVELS.filter((r) => roastSlugs.has(r.slug)).slice(0, 2);
 
   return NextResponse.json({
     roastLevels,
-    origins: originRows.map((o) => o.origin),
-    products: products.map((p) => ({
+    origins,
+    products: hits.slice(0, 7).map(({ product: p }) => ({
       slug: p.slug,
       title: p.title,
       image: p.images[0] ?? "",
