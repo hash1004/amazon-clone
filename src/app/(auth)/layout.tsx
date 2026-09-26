@@ -15,7 +15,7 @@ export default function AuthLayout({
     <div className="flex min-h-full flex-col bg-surface">
       <div className="flex justify-start border-b border-border-default px-4 py-4 sm:justify-center sm:px-0">
         <Link href="/">
-          <BrandLogo className="h-9 w-auto" tone="dark" />
+          <BrandLogo className="h-7 w-auto" tone="dark" />
         </Link>
       </div>
 
@@ -35,7 +35,7 @@ export default function AuthLayout({
             Help
           </Link>
         </p>
-        <p className="mt-2">© 2026 Still Coffee Co.</p>
+        <p className="mt-2">© 2026 Still Coffee and Co.</p>
       </footer>
     </div>
   );

@@ -38,7 +38,7 @@ export default function NotFound() {
             href="/"
             className="rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
           >
-            Back to Still Coffee Co.
+            Back to Still Coffee and Co.
           </Link>
           <Link
             href="/s?deals=1"

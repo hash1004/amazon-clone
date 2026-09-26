@@ -40,7 +40,6 @@ export default async function Home() {
     process: p.process,
     tastingNotes: p.tastingNotes,
     images: p.images,
-    priceCents: p.priceCents,
   }));
 
   return (

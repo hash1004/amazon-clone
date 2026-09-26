@@ -448,7 +448,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
             {pending ? "Placing order…" : "Place your order"}
           </button>
           <p className="mt-2 text-xs text-text-secondary">
-            By placing your order, you agree to Still Coffee Co.&apos;s
+            By placing your order, you agree to Still Coffee and Co.&apos;s
             Conditions of Use and Privacy Notice.
           </p>
 

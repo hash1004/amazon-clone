@@ -67,7 +67,7 @@ export function SiteFooter() {
             Terms of Use
           </Link>
         </p>
-        <p className="mt-2">© 2026 Still Coffee Co.</p>
+        <p className="mt-2">© 2026 Still Coffee and Co.</p>
       </div>
     </footer>
   );

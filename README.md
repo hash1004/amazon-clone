@@ -1,6 +1,6 @@
 **Live:** https://amazon.svdistributor.com _(domain predates the rebrand below — see [Still open](#still-open))_
 
-# Still Coffee Co.
+# Still Coffee and Co.
 
 A single-category coffee shop: one small-batch roaster, a dozen coffees,
 built as a timed assignment — chrome, home, search, product, cart,
@@ -18,7 +18,7 @@ with its own name, palette, catalog, and layout, on the same real backend
 
 What actually changed:
 
-- **New brand.** "Still Coffee Co." — no more Amazon wordmark, Prime badge,
+- **New brand.** "Still Coffee and Co." — no more Amazon wordmark, Prime badge,
   "Amazon's Choice," or copyright line. One roast-toned caramel accent
   replaces Amazon's own button orange.
 - **New catalog.** ~194 dummyjson products across five departments →

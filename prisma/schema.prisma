@@ -1,4 +1,4 @@
-// Still Coffee Co. — data model.
+// Still Coffee and Co. — data model.
 // Single-category catalog (specialty coffee only): no department/brand facet,
 // just this roaster's own beans. Prices are integer cents. Order line items
 // snapshot product fields so order history survives later catalog edits.

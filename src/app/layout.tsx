@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://amazon.svdistributor.com",
   ),
   title: {
-    default: "Still Coffee Co. — One coffee, done well.",
-    template: "Still Coffee Co.: %s",
+    default: "Still Coffee and Co. — One coffee, done well.",
+    template: "Still Coffee and Co.: %s",
   },
   description:
     "Small-batch specialty coffee, roasted to order and shipped within 48 hours of roasting.",

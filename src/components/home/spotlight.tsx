@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SafeImage as Image } from "@/components/ui/safe-image";
-import { PriceTag } from "@/components/ui/price-tag";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
 
 export type SpotlightProduct = {
@@ -13,7 +12,6 @@ export type SpotlightProduct = {
   process: string;
   tastingNotes: string[];
   images: string[];
-  priceCents: number;
 };
 
 const INTERVAL_MS = 5000;
@@ -109,15 +107,12 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
             ))}
           </ul>
 
-          <div className="mt-7 flex items-center gap-4">
-            <PriceTag cents={product.priceCents} size="lg" className="!text-text-on-brown" />
-            <Link
-              href={`/p/${product.slug}`}
-              className="inline-flex items-center rounded-pill bg-accent px-7 py-3 text-sm font-medium text-accent-fg transition-all duration-200 ease-out hover:scale-[1.03] hover:bg-accent-hover active:scale-[0.98]"
-            >
-              Shop this roast
-            </Link>
-          </div>
+          <Link
+            href={`/p/${product.slug}`}
+            className="mt-7 inline-flex items-center rounded-pill bg-accent px-7 py-3 text-sm font-medium text-accent-fg transition-all duration-200 ease-out hover:scale-[1.03] hover:bg-accent-hover active:scale-[0.98]"
+          >
+            Shop this roast
+          </Link>
 
           {n > 1 && (
             <div className="mt-8 flex items-center gap-4">

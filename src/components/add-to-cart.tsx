@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useCart, type CartLine } from "@/lib/cart-store";
 import { useToast } from "@/lib/toast";
-import { BeanIcon, CheckIcon } from "@/components/ui/icons";
+import { formatPrice } from "@/lib/format";
 
 export function AddToCart({
   product,
@@ -51,17 +51,15 @@ export function AddToCart({
 
       <button
         type="button"
-        aria-label="Add to cart"
-        title="Add to cart"
         onClick={() => {
           add(product, qty);
           toast(`Added ${qty} to Cart`);
           setAdded(true);
           setTimeout(() => setAdded(false), 2000);
         }}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-chrome-nav text-text-on-brown transition-transform duration-200 hover:scale-105 active:scale-95"
+        className="flex-1 rounded-pill bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition-all duration-200 hover:scale-[1.02] hover:bg-accent-hover active:scale-[0.98]"
       >
-        {added ? <CheckIcon className="h-5 w-5" /> : <BeanIcon className="h-5 w-5" />}
+        {added ? "✓ Added to Cart" : `Add to Cart · ${formatPrice(product.priceCents * qty)}`}
       </button>
     </div>
   );
