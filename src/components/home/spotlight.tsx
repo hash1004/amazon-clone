@@ -92,7 +92,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
         </Link>
 
         <div className="lg:order-1">
-          <p className="text-xs text-text-on-brown-muted sm:text-sm">This week&apos;s roast</p>
+          <p className="text-xs text-text-on-brown-muted sm:text-sm">Featured roast</p>
           <h1 className="mt-1 font-serif text-[1.75rem] font-medium leading-[1.05] tracking-tight text-text-on-brown sm:mt-2 sm:text-[2.5rem] lg:text-[3.5rem]">
             {product.title}
           </h1>
@@ -104,7 +104,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
             {product.tastingNotes.map((note) => (
               <li
                 key={note}
-                className="rounded-pill border border-border-on-brown px-2.5 py-0.5 text-[0.7rem] text-text-on-brown-muted sm:px-3 sm:py-1 sm:text-xs"
+                className="cursor-default rounded-pill border border-border-on-brown px-2.5 py-0.5 text-[0.7rem] text-text-on-brown-muted transition-colors duration-150 ease-out hover:border-accent hover:bg-accent hover:text-accent-fg sm:px-3 sm:py-1 sm:text-xs"
               >
                 {note}
               </li>
