@@ -52,3 +52,8 @@ export const PAYMENT_LABEL: Record<string, string> = {
   upi: "UPI",
   cod: "Cash on Delivery",
 };
+
+/** Short, readable order number for display ("#K7Q2M9XA"); the full id stays in URLs. */
+export function orderNumber(id: string): string {
+  return "#" + id.slice(-8).toUpperCase();
+}

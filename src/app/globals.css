@@ -69,13 +69,15 @@
 
   /* ── Status (system-owned — kept genuinely distinct from the
          brand accent so real errors/warnings still read as such) ── */
-  --status-success: #165626;
+  /* success and danger are tuned into the brown/caramel family: "done" reads
+     as the brand's own brown, errors as a warm rust rather than a cold red. */
+  --status-success: #7a4419;
   --status-warning: #9a6500;
-  --status-danger: #a12f2f;
+  --status-danger: #9b3a1e;
   --status-info: #345a73;
-  --status-success-subtle: #e4f3e5;
+  --status-success-subtle: #f6e9d6;
   --status-warning-subtle: #fbecd9;
-  --status-danger-subtle: #ffe7e4;
+  --status-danger-subtle: #f8e4dc;
   --status-info-subtle: #e3f1fb;
 
   /* ── Radius — pointed everywhere, buttons included. --radius-pill is

@@ -84,7 +84,7 @@ export function WishlistClient() {
                 </p>
                 <p className="text-xs font-medium">
                   {it.inStock ? (
-                    <span className="text-success">In Stock</span>
+                    <span className="text-text-secondary">In stock</span>
                   ) : (
                     <span className="text-text-deal">Currently unavailable</span>
                   )}

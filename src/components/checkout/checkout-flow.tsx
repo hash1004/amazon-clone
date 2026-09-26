@@ -452,7 +452,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
             Conditions of Use and Privacy Notice.
           </p>
 
-          <h2 className="mt-4 border-t border-border-default pt-3 text-lg font-bold">
+          <h2 className="mt-4 border-t border-border-default pt-3 font-serif text-lg font-medium">
             Order Summary
           </h2>
           <dl className="mt-2 space-y-1 text-sm">
@@ -461,7 +461,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
               <Row
                 label="Discount"
                 value={`−${formatPrice(totals.discountCents)}`}
-                accent="text-success"
+                accent="text-text-accent"
               />
             )}
             <Row
@@ -534,7 +534,7 @@ function Section({
         <span
           className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
             done
-              ? "bg-success text-white"
+              ? "bg-text-accent text-text-inverse"
               : open
                 ? "bg-accent text-accent-fg"
                 : "bg-subtle text-text-secondary"

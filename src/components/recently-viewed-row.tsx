@@ -28,7 +28,7 @@ export function RecentlyViewedRow({
               href={`/p/${p.slug}`}
               className="group w-32 shrink-0"
             >
-              <div className="relative mb-1 aspect-square w-full bg-white">
+              <div className="relative mb-1 aspect-square w-full bg-subtle">
                 <Image
                   src={p.image}
                   alt={p.title}

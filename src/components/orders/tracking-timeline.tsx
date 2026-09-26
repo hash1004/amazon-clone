@@ -11,14 +11,12 @@ export function TrackingTimeline({
 }) {
   if (cancelled) {
     return (
-      <p className="rounded-md bg-danger-subtle p-3 text-sm font-medium text-danger">
-        This order was cancelled.
-      </p>
+      <p className="bg-danger-subtle p-3 text-sm font-medium text-danger">This order was cancelled.</p>
     );
   }
 
   return (
-    <ol className="relative ml-2">
+    <ol className="relative ml-1">
       {TRACKING_STAGES.map((s, i) => {
         const reached = i <= currentIndex;
         const isCurrent = i === currentIndex;
@@ -26,19 +24,17 @@ export function TrackingTimeline({
           <li key={s.key} className="flex gap-3 pb-5 last:pb-0">
             <div className="flex flex-col items-center">
               <span
-                className={`z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 text-[10px] ${
+                className={`z-10 flex h-5 w-5 items-center justify-center rounded-full border-2 text-[10px] font-bold ${
                   reached
-                    ? "border-success bg-success text-white"
+                    ? "border-accent bg-accent text-accent-fg"
                     : "border-border-strong bg-surface text-transparent"
-                }`}
+                } ${isCurrent ? "ring-4 ring-accent-subtle" : ""}`}
               >
                 ✓
               </span>
               {i < TRACKING_STAGES.length - 1 && (
                 <span
-                  className={`-mb-5 w-0.5 flex-1 ${
-                    i < currentIndex ? "bg-success" : "bg-border-default"
-                  }`}
+                  className={`-mb-5 w-0.5 flex-1 ${i < currentIndex ? "bg-accent" : "bg-border-default"}`}
                 />
               )}
             </div>
@@ -46,9 +42,9 @@ export function TrackingTimeline({
               <p
                 className={`text-sm ${
                   isCurrent
-                    ? "font-bold text-success"
+                    ? "font-semibold text-text-accent"
                     : reached
-                      ? "font-medium"
+                      ? "font-medium text-text-primary"
                       : "text-text-secondary"
                 }`}
               >

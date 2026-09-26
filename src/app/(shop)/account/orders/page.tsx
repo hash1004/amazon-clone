@@ -6,8 +6,10 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { formatDeliveryDate } from "@/lib/delivery";
-import { derivedStage, TRACKING_STAGES } from "@/lib/tracking";
+import { derivedStage, orderNumber, TRACKING_STAGES } from "@/lib/tracking";
 import { ReorderButton } from "@/components/orders/reorder-button";
+import { OrderProgress, OrderStatusBadge } from "@/components/orders/order-status";
+import { SorryMug } from "@/components/ui/sorry-mug";
 
 export const metadata: Metadata = { title: "Your Orders" };
 
@@ -22,92 +24,109 @@ export default async function OrdersPage() {
   });
 
   return (
-    <div className="mx-auto max-w-[1000px] px-4 py-6">
-      <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">Your Orders</h1>
+    <div className="mx-auto max-w-[1000px] px-4 py-8">
+      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+        <h1 className="font-serif text-2xl font-medium text-text-primary">Your Orders</h1>
+        {orders.length > 0 && (
+          <p className="text-sm text-text-secondary">
+            {orders.length} {orders.length === 1 ? "order" : "orders"}
+          </p>
+        )}
+      </div>
 
       {orders.length === 0 ? (
-        <div className="rounded-lg border border-border-default bg-surface p-8 text-center">
-          <p className="text-lg font-bold">You have no orders yet</p>
-          <Link
-            href="/s"
-            className="mt-3 inline-block rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
-          >
-            Start shopping
-          </Link>
+        <div className="flex flex-col items-center gap-6 border border-border-default bg-surface p-10 text-center sm:flex-row sm:text-left">
+          <SorryMug className="h-36 w-36 shrink-0" />
+          <div>
+            <p className="font-serif text-xl font-medium text-text-primary">No orders yet</p>
+            <p className="mt-1 text-sm text-text-secondary">
+              When you order a bag, you can follow it from roaster to doorstep here.
+            </p>
+            <Link
+              href="/s"
+              className="mt-4 inline-block bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+            >
+              Browse coffee
+            </Link>
+          </div>
         </div>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-5">
           {orders.map((order) => {
-            const { index } = derivedStage(
-              order.status,
-              order.createdAt,
-              order.estimatedDelivery,
-            );
+            const { index } = derivedStage(order.status, order.createdAt, order.estimatedDelivery);
             const cancelled = order.status === "CANCELLED";
-            const stageLabel = cancelled
-              ? "Cancelled"
-              : TRACKING_STAGES[index]?.label ?? "Processing";
+            const delivered = !cancelled && index >= TRACKING_STAGES.length - 1;
+            const bags = order.items.reduce((n, it) => n + it.quantity, 0);
+            const eta = order.estimatedDelivery ? formatDeliveryDate(order.estimatedDelivery) : null;
+
             return (
-              <li
-                key={order.id}
-                className="overflow-hidden rounded-lg border border-border-default bg-surface"
-              >
-                <div className="flex flex-wrap gap-x-10 gap-y-1 border-b border-border-default bg-subtle px-4 py-2 text-xs">
-                  <Col k="Order placed">
-                    {order.createdAt.toLocaleDateString("en-US", {
-                      dateStyle: "medium",
-                    })}
+              <li key={order.id} className="border border-border-default bg-surface">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-2 border-b border-border-default bg-subtle px-5 py-3 text-xs">
+                  <Col k="Order">{orderNumber(order.id)}</Col>
+                  <Col k="Placed">
+                    {order.createdAt.toLocaleDateString("en-US", { dateStyle: "medium" })}
                   </Col>
                   <Col k="Total">{formatPrice(order.totalCents)}</Col>
                   <Col k="Ship to">{order.shipName}</Col>
-                  <div className="ml-auto self-center">
-                    <Link href={`/orders/${order.id}`} className="link">
-                      View order details &amp; tracking
-                    </Link>
+                  <div className="ml-auto">
+                    <OrderStatusBadge index={index} cancelled={cancelled} />
                   </div>
                 </div>
 
-                <div className="p-4">
-                  <p
-                    className={`mb-2 text-sm font-bold ${
-                      cancelled ? "text-danger" : "text-success"
-                    }`}
-                  >
-                    {stageLabel}
-                    {!cancelled && index < 5 && order.estimatedDelivery && (
-                      <span className="font-normal text-text-secondary">
-                        {" "}
-                        · arriving {formatDeliveryDate(order.estimatedDelivery)}
-                      </span>
-                    )}
+                <div className="p-5">
+                  <p className="font-serif text-lg font-medium text-text-primary">
+                    {cancelled
+                      ? "This order was cancelled"
+                      : delivered
+                        ? "Delivered"
+                        : eta
+                          ? `Arriving ${eta}`
+                          : "On its way"}
                   </p>
+                  {!cancelled && (
+                    <div className="mt-2 max-w-md">
+                      <OrderProgress index={index} />
+                    </div>
+                  )}
 
-                  <div className="flex flex-wrap gap-4">
+                  <ul className="mt-4 flex flex-wrap gap-4">
                     {order.items.map((it) => (
-                      <Link
-                        key={it.id}
-                        href={`/p/${it.product.slug}`}
-                        className="flex items-center gap-2"
-                      >
-                        <div className="relative h-14 w-14 shrink-0 bg-white">
-                          {it.imageSnapshot && (
-                            <Image
-                              src={it.imageSnapshot}
-                              alt={it.titleSnapshot}
-                              fill
-                              sizes="56px"
-                              className="object-cover"
-                            />
-                          )}
-                        </div>
-                        <span className="max-w-[180px] truncate text-sm hover:text-text-accent">
-                          {it.titleSnapshot}
-                        </span>
-                      </Link>
+                      <li key={it.id}>
+                        <Link href={`/p/${it.product.slug}`} className="group flex items-center gap-3">
+                          <span className="relative h-16 w-16 shrink-0 border border-border-default bg-subtle">
+                            {it.imageSnapshot && (
+                              <Image
+                                src={it.imageSnapshot}
+                                alt={it.titleSnapshot}
+                                fill
+                                sizes="64px"
+                                className="object-cover"
+                              />
+                            )}
+                            {it.quantity > 1 && (
+                              <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center bg-text-accent px-1 text-[10px] font-bold text-text-inverse">
+                                ×{it.quantity}
+                              </span>
+                            )}
+                          </span>
+                          <span className="max-w-[180px] text-sm group-hover:text-text-accent">
+                            <span className="line-clamp-2">{it.titleSnapshot}</span>
+                            <span className="text-xs text-text-secondary">
+                              {formatPrice(it.priceCentsSnapshot)} / bag
+                            </span>
+                          </span>
+                        </Link>
+                      </li>
                     ))}
-                  </div>
+                  </ul>
 
-                  <div className="mt-3">
+                  <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border-default pt-4">
+                    <Link
+                      href={`/orders/${order.id}`}
+                      className="bg-accent px-4 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+                    >
+                      Track &amp; view details
+                    </Link>
                     <ReorderButton
                       items={order.items.map((it) => ({
                         productId: it.productId,
@@ -118,6 +137,9 @@ export default async function OrdersPage() {
                         quantity: it.quantity,
                       }))}
                     />
+                    <span className="ml-auto text-xs text-text-secondary">
+                      {bags} {bags === 1 ? "bag" : "bags"}
+                    </span>
                   </div>
                 </div>
               </li>
@@ -132,8 +154,8 @@ export default async function OrdersPage() {
 function Col({ k, children }: { k: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="uppercase text-text-secondary">{k}</p>
-      <p>{children}</p>
+      <p className="uppercase tracking-wide text-text-muted">{k}</p>
+      <p className="font-medium text-text-primary">{children}</p>
     </div>
   );
 }

@@ -161,7 +161,7 @@ export default async function ProductPage({
                 Only {product.stock} left in stock
               </span>
             ) : (
-              <span className="font-medium text-success">In stock</span>
+              <span className="font-medium text-text-primary">In stock</span>
             )}
             {inStock && (
               <span className="text-text-secondary">

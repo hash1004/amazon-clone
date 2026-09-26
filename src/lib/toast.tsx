@@ -40,7 +40,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           <div
             key={t.id}
             role="status"
-            className={`pointer-events-auto flex items-center gap-2 rounded-md px-4 py-2.5 text-sm text-white shadow-lg ${
+            className={`pointer-events-auto flex items-center gap-2 rounded-md px-4 py-2.5 text-sm text-text-inverse shadow-lg ${
               t.kind === "error" ? "bg-danger" : "bg-inverse"
             }`}
           >

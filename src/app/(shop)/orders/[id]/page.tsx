@@ -6,9 +6,10 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
 import { formatDeliveryDate } from "@/lib/delivery";
-import { derivedStage, PAYMENT_LABEL } from "@/lib/tracking";
+import { derivedStage, orderNumber, PAYMENT_LABEL } from "@/lib/tracking";
 import { TrackingTimeline } from "@/components/orders/tracking-timeline";
 import { ReorderButton } from "@/components/orders/reorder-button";
+import { OrderProgress, OrderStatusBadge } from "@/components/orders/order-status";
 
 export const metadata: Metadata = { title: "Order details" };
 
@@ -40,20 +41,21 @@ export default async function OrderPage({
   const cancelled = order.status === "CANCELLED";
 
   return (
-    <div className="mx-auto max-w-[1000px] px-4 py-6">
+    <div className="mx-auto max-w-[1000px] px-4 py-8">
       <nav className="mb-3 text-xs text-text-secondary">
         <Link href="/account/orders" className="link">
           Your Orders
         </Link>{" "}
-        › <span>Order details</span>
+        › <span>Order {orderNumber(order.id)}</span>
       </nav>
 
       {placed && (
-        <div className="mb-4 rounded-lg border border-success/40 bg-success-subtle p-4">
-          <h1 className="font-serif text-xl font-medium text-success">
+        <div className="mb-5 border border-border-default border-l-4 border-l-accent bg-accent-subtle p-5">
+          <h1 className="font-serif text-xl font-medium text-text-primary">
             Order placed, thank you!
           </h1>
-          <p className="text-sm text-text-secondary">
+          <p className="mt-1 text-sm text-text-secondary">
+            Order {orderNumber(order.id)}.{" "}
             Confirmation sent to {session.user.email}. Estimated delivery{" "}
             {order.estimatedDelivery
               ? formatDeliveryDate(order.estimatedDelivery)
@@ -66,9 +68,9 @@ export default async function OrderPage({
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           {/* Tracking */}
-          <section className="rounded-lg border border-border-default bg-surface p-4">
-            <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="text-lg font-bold">
+          <section className="border border-border-default bg-surface p-5">
+            <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-serif text-xl font-medium text-text-primary">
                 {cancelled
                   ? "Cancelled"
                   : delivered
@@ -78,11 +80,16 @@ export default async function OrderPage({
                         ? formatDeliveryDate(order.estimatedDelivery)
                         : "soon")}
               </h2>
-              <span className="text-sm text-text-secondary">
-                {order.deliverySpeed === "express" ? "Express" : "Standard"}{" "}
-                delivery
-              </span>
+              <OrderStatusBadge index={index} cancelled={cancelled} />
             </div>
+            <p className="mb-4 text-sm text-text-secondary">
+              {order.deliverySpeed === "express" ? "Express" : "Standard"} delivery
+            </p>
+            {!cancelled && (
+              <div className="mb-5">
+                <OrderProgress index={index} />
+              </div>
+            )}
             <TrackingTimeline
               currentIndex={index}
               createdAt={order.createdAt}
@@ -91,8 +98,8 @@ export default async function OrderPage({
           </section>
 
           {/* Items */}
-          <section className="rounded-lg border border-border-default bg-surface p-4">
-            <h2 className="mb-2 text-lg font-bold">
+          <section className="border border-border-default bg-surface p-5">
+            <h2 className="mb-2 font-serif text-lg font-medium text-text-primary">
               {order.items.length} item{order.items.length > 1 ? "s" : ""}
             </h2>
             <ul className="divide-y divide-border-default">
@@ -100,26 +107,31 @@ export default async function OrderPage({
                 <li key={it.id} className="flex gap-3 py-3">
                   <Link
                     href={`/p/${it.product.slug}`}
-                    className="relative h-16 w-16 shrink-0 bg-white"
+                    className="relative h-20 w-20 shrink-0 border border-border-default bg-subtle"
                   >
                     {it.imageSnapshot && (
                       <Image
                         src={it.imageSnapshot}
                         alt={it.titleSnapshot}
                         fill
-                        sizes="64px"
+                        sizes="80px"
                         className="object-cover"
                       />
                     )}
                   </Link>
                   <div className="min-w-0 flex-1">
-                    <p className="line-clamp-2 text-sm">{it.titleSnapshot}</p>
+                    <Link
+                      href={`/p/${it.product.slug}`}
+                      className="line-clamp-2 text-sm font-medium hover:text-text-accent"
+                    >
+                      {it.titleSnapshot}
+                    </Link>
                     <p className="text-xs text-text-secondary">
                       Qty {it.quantity} ·{" "}
                       {formatPrice(it.priceCentsSnapshot)} each
                     </p>
                   </div>
-                  <p className="text-sm font-bold">
+                  <p className="text-sm font-semibold">
                     {formatPrice(it.priceCentsSnapshot * it.quantity)}
                   </p>
                 </li>
@@ -142,10 +154,10 @@ export default async function OrderPage({
 
         {/* Meta sidebar */}
         <aside className="h-fit space-y-4">
-          <section className="rounded-lg border border-border-default bg-surface p-4 text-sm">
-            <h2 className="mb-2 font-bold">Order info</h2>
+          <section className="border border-border-default bg-surface p-5 text-sm">
+            <h2 className="mb-3 font-serif text-base font-medium text-text-primary">Order info</h2>
             <dl className="space-y-1">
-              <Meta k="Order #" v={order.id} mono />
+              <Meta k="Order" v={orderNumber(order.id)} />
               <Meta
                 k="Order date"
                 v={order.createdAt.toLocaleDateString("en-US", {
@@ -163,8 +175,8 @@ export default async function OrderPage({
             </dl>
           </section>
 
-          <section className="rounded-lg border border-border-default bg-surface p-4 text-sm">
-            <h2 className="mb-2 font-bold">Delivery address</h2>
+          <section className="border border-border-default bg-surface p-5 text-sm">
+            <h2 className="mb-3 font-serif text-base font-medium text-text-primary">Delivery address</h2>
             <address className="not-italic text-text-secondary">
               {order.shipName}
               <br />
@@ -186,8 +198,8 @@ export default async function OrderPage({
             </address>
           </section>
 
-          <section className="rounded-lg border border-border-default bg-surface p-4 text-sm">
-            <h2 className="mb-2 font-bold">Payment</h2>
+          <section className="border border-border-default bg-surface p-5 text-sm">
+            <h2 className="mb-3 font-serif text-base font-medium text-text-primary">Payment</h2>
             <p className="text-text-secondary">
               {PAYMENT_LABEL[order.paymentMethod] ?? order.paymentMethod}
               {order.paymentLast4 ? ` ending ${order.paymentLast4}` : ""}
@@ -209,7 +221,7 @@ export default async function OrderPage({
                 }
               />
               <Meta k="Tax" v={formatPrice(order.taxCents)} />
-              <div className="border-t border-border-default pt-1 font-bold">
+              <div className="mt-1 border-t border-border-default pt-2 font-semibold text-text-primary">
                 <Meta k="Grand total" v={formatPrice(order.totalCents)} />
               </div>
             </dl>
@@ -220,11 +232,11 @@ export default async function OrderPage({
   );
 }
 
-function Meta({ k, v, mono }: { k: string; v: string; mono?: boolean }) {
+function Meta({ k, v }: { k: string; v: string }) {
   return (
     <div className="flex justify-between gap-2">
       <dt className="text-text-secondary">{k}</dt>
-      <dd className={`text-right ${mono ? "font-mono text-xs" : ""}`}>{v}</dd>
+      <dd className="text-right">{v}</dd>
     </div>
   );
 }
