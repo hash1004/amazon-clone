@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { validateAddress } from "@/lib/field-rules";
 import { orderTotals } from "@/lib/pricing";
 import { estimateDelivery } from "@/lib/delivery";
 
@@ -81,11 +82,11 @@ export async function POST(req: Request) {
       state: g("state"),
       postal: g("postal"),
     };
-    if (!ship.name || !ship.line1 || !ship.city || !ship.state || !ship.postal) {
-      return NextResponse.json(
-        { error: "Complete the delivery address." },
-        { status: 400 },
-      );
+    const problem = Object.values(
+      validateAddress({ ...ship, fullName: ship.name }),
+    )[0];
+    if (problem) {
+      return NextResponse.json({ error: `Delivery address: ${problem}` }, { status: 400 });
     }
   }
 

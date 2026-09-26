@@ -10,6 +10,7 @@ import { orderTotals } from "@/lib/pricing";
 import { DELIVERY_OPTIONS, deliveryRange, type DeliverySpeed } from "@/lib/delivery";
 import { createAddress } from "@/lib/address-actions";
 import { AddressFields } from "@/components/checkout/address-form";
+import { sanitize } from "@/lib/field-rules";
 import {
   formatCardNumber,
   formatExpiry,
@@ -336,6 +337,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                     label="Card number"
                     span2
                     inputMode="numeric"
+                    autoComplete="cc-number"
                     value={card.number}
                     error={cardErrors.number}
                     onChange={(v) => {
@@ -347,16 +349,18 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                   <CardInput
                     label="Name on card"
                     span2
+                    autoComplete="cc-name"
                     value={card.name}
                     error={cardErrors.name}
                     onChange={(v) => {
-                      setCard({ ...card, name: v });
+                      setCard({ ...card, name: sanitize.name(v) });
                       setCardErrors((e) => ({ ...e, name: undefined }));
                     }}
                   />
                   <CardInput
                     label="Expiry (MM/YY)"
                     inputMode="numeric"
+                    autoComplete="cc-exp"
                     value={card.exp}
                     error={cardErrors.exp}
                     onChange={(v) => {
@@ -368,6 +372,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                   <CardInput
                     label="CVV"
                     inputMode="numeric"
+                    autoComplete="cc-csc"
                     value={card.cvv}
                     error={cardErrors.cvv}
                     onChange={(v) => {
@@ -395,7 +400,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                     value={upiId}
                     error={upiError ?? undefined}
                     onChange={(v) => {
-                      setUpiId(v);
+                      setUpiId(v.replace(/[^\w.@-]/g, "").slice(0, 60));
                       setUpiError(null);
                     }}
                     placeholder="name@bank"
@@ -584,6 +589,7 @@ function CardInput({
   span2,
   error,
   inputMode,
+  autoComplete,
 }: {
   label: string;
   value: string;
@@ -592,6 +598,7 @@ function CardInput({
   span2?: boolean;
   error?: string;
   inputMode?: "numeric" | "text";
+  autoComplete?: string;
 }) {
   return (
     <label className={`block text-sm font-bold ${span2 ? "sm:col-span-2" : ""}`}>
@@ -601,6 +608,7 @@ function CardInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         inputMode={inputMode}
+        autoComplete={autoComplete}
         aria-invalid={!!error}
         className={`mt-1 w-full rounded-md border px-2 py-1.5 text-sm font-normal focus:outline-none ${
           error

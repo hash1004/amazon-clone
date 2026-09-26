@@ -1,3 +1,5 @@
+import { validateCardName } from "@/lib/field-rules";
+
 export function formatCardNumber(input: string): string {
   const digits = input.replace(/\D/g, "").slice(0, 16);
   return digits.replace(/(.{4})/g, "$1 ").trim();
@@ -39,7 +41,8 @@ export function validateCard(card: CardFields): Partial<Record<keyof CardFields,
   if (digits.length < 15) errors.number = "Enter a 16-digit card number.";
   else if (!luhnValid(digits)) errors.number = "That card number looks invalid.";
 
-  if (!card.name.trim()) errors.name = "Enter the name on the card.";
+  const nameError = validateCardName(card.name);
+  if (nameError) errors.name = nameError;
 
   const m = card.exp.match(/^(\d{2})\/(\d{2})$/);
   if (!m) {

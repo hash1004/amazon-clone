@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
+import { validateAddress } from "@/lib/field-rules";
 
 type Result = { ok: true; id?: string } | { ok: false; error: string };
 
@@ -22,11 +23,8 @@ function readForm(form: FormData) {
 }
 
 function validate(a: ReturnType<typeof readForm>): string | null {
-  if (!a.fullName) return "Enter a full name.";
-  if (!/^[0-9+\-\s()]{7,}$/.test(a.phone)) return "Enter a valid phone number.";
-  if (!a.line1) return "Enter a street address.";
-  if (!a.city || !a.state || !a.postal) return "Complete city, state and ZIP.";
-  return null;
+  // Same rules the form checks as you type; this copy is the one that counts.
+  return Object.values(validateAddress(a))[0] ?? null;
 }
 
 export async function createAddress(form: FormData): Promise<Result> {
