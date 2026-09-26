@@ -32,23 +32,20 @@ export default async function Home() {
   const session = await auth();
   const all = await db.product.findMany({ select: SELECT, orderBy: { ratingCount: "desc" } });
 
-  const spotlightProduct = all.find((p) => p.featured) ?? all[0];
+  const featured = all.filter((p) => p.featured);
+  const slides = (featured.length > 0 ? featured : all.slice(0, 4)).map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    origin: p.origin,
+    process: p.process,
+    tastingNotes: p.tastingNotes,
+    images: p.images,
+    priceCents: p.priceCents,
+  }));
 
   return (
     <div className="pb-8">
-      {spotlightProduct && (
-        <Spotlight
-          product={{
-            slug: spotlightProduct.slug,
-            title: spotlightProduct.title,
-            origin: spotlightProduct.origin,
-            process: spotlightProduct.process,
-            tastingNotes: spotlightProduct.tastingNotes,
-            images: spotlightProduct.images,
-            priceCents: spotlightProduct.priceCents,
-          }}
-        />
-      )}
+      <Spotlight products={slides} />
 
       <Reveal className="mx-auto max-w-[700px] px-6 py-14 text-center sm:py-20">
         <p className="font-serif text-2xl leading-snug text-text-primary sm:text-3xl">

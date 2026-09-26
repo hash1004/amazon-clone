@@ -51,7 +51,7 @@ export function ProductGallery({
         onMouseLeave={() => setZoom(null)}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        className="group relative aspect-square w-full cursor-crosshair touch-pan-y overflow-hidden rounded-xl border border-border-default bg-subtle"
+        className="group relative aspect-[4/5] w-full cursor-crosshair touch-pan-y overflow-hidden border border-border-default bg-subtle"
       >
         <Image
           src={list[active]}
@@ -59,7 +59,7 @@ export function ProductGallery({
           fill
           sizes="(max-width:1024px) 90vw, 560px"
           priority
-          className="object-contain p-8"
+          className="object-cover"
         />
         {zoom && (
           <span
@@ -102,7 +102,7 @@ export function ProductGallery({
               onMouseEnter={() => setActive(i)}
               onClick={() => setActive(i)}
               aria-label={`View image ${i + 1}`}
-              className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border bg-subtle transition sm:h-16 sm:w-16 ${
+              className={`relative h-14 w-14 shrink-0 overflow-hidden border bg-subtle transition sm:h-16 sm:w-16 ${
                 i === active
                   ? "border-border-accent ring-1 ring-border-accent"
                   : "border-border-default hover:border-border-strong"
@@ -113,7 +113,7 @@ export function ProductGallery({
                 alt=""
                 fill
                 sizes="64px"
-                className="object-contain p-1.5"
+                className="object-cover"
               />
               {i !== active && (
                 <span className="absolute inset-0 bg-surface/50" />
@@ -126,7 +126,7 @@ export function ProductGallery({
       {/* Zoom panel (desktop) — overlays to the right, never widens the page */}
       {zoom && (
         <div
-          className="pointer-events-none absolute left-full top-0 z-20 ml-4 hidden h-[460px] w-[380px] rounded-2xl border border-border-default bg-subtle bg-no-repeat shadow-xl xl:block"
+          className="pointer-events-none absolute left-full top-0 z-20 ml-4 hidden h-[460px] w-[380px] border border-border-default bg-subtle bg-no-repeat shadow-xl xl:block"
           style={{
             backgroundImage: `url(${list[active]})`,
             backgroundSize: "220%",

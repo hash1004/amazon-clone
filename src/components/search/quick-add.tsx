@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useCart, type CartLine } from "@/lib/cart-store";
 import { useToast } from "@/lib/toast";
+import { BeanIcon, CheckIcon } from "@/components/ui/icons";
 
 export function QuickAdd({
   product,
@@ -19,15 +20,17 @@ export function QuickAdd({
     <button
       type="button"
       disabled={disabled}
+      aria-label="Add to cart"
+      title="Add to cart"
       onClick={() => {
         add(product, 1);
         toast("Added to Cart");
         setAdded(true);
         setTimeout(() => setAdded(false), 1800);
       }}
-      className="mt-1.5 w-full rounded-pill bg-accent px-3 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+      className="mt-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-chrome-nav text-text-on-brown transition hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      {added ? "✓ Added" : "Add to cart"}
+      {added ? <CheckIcon className="h-4 w-4" /> : <BeanIcon className="h-4 w-4" />}
     </button>
   );
 }

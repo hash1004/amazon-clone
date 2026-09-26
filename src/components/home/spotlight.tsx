@@ -1,6 +1,10 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { SafeImage as Image } from "@/components/ui/safe-image";
 import { PriceTag } from "@/components/ui/price-tag";
+import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
 
 export type SpotlightProduct = {
   slug: string;
@@ -12,20 +16,68 @@ export type SpotlightProduct = {
   priceCents: number;
 };
 
+const INTERVAL_MS = 5000;
+const FADE_MS = 300;
+const SWIPE_THRESHOLD_PX = 40;
+
 /**
- * One considered pick, not a rotating carousel — the whole catalog is a
- * dozen coffees, so there's nothing to auto-advance through. A full brown
- * block (the boldest section on the page, on purpose — this is the one
- * thing every visitor should see first) with a full-bleed photo on one
- * side, tasting notes and a single CTA on the other.
+ * Auto-advancing carousel over the featured coffees — a handful of slides,
+ * not nine rails; each one is the full brown block (not a tint + floating
+ * product cutout) so the identity stays consistent slide to slide. Pauses
+ * on hover/touch; swipe on phones, arrows + dots on desktop.
  */
-export function Spotlight({ product }: { product: SpotlightProduct }) {
+export function Spotlight({ products }: { products: SpotlightProduct[] }) {
+  const [i, setI] = useState(0);
+  const [visible, setVisible] = useState(true);
+  const [paused, setPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+  const n = products.length;
+
+  const step = (next: number) => {
+    setVisible(false);
+    setTimeout(() => {
+      setI(next);
+      setVisible(true);
+    }, FADE_MS);
+  };
+
+  useEffect(() => {
+    if (paused || n <= 1) return;
+    const t = setInterval(() => step((i + 1) % n), INTERVAL_MS);
+    return () => clearInterval(t);
+  }, [paused, n, i]);
+
+  const go = (d: number) => step((i + d + n) % n);
+  const product = products[i];
+  if (!product) return null;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setPaused(true);
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) > SWIPE_THRESHOLD_PX) go(dx < 0 ? 1 : -1);
+  };
+
   return (
-    <section className="grain bg-chrome-nav text-text-on-brown">
-      <div className="mx-auto grid max-w-[1400px] gap-8 px-6 py-14 sm:px-10 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
+    <section
+      className="grain bg-chrome-nav text-text-on-brown"
+      style={{ ["--icon-hover-bg" as string]: "rgba(243, 234, 217, 0.14)" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      <div
+        className="mx-auto grid max-w-[1400px] gap-8 px-6 py-14 sm:px-10 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16"
+        style={{ opacity: visible ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-out` }}
+      >
         <Link
           href={`/p/${product.slug}`}
-          className="group relative block aspect-[4/3] w-full overflow-hidden rounded-xl border border-border-on-brown lg:order-2 lg:aspect-square"
+          className="group relative block aspect-[4/3] w-full overflow-hidden border border-border-on-brown lg:order-2 lg:aspect-square"
         >
           <Image
             src={product.images[0]}
@@ -66,6 +118,40 @@ export function Spotlight({ product }: { product: SpotlightProduct }) {
               Shop this roast
             </Link>
           </div>
+
+          {n > 1 && (
+            <div className="mt-8 flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                {products.map((p, k) => (
+                  <button
+                    key={p.slug}
+                    type="button"
+                    aria-label={`Slide ${k + 1}`}
+                    onClick={() => step(k)}
+                    className={`h-1.5 rounded-pill transition-all ${
+                      k === i ? "w-6 bg-accent" : "w-1.5 bg-border-on-brown"
+                    }`}
+                  />
+                ))}
+              </div>
+              <button
+                type="button"
+                aria-label="Previous"
+                onClick={() => go(-1)}
+                className="icon-hover flex h-8 w-8 items-center justify-center rounded-full border border-border-on-brown"
+              >
+                <ArrowLeftIcon className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                aria-label="Next"
+                onClick={() => go(1)}
+                className="icon-hover flex h-8 w-8 items-center justify-center rounded-full border border-border-on-brown"
+              >
+                <ArrowRightIcon className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>

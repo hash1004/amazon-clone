@@ -1,14 +1,10 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/ui/brand-logo";
-import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 
 /**
  * This layout deliberately drops the full header/footer chrome for a
- * focused sign-in screen. But it lives in its own route group outside
- * (shop), so on phones it was never getting the bottom nav either —
- * landing here (e.g. Wishlist redirects here when signed out) meant
- * the bottom nav just vanished with no way back except browser-back.
- * Keep the bottom nav so it never fully strands a mobile user.
+ * focused sign-in screen — the logo above the form is the only way back
+ * home, which is enough now that there's no bottom nav to fall back to.
  */
 export default function AuthLayout({
   children,
@@ -16,7 +12,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-full flex-col bg-surface pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0">
+    <div className="flex min-h-full flex-col bg-surface">
       <div className="flex justify-start border-b border-border-default px-4 py-4 sm:justify-center sm:px-0">
         <Link href="/">
           <BrandLogo className="h-9 w-auto" tone="dark" />
@@ -41,8 +37,6 @@ export default function AuthLayout({
         </p>
         <p className="mt-2">© 2026 Still Coffee Co.</p>
       </footer>
-
-      <MobileBottomNav />
     </div>
   );
 }

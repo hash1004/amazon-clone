@@ -2,7 +2,6 @@ import {
   Search,
   ShoppingCart,
   Heart,
-  User,
   Menu,
   ArrowLeft,
   ArrowRight,
@@ -10,8 +9,9 @@ import {
   SlidersHorizontal,
   ChevronDown,
   ChevronRight,
-  House,
   X,
+  Bean,
+  Check,
 } from "lucide-react";
 
 type P = { className?: string };
@@ -31,10 +31,6 @@ export function CartIcon({ className = "h-5 w-5" }: P) {
 
 export function CategoriesIcon({ className = "h-5 w-5" }: P) {
   return <Menu className={className} strokeWidth={2} aria-hidden />;
-}
-
-export function PersonIcon({ className = "h-5 w-5" }: P) {
-  return <User className={className} strokeWidth={1.8} aria-hidden />;
 }
 
 export function ArrowLeftIcon({ className = "h-4 w-4" }: P) {
@@ -65,8 +61,12 @@ export function ChevronRightIcon({ className = "h-4 w-4" }: P) {
   return <ChevronRight className={className} strokeWidth={2} aria-hidden />;
 }
 
-export function HomeIcon({ className = "h-5 w-5" }: P) {
-  return <House className={className} strokeWidth={1.8} aria-hidden />;
+export function BeanIcon({ className = "h-5 w-5" }: P) {
+  return <Bean className={className} strokeWidth={1.8} aria-hidden />;
+}
+
+export function CheckIcon({ className = "h-5 w-5" }: P) {
+  return <Check className={className} strokeWidth={2.2} aria-hidden />;
 }
 
 export function HeartIcon({

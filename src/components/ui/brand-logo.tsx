@@ -1,9 +1,10 @@
 /**
  * Wordmark — "Still", upright Fraunces, lowercase, one accent. `tone`
- * picks the shade for the background it sits on: "dark" (default —
- * header, auth, light backgrounds) gets the darker espresso-rust shade;
- * "light" (footer, dark backgrounds) gets the brighter caramel accent,
- * which needs the extra brightness to read against near-black.
+ * picks the shade for the background it sits on: "dark" (default — auth,
+ * light backgrounds) gets the espresso-rust shade; "light" (header,
+ * footer, dark brown backgrounds) gets cream — the same shade every other
+ * headline on brown already uses, so the wordmark pops instead of
+ * blending into the block behind it.
  */
 export function BrandLogo({
   className = "",
@@ -12,7 +13,7 @@ export function BrandLogo({
   className?: string;
   tone?: "light" | "dark";
 }) {
-  const fill = tone === "light" ? "var(--accent-primary)" : "var(--text-accent)";
+  const fill = tone === "light" ? "var(--text-on-brown)" : "var(--text-accent)";
   return (
     <svg
       viewBox="0 0 78 30"

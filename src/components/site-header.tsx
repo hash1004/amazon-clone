@@ -1,17 +1,14 @@
 import Link from "next/link";
-import { CartBadge } from "@/components/cart-badge";
-import { WishlistBadge } from "@/components/wishlist-badge";
 import { BrandLogo } from "@/components/ui/brand-logo";
-import { ExpandingSearch } from "@/components/search/expanding-search";
-import { AccountMenu } from "@/components/account-menu";
+import { BrowseMenu } from "@/components/browse-menu";
+import { ShopMenu } from "@/components/shop-menu";
 import { auth } from "@/auth";
 
 /**
- * Single-category store, so there's no department flyout to anchor a
- * three-zone grid — just a plain left/right split: wordmark (left) +
- * search + account + wishlist + cart icons (right). Same split on phones,
- * where Account, Cart and Wishlist move to the bottom nav instead (see
- * mobile-bottom-nav.tsx).
+ * Three-zone header — browse/search (left) — wordmark (center) — cart,
+ * wishlist and account behind one icon (right). No bottom nav to fall
+ * back to on phones anymore, so every icon here is visible at every
+ * width instead of half of them hiding until sm:.
  */
 export async function SiteHeader() {
   const session = await auth();
@@ -21,8 +18,13 @@ export async function SiteHeader() {
       className="grain bg-chrome-nav text-text-on-brown"
       style={{ ["--icon-hover-bg" as string]: "rgba(243, 234, 217, 0.14)" }}
     >
-      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-2 px-3 py-2.5 sm:px-6">
-        <Link href="/" className="group relative overflow-hidden rounded-sm px-1">
+      <div className="mx-auto grid max-w-[1500px] grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:px-6">
+        <BrowseMenu />
+
+        <Link
+          href="/"
+          className="group relative mx-auto overflow-hidden rounded-sm px-1"
+        >
           <BrandLogo className="h-8 w-auto" tone="light" />
           <span
             aria-hidden
@@ -30,21 +32,10 @@ export async function SiteHeader() {
           />
         </Link>
 
-        <div className="flex items-center gap-1">
-          <ExpandingSearch />
-          <span className="hidden sm:block">
-            <AccountMenu
-              isAuthed={!!session?.user}
-              firstName={session?.user?.name?.split(" ")[0] ?? session?.user?.email}
-            />
-          </span>
-          <span className="hidden sm:block">
-            <WishlistBadge />
-          </span>
-          <span className="hidden sm:block">
-            <CartBadge />
-          </span>
-        </div>
+        <ShopMenu
+          isAuthed={!!session?.user}
+          firstName={session?.user?.name?.split(" ")[0] ?? session?.user?.email}
+        />
       </div>
     </header>
   );
