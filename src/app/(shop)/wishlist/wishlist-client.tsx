@@ -16,10 +16,10 @@ export function WishlistClient() {
     return (
       <div className="mx-auto max-w-[600px] px-4 py-16 text-center">
         <h1 className="font-serif text-2xl font-medium text-text-primary">
-          Your list is empty
+          No saved beans yet
         </h1>
         <p className="mt-2 text-sm text-text-secondary">
-          Tap “Add to List” on any product to save it here for later.
+          Tap “Save beans” on any coffee to keep it here for later.
         </p>
         <Link
           href="/s"
@@ -34,7 +34,7 @@ export function WishlistClient() {
   return (
     <div className="mx-auto max-w-[1000px] px-4 py-8">
       <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">
-        Your list{" "}
+        Saved Beans{" "}
         <span className="font-sans text-sm text-text-secondary">
           ({items.length} {items.length === 1 ? "item" : "items"})
         </span>

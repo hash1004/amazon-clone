@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { WishlistClient } from "./wishlist-client";
 
-export const metadata: Metadata = { title: "Your List" };
+export const metadata: Metadata = { title: "Saved Beans" };
 
 export default async function WishlistPage() {
   const session = await auth();

@@ -57,8 +57,8 @@ export default async function AccountPage() {
           href="/wishlist"
           className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
         >
-          <h2 className="font-medium text-text-primary">Your List</h2>
-          <p className="text-sm text-text-secondary">Items you&apos;ve saved for later</p>
+          <h2 className="font-medium text-text-primary">Saved Beans</h2>
+          <p className="text-sm text-text-secondary">Coffees you&apos;ve saved for later</p>
         </Link>
       </div>
       <SignOutButton className="mt-6 text-sm text-text-secondary hover:text-text-accent hover:underline" />

@@ -33,7 +33,7 @@ function LoginForm() {
 
   const reason =
     callbackUrl.startsWith("/wishlist") || params.get("from") === "wishlist"
-      ? "Sign in to save items to your List."
+      ? "Sign in to save beans for later."
       : callbackUrl.startsWith("/checkout")
         ? "Sign in to continue to checkout."
         : null;

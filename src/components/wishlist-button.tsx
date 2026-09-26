@@ -29,14 +29,14 @@ export function WishlistButton({
       return;
     }
     toggle(entry);
-    toast(saved ? "Removed from your List" : "Added to your List");
+    toast(saved ? "Removed from Saved Beans" : "Added to Saved Beans");
   };
 
   if (variant === "icon") {
     return (
       <button
         type="button"
-        aria-label={saved ? "Remove from List" : "Add to List"}
+        aria-label={saved ? "Remove from Saved Beans" : "Save beans"}
         aria-pressed={saved}
         onClick={(e) => {
           e.preventDefault();
@@ -57,7 +57,7 @@ export function WishlistButton({
       className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-pill border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
     >
       <HeartIcon className={`h-4 w-4 ${saved ? "text-accent" : ""}`} filled={saved} />
-      {saved ? "Added to List" : "Add to List"}
+      {saved ? "Saved" : "Save beans"}
     </button>
   );
 }

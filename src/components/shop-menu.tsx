@@ -62,7 +62,7 @@ export function ShopMenu({
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="true"
         aria-expanded={open}
-        aria-label={`Cart, wishlist and account${hasCartItems ? `, ${cartCount} items in cart` : ""}`}
+        aria-label={`Cart, saved beans and account${hasCartItems ? `, ${cartCount} items in cart` : ""}`}
         className="icon-hover relative flex h-9 w-9 items-center justify-center"
       >
         <CartIcon className="h-5 w-5" />
@@ -104,7 +104,7 @@ export function ShopMenu({
             onClick={close}
             className="flex items-center justify-between border-b border-border-default py-3 text-sm hover:text-text-accent"
           >
-            <span>Your List</span>
+            <span>Saved Beans</span>
             {hasWishItems && <span className="text-text-secondary">{wishCount}</span>}
           </Link>
 
