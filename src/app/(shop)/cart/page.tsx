@@ -6,10 +6,15 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
 import { Reveal } from "@/components/ui/reveal";
+import { useStock } from "@/lib/use-stock";
+import { LOW_STOCK_THRESHOLD } from "@/lib/product-display";
 
 export default function CartPage() {
   const { lines, subtotalCents, count, ready, setQuantity, remove } = useCart();
   const router = useRouter();
+  const stock = useStock(lines.map((l) => l.productId));
+  // A line can't be filled when there are fewer bags left than it asks for.
+  const shortLines = stock ? lines.filter((l) => l.quantity > (stock[l.productId] ?? 0)) : [];
 
   if (ready && lines.length === 0) {
     return (
@@ -76,7 +81,12 @@ export default function CartPage() {
                       }
                       className="rounded-md border border-border-default bg-canvas px-2 py-1 text-text-primary"
                     >
-                      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                      {/* Up to 10, or what's left if that's fewer; always keep the
+                          current value selectable so an over-stock line still shows. */}
+                      {Array.from(
+                        { length: Math.max(l.quantity, Math.min(10, stock?.[l.productId] ?? 10)) },
+                        (_, i) => i + 1,
+                      ).map((n) => (
                         <option key={n} value={n}>
                           {n}
                         </option>
@@ -87,6 +97,8 @@ export default function CartPage() {
                     Remove
                   </button>
                 </div>
+
+                <StockNote left={stock?.[l.productId]} quantity={l.quantity} />
               </div>
 
               <p className="shrink-0 text-sm font-medium text-text-primary">
@@ -104,14 +116,35 @@ export default function CartPage() {
         <p className="mt-1 font-serif text-2xl font-medium text-text-primary">
           {formatPrice(subtotalCents)}
         </p>
+        {shortLines.length > 0 && (
+          <p className="mt-3 text-xs text-danger">
+            Some coffees in your cart are low or sold out. Adjust them to continue.
+          </p>
+        )}
         <button
           type="button"
           onClick={() => router.push("/checkout")}
-          className="mt-4 w-full rounded-pill bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          disabled={shortLines.length > 0}
+          className="mt-4 w-full rounded-pill bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-accent"
         >
           Proceed to checkout
         </button>
       </aside>
     </Reveal>
   );
+}
+
+/** Per-line stock message; nothing while stock is still loading or plentiful. */
+function StockNote({ left, quantity }: { left: number | undefined; quantity: number }) {
+  if (left === undefined) return null;
+  if (left === 0) return <p className="mt-2 text-xs font-medium text-danger">Sold out. Remove it to continue.</p>;
+  if (quantity > left)
+    return (
+      <p className="mt-2 text-xs font-medium text-danger">
+        Only {left} left. Lower the quantity to {left} or fewer.
+      </p>
+    );
+  if (left <= LOW_STOCK_THRESHOLD)
+    return <p className="mt-2 text-xs font-medium text-text-deal">Only {left} left in stock</p>;
+  return null;
 }
