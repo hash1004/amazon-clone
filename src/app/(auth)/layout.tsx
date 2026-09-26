@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { HeaderShell } from "@/components/header-shell";
 import { AuthedProvider } from "@/lib/auth-context";
+import { WishlistProvider } from "@/lib/wishlist-store";
 
 /**
  * Same header/footer/structure as the shop layout — a separately-styled
@@ -22,13 +23,15 @@ export default async function AuthLayout({
 
   return (
     <AuthedProvider value={!!session?.user}>
-      <HeaderShell>
-        <SiteHeader />
-      </HeaderShell>
-      <main className="w-full min-w-0 flex-1 overflow-x-clip">
-        <div className="mx-auto w-full max-w-[350px] px-4 py-10">{children}</div>
-      </main>
-      <SiteFooter />
+      <WishlistProvider userId={session?.user?.id ?? null}>
+        <HeaderShell>
+          <SiteHeader />
+        </HeaderShell>
+        <main className="w-full min-w-0 flex-1 overflow-x-clip">
+          <div className="mx-auto w-full max-w-[350px] px-4 py-10">{children}</div>
+        </main>
+        <SiteFooter />
+      </WishlistProvider>
     </AuthedProvider>
   );
 }

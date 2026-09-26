@@ -4,9 +4,11 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
-  useSyncExternalStore,
+  useState,
 } from "react";
+import { loadWishlist, setSaved } from "@/lib/wishlist-actions";
 
 export type WishlistEntry = {
   productId: string;
@@ -20,51 +22,29 @@ export type WishlistEntry = {
   inStock: boolean;
 };
 
-const KEY = "still-coffee.wishlist.v1";
-const EVENT = "still-coffee:wishlist";
+// Where Saved Beans lived before they moved to the account. Read once after
+// sign-in, merged into the account, then cleared.
+const LEGACY_KEY = "still-coffee.wishlist.v1";
 
-let cachedRaw: string | null = null;
-let cached: WishlistEntry[] = [];
-
-function read(): WishlistEntry[] {
-  let raw: string | null = null;
+function takeLegacyIds(): string[] {
   try {
-    raw = window.localStorage.getItem(KEY);
+    const raw = window.localStorage.getItem(LEGACY_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed)
+      ? parsed.map((e) => (e as Partial<WishlistEntry>)?.productId).filter((id): id is string => !!id)
+      : [];
   } catch {
-    raw = null;
+    return [];
   }
-  if (raw === cachedRaw) return cached;
-  cachedRaw = raw;
-  try {
-    const p = raw ? JSON.parse(raw) : [];
-    cached = Array.isArray(p) ? p : [];
-  } catch {
-    cached = [];
-  }
-  return cached;
 }
 
-const EMPTY: WishlistEntry[] = [];
-
-function subscribe(cb: () => void) {
-  const h = () => cb();
-  const s = (e: StorageEvent) => e.key === KEY && cb();
-  window.addEventListener(EVENT, h);
-  window.addEventListener("storage", s);
-  return () => {
-    window.removeEventListener(EVENT, h);
-    window.removeEventListener("storage", s);
-  };
-}
-
-function write(next: WishlistEntry[]) {
+function clearLegacy() {
   try {
-    window.localStorage.setItem(KEY, JSON.stringify(next));
+    window.localStorage.removeItem(LEGACY_KEY);
   } catch {
-    cachedRaw = JSON.stringify(next);
-    cached = next;
+    // Storage blocked — nothing to clear.
   }
-  window.dispatchEvent(new Event(EVENT));
 }
 
 type Ctx = {
@@ -78,38 +58,77 @@ type Ctx = {
 
 const WishlistContext = createContext<Ctx | null>(null);
 
-export function WishlistProvider({ children }: { children: React.ReactNode }) {
-  const items = useSyncExternalStore(subscribe, read, () => EMPTY);
-  const ready = useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
+/**
+ * Saved Beans, stored on the account (see wishlist-actions). Changes show
+ * immediately and save in the background; a failed save is rolled back.
+ * `userId` comes from the server session, so signing in, out or as someone
+ * else reloads it — and a list loaded for one user is never shown to another.
+ */
+export function WishlistProvider({ userId, children }: { userId: string | null; children: React.ReactNode }) {
+  const [loaded, setLoaded] = useState<{ userId: string; items: WishlistEntry[] } | null>(null);
+
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+    const legacy = takeLegacyIds();
+    loadWishlist(legacy)
+      .then((list) => {
+        if (cancelled) return;
+        if (legacy.length > 0) clearLegacy();
+        setLoaded({ userId, items: list ?? [] });
+      })
+      .catch(() => {
+        if (!cancelled) setLoaded({ userId, items: [] });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  const current = userId && loaded?.userId === userId ? loaded : null;
+  const items = useMemo(() => current?.items ?? [], [current]);
+  const ready = !userId || current !== null;
+
+  const setItems = useCallback(
+    (next: WishlistEntry[]) => userId && setLoaded({ userId, items: next }),
+    [userId],
   );
 
-  const has = useCallback(
-    (id: string) => read().some((e) => e.productId === id),
-    [],
+  const persist = useCallback(
+    (productId: string, saved: boolean, rollback: WishlistEntry[]) => {
+      setSaved(productId, saved)
+        .then((r) => {
+          if (!r.ok) setItems(rollback);
+        })
+        .catch(() => setItems(rollback));
+    },
+    [setItems],
   );
-  const toggle = useCallback((entry: WishlistEntry) => {
-    const cur = read();
-    write(
-      cur.some((e) => e.productId === entry.productId)
-        ? cur.filter((e) => e.productId !== entry.productId)
-        : [entry, ...cur],
-    );
-  }, []);
+
+  const has = useCallback((id: string) => items.some((e) => e.productId === id), [items]);
+
+  const toggle = useCallback(
+    (entry: WishlistEntry) => {
+      const saved = items.some((e) => e.productId === entry.productId);
+      setItems(saved ? items.filter((e) => e.productId !== entry.productId) : [entry, ...items]);
+      persist(entry.productId, !saved, items);
+    },
+    [items, setItems, persist],
+  );
+
   const remove = useCallback(
-    (id: string) => write(read().filter((e) => e.productId !== id)),
-    [],
+    (id: string) => {
+      setItems(items.filter((e) => e.productId !== id));
+      persist(id, false, items);
+    },
+    [items, setItems, persist],
   );
 
   const value = useMemo<Ctx>(
     () => ({ items, count: items.length, ready, has, toggle, remove }),
     [items, ready, has, toggle, remove],
   );
-  return (
-    <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>
-  );
+  return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 }
 
 export function useWishlist() {

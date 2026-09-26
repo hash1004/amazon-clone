@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Archivo, Fraunces } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart-store";
-import { WishlistProvider } from "@/lib/wishlist-store";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed";
 import { ToastProvider } from "@/lib/toast";
 
@@ -46,9 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <span id="top" />
         <ToastProvider>
           <CartProvider>
-            <WishlistProvider>
-              <RecentlyViewedProvider>{children}</RecentlyViewedProvider>
-            </WishlistProvider>
+            <RecentlyViewedProvider>{children}</RecentlyViewedProvider>
           </CartProvider>
         </ToastProvider>
       </body>
