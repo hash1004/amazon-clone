@@ -61,4 +61,4 @@ run_oneoff prisma-migrate-tmp npx prisma db push
 log "Rolling amazon-clone_web to the new image"
 docker service update --image amazon-clone:latest --force amazon-clone_web
 
-log "Done — https://amazon.svdistributor.com"
+log "Done — https://stillcoffeeandco.svdistributor.com"

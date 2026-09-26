@@ -1,4 +1,4 @@
-**Live:** https://amazon.svdistributor.com _(domain predates the rebrand below — see [Still open](#still-open))_
+**Live:** https://amazon.svdistributor.com _(moving to https://stillcoffeeandco.svdistributor.com once its DNS record is added — see [Still open](#still-open))_
 
 # Still Coffee and Co.
 
@@ -146,11 +146,14 @@ whole catalog, never as part of a routine deploy.
 
 ## Still open
 
-The production domain (`amazon.svdistributor.com`) predates this rebrand
-and is infrastructure this codebase doesn't control (DNS/hosting on the
-Contabo VPS) — it still works, it just no longer matches the name on the
-page. Pointing a new subdomain at the same deployment is a one-time
-infra change outside this repo.
+`stillcoffeeandco.svdistributor.com` is a subdomain of the existing
+`svdistributor.com` — no new domain purchase needed, just a DNS record
+(an A record pointed at `194.163.153.158`, the same VPS) added wherever
+`svdistributor.com`'s DNS is managed. Traefik on the VPS is already
+configured to route it to this same deployment once that record exists
+(see the `amazon-clone.yml` compose file on the host, not in this repo —
+it holds the DB password). Until then, the original
+`amazon.svdistributor.com` domain keeps working exactly as before.
 
 ## Agent logs
 

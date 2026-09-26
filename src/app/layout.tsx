@@ -29,7 +29,7 @@ const display = Fraunces({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://amazon.svdistributor.com",
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://stillcoffeeandco.svdistributor.com",
   ),
   title: {
     default: "Still Coffee and Co. — One coffee, done well.",
