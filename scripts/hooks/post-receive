@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Installed at /root/amazon-clone/.git/hooks/post-receive on the VPS.
+# Not run automatically from a git checkout — git hooks aren't tracked
+# under version control, so this file is a versioned copy; see README
+# "Deploying" for the one-time install command.
+#
+# Triggered by `git push production main`. Requires:
+#   git config receive.denyCurrentBranch updateInstead
+# on /root/amazon-clone, so the push itself updates the working tree
+# before this hook runs — this only builds/migrates/rolls, it doesn't
+# fetch or checkout anything itself.
+#
+# Only deploys on a push that updates refs/heads/main; pushing any other
+# branch to this remote updates the ref but does not trigger a release.
+
+set -euo pipefail
+
+while read -r _old_rev _new_rev ref_name; do
+  if [ "$ref_name" = "refs/heads/main" ]; then
+    /root/amazon-clone/scripts/release.sh
+  fi
+done

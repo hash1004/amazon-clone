@@ -94,19 +94,46 @@ is declined. UPI IDs starting `fail@` simulate a failed request.
 Production is a two-service Docker Swarm stack (`amazon-clone_web` +
 `amazon-clone_db`) on a self-hosted Contabo VPS, behind Traefik
 (`/root/compose/amazon-clone.yml` on that host — not in this repo, since
-it holds the DB password). There's no CI/CD; deploys are manual, run by
-hand on the VPS:
+it holds the DB password). No CI — deploy is triggered by `git push`
+straight to the VPS.
+
+### One-time setup (already done on the current VPS)
 
 ```bash
 ssh contabo
 cd /root/amazon-clone
-./scripts/deploy.sh          # pull main, rebuild, sync schema, roll the service
+git config receive.denyCurrentBranch updateInstead   # push updates the working tree directly
+cp scripts/hooks/post-receive .git/hooks/post-receive
+chmod +x .git/hooks/post-receive
 ```
 
-`deploy.sh` is safe to re-run for routine code changes — it does **not**
-touch the catalog. Schema sync (`prisma db push`, no `--accept-data-loss`)
-fails loudly instead of dropping data if a change would be destructive;
-if that happens, resolve it by hand rather than forcing it.
+Then, from wherever you push from (laptop, not this repo's sandbox):
+
+```bash
+git remote add production root@194.163.153.158:/root/amazon-clone
+```
+
+### Deploying
+
+```bash
+git push production main
+```
+
+That's it — the push updates the working tree, the `post-receive` hook
+runs `scripts/release.sh` (build, sync schema, roll the service), and
+the output streams back to your terminal since git forwards hook
+stdout/stderr over the push connection. It only fires on `main`; pushing
+any other branch just updates the ref.
+
+`release.sh`/`deploy.sh` are safe to re-run for routine code changes —
+neither touches the catalog. Schema sync (`prisma db push`, no
+`--accept-data-loss`) fails loudly instead of dropping data if a change
+would be destructive; if that happens, resolve it by hand rather than
+forcing it.
+
+Prefer pulling from GitHub `main` instead of pushing directly? Run
+`./scripts/deploy.sh` on the VPS — it fetches `origin/main` and calls
+the same `release.sh`.
 
 Reseeding the catalog is a separate, deliberately manual step
 (`prisma/seed.ts` deletes every `Product`/`Cart`/`Order` row first) —
