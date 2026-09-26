@@ -107,10 +107,14 @@ cp scripts/hooks/post-receive .git/hooks/post-receive
 chmod +x .git/hooks/post-receive
 ```
 
-Then, from wherever you push from (laptop, not this repo's sandbox):
+Then, from wherever you push from (laptop, not this repo's sandbox), add
+a `production` remote. Use your SSH config alias for the VPS (e.g.
+`contabo:/root/amazon-clone`, matching a `Host contabo` entry in
+`~/.ssh/config`) rather than the raw `root@<ip>` form — git's SSH
+invocation only picks up the right `IdentityFile` through the alias:
 
 ```bash
-git remote add production root@194.163.153.158:/root/amazon-clone
+git remote add production contabo:/root/amazon-clone
 ```
 
 ### Deploying
