@@ -8,6 +8,7 @@ import { SearchFilterToggle } from "@/components/search/search-filter-toggle";
 import { SearchFilterPanel } from "@/components/search/search-filter-panel";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { SorryMug } from "@/components/ui/sorry-mug";
+import { Reveal } from "@/components/ui/reveal";
 
 const PAGE_SIZE = 24;
 
@@ -160,7 +161,7 @@ export default async function SearchPage({
         <div className="relative">
           <SearchFilterPanel params={sp} origins={origins} />
           <div className="mb-2 border-b border-border-default pb-2">
-            <h1 className="font-serif text-xl font-medium text-text-primary">
+            <h1 className="font-serif text-2xl italic font-medium text-text-primary">
               {sp.q ? `Results for "${sp.q}"` : heading}
             </h1>
             {chips.length > 0 && (
@@ -214,11 +215,11 @@ export default async function SearchPage({
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <Reveal className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {products.map((p) => (
                 <ProductCard key={p.id} product={p} withCart />
               ))}
-            </div>
+            </Reveal>
           )}
 
           {totalPages > 1 && (

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
+import { Reveal } from "@/components/ui/reveal";
 
 export default function CartPage() {
   const { lines, subtotalCents, count, ready, setQuantity, remove } = useCart();
@@ -12,39 +13,36 @@ export default function CartPage() {
 
   if (ready && lines.length === 0) {
     return (
-      <div className="mx-auto max-w-[1000px] px-4 py-6">
-        <div className="bg-surface p-8 shadow-sm">
-          <h1 className="text-2xl font-bold">Your cart is empty</h1>
-          <p className="mt-2 text-sm text-text-secondary">
-            Your cart lives here. Give it purpose — pick a roast to start.
-          </p>
-          <Link
-            href="/s"
-            className="mt-4 inline-block rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
-          >
-            Keep shopping
-          </Link>
-        </div>
+      <div className="mx-auto max-w-[600px] px-4 py-16 text-center">
+        <h1 className="font-serif text-2xl italic font-medium text-text-primary">
+          Your cart is empty
+        </h1>
+        <p className="mt-2 text-sm text-text-secondary">
+          Your cart lives here. Give it purpose — pick a roast to start.
+        </p>
+        <Link
+          href="/s"
+          className="mt-5 inline-block rounded-pill bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+        >
+          Keep shopping
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto grid max-w-[1200px] gap-4 px-4 py-6 lg:grid-cols-[1fr_300px]">
-      <div className="bg-surface p-4 shadow-sm">
-        <h1 className="border-b border-border-default pb-2 text-2xl font-bold">
-          Shopping Cart
+    <Reveal className="mx-auto grid max-w-[1200px] gap-6 px-4 py-8 lg:grid-cols-[1fr_320px]">
+      <div>
+        <h1 className="font-serif text-2xl italic font-medium text-text-primary">
+          Your cart
         </h1>
 
-        <ul>
+        <ul className="mt-4 divide-y divide-border-default rounded-lg border border-border-default bg-surface">
           {lines.map((l) => (
-            <li
-              key={l.productId}
-              className="flex gap-4 border-b border-border-default py-4"
-            >
+            <li key={l.productId} className="flex gap-4 p-4">
               <Link
                 href={`/p/${l.slug}`}
-                className="relative h-24 w-24 shrink-0 bg-white"
+                className="relative h-24 w-24 shrink-0 overflow-hidden rounded-md border border-border-default bg-subtle"
               >
                 {l.image ? (
                   <Image
@@ -52,7 +50,7 @@ export default function CartPage() {
                     alt={l.title}
                     fill
                     sizes="96px"
-                    className="object-contain p-1"
+                    className="object-cover"
                   />
                 ) : null}
               </Link>
@@ -64,19 +62,19 @@ export default function CartPage() {
                 >
                   {l.title}
                 </Link>
-                <p className="mt-1 text-lg font-bold">
+                <p className="mt-1 text-lg font-medium text-text-primary">
                   {formatPrice(l.priceCents)}
                 </p>
 
                 <div className="mt-2 flex items-center gap-3 text-sm">
-                  <label className="flex items-center gap-1">
-                    Qty:
+                  <label className="flex items-center gap-1.5 text-text-secondary">
+                    Qty
                     <select
                       value={l.quantity}
                       onChange={(e) =>
                         setQuantity(l.productId, Number(e.target.value))
                       }
-                      className="rounded-md border border-border-strong bg-subtle px-2 py-1"
+                      className="rounded-md border border-border-default bg-canvas px-2 py-1 text-text-primary"
                     >
                       {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
                         <option key={n} value={n}>
@@ -85,43 +83,35 @@ export default function CartPage() {
                       ))}
                     </select>
                   </label>
-                  <span className="text-border-strong">|</span>
-                  <button
-                    type="button"
-                    onClick={() => remove(l.productId)}
-                    className="link"
-                  >
-                    Delete
+                  <button type="button" onClick={() => remove(l.productId)} className="link">
+                    Remove
                   </button>
                 </div>
               </div>
 
-              <p className="shrink-0 text-sm font-bold">
+              <p className="shrink-0 text-sm font-medium text-text-primary">
                 {formatPrice(l.priceCents * l.quantity)}
               </p>
             </li>
           ))}
         </ul>
-
-        <p className="pt-3 text-right text-lg">
-          Subtotal ({count} {count === 1 ? "item" : "items"}):{" "}
-          <span className="font-bold">{formatPrice(subtotalCents)}</span>
-        </p>
       </div>
 
-      <aside className="h-fit bg-surface p-4 shadow-sm">
-        <p className="text-lg">
-          Subtotal ({count} {count === 1 ? "item" : "items"}):{" "}
-          <span className="font-bold">{formatPrice(subtotalCents)}</span>
+      <aside className="h-fit rounded-lg border border-border-default bg-surface p-5">
+        <p className="text-sm text-text-secondary">
+          Subtotal ({count} {count === 1 ? "item" : "items"})
+        </p>
+        <p className="mt-1 font-serif text-2xl font-medium text-text-primary">
+          {formatPrice(subtotalCents)}
         </p>
         <button
           type="button"
           onClick={() => router.push("/checkout")}
-          className="mt-3 w-full rounded-pill bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          className="mt-4 w-full rounded-pill bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
         >
           Proceed to checkout
         </button>
       </aside>
-    </div>
+    </Reveal>
   );
 }

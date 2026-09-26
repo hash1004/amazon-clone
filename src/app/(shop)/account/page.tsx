@@ -23,36 +23,41 @@ export default async function AccountPage() {
 
   return (
     <div className="mx-auto max-w-[900px] px-4 py-6">
-      <h1 className="mb-4 text-2xl font-bold">Your Account</h1>
-      <p className="mb-4 text-sm text-text-secondary">
+      <h1 className="mb-1 font-serif text-2xl italic font-medium text-text-primary">
+        Your account
+      </h1>
+      <p className="mb-5 text-sm text-text-secondary">
         Signed in as {session.user.email}
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
           href="/account/orders"
-          className="rounded-lg bg-surface p-5 shadow-sm hover:shadow-md"
+          className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
         >
-          <h2 className="font-bold">Your Orders</h2>
+          <h2 className="font-medium text-text-primary">Your Orders</h2>
           <p className="text-sm text-text-secondary">
             {orderCount} {orderCount === 1 ? "order" : "orders"} — track, view details
           </p>
         </Link>
         <Link
           href="/account/addresses"
-          className="rounded-lg bg-surface p-5 shadow-sm hover:shadow-md"
+          className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
         >
-          <h2 className="font-bold">Your Addresses</h2>
+          <h2 className="font-medium text-text-primary">Your Addresses</h2>
           <p className="text-sm text-text-secondary">Manage shipping addresses</p>
         </Link>
-        <Link href="/cart" className="rounded-lg bg-surface p-5 shadow-sm hover:shadow-md">
-          <h2 className="font-bold">Your Cart</h2>
+        <Link
+          href="/cart"
+          className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
+        >
+          <h2 className="font-medium text-text-primary">Your Cart</h2>
           <p className="text-sm text-text-secondary">Review items and check out</p>
         </Link>
         <Link
           href="/wishlist"
-          className="rounded-lg bg-surface p-5 shadow-sm hover:shadow-md"
+          className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
         >
-          <h2 className="font-bold">Your List</h2>
+          <h2 className="font-medium text-text-primary">Your List</h2>
           <p className="text-sm text-text-secondary">Items you&apos;ve saved for later</p>
         </Link>
       </div>

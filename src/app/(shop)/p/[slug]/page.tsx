@@ -6,12 +6,12 @@ import { discountPct, formatPrice } from "@/lib/format";
 import { estimateDelivery, formatDeliveryDate } from "@/lib/delivery";
 import { PriceTag } from "@/components/ui/price-tag";
 import { ProductGallery } from "@/components/product-gallery";
-import { Accordion } from "@/components/ui/accordion";
 import { AddToCart } from "@/components/add-to-cart";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductCard } from "@/components/product-card";
 import { RatingSummary } from "@/components/product/rating-summary";
 import { MobileBuyBar } from "@/components/product/mobile-buy-bar";
+import { Reveal } from "@/components/ui/reveal";
 import { RecordView } from "@/lib/recently-viewed";
 
 const ROAST_LABEL = { LIGHT: "Light", MEDIUM: "Medium", DARK: "Dark" } as const;
@@ -181,64 +181,63 @@ export default async function ProductPage({
           <p className="text-sm leading-relaxed text-text-secondary">
             {product.description}
           </p>
+          {product.bullets.length > 0 && (
+            <ul className="mt-3 space-y-1.5 text-sm text-text-secondary">
+              {product.bullets.map((b, i) => (
+                <li key={i} className="flex gap-2">
+                  <span aria-hidden className="text-text-accent">
+                    ·
+                  </span>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          )}
 
           <RatingSummary rating={product.rating} ratingCount={product.ratingCount} />
         </div>
       </div>
 
-      <div className="mt-8">
-        <Accordion title="Brew guide">
-          <table className="w-full max-w-[70ch] text-sm">
+      <Reveal className="mt-10">
+        <h2 className="mb-4 font-serif text-xl font-medium text-text-primary">Brew guide</h2>
+        <div className="grain bg-chrome-nav overflow-hidden rounded-xl text-text-on-brown">
+          <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border-default text-left text-xs uppercase tracking-wide text-text-muted">
-                <th className="py-2 font-medium">Method</th>
-                <th className="py-2 font-medium">Ratio (coffee:water)</th>
-                <th className="py-2 font-medium">Time</th>
+              <tr className="border-b border-border-on-brown text-left text-xs uppercase tracking-wide text-text-on-brown-muted">
+                <th className="px-5 py-3 font-medium">Method</th>
+                <th className="px-5 py-3 font-medium">Ratio (coffee:water)</th>
+                <th className="px-5 py-3 font-medium">Time</th>
               </tr>
             </thead>
             <tbody>
               {BREW_GUIDE[product.roastLevel].map((row) => (
-                <tr key={row.method} className="border-b border-border-default last:border-0">
-                  <td className="py-2 font-medium text-text-primary">{row.method}</td>
-                  <td className="py-2 text-text-secondary">{row.ratio}</td>
-                  <td className="py-2 text-text-secondary">{row.time}</td>
+                <tr key={row.method} className="border-b border-border-on-brown last:border-0">
+                  <td className="px-5 py-3 font-medium">{row.method}</td>
+                  <td className="px-5 py-3 text-text-on-brown-muted">{row.ratio}</td>
+                  <td className="px-5 py-3 text-text-on-brown-muted">{row.time}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </Accordion>
+        </div>
+      </Reveal>
 
-        {product.bullets.length > 0 && (
-          <Accordion title="Highlights">
-            <ul className="max-w-[70ch] list-disc space-y-1.5 pl-5 text-sm text-text-secondary">
-              {product.bullets.map((b, i) => (
-                <li key={i}>{b}</li>
-              ))}
-            </ul>
-          </Accordion>
-        )}
-
-        <Accordion title="Product details">
-          <table className="w-full max-w-[70ch] text-sm">
-            <tbody>
-              {specs.map(([k, v]) => (
-                <tr key={k} className="border-b border-border-default last:border-0">
-                  <th className="w-40 py-2 text-left align-top font-medium text-text-primary">
-                    {k}
-                  </th>
-                  <td className="py-2 text-text-secondary">{v}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Accordion>
-      </div>
+      <Reveal className="mt-10 max-w-[70ch]">
+        <h2 className="mb-3 font-serif text-lg font-medium text-text-primary">
+          Product details
+        </h2>
+        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+          {specs.map(([k, v]) => (
+            <div key={k} className="contents">
+              <dt className="text-text-secondary">{k}</dt>
+              <dd className="text-text-primary">{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
 
       {related.length > 0 && (
-        <section className="mt-8">
-          {/* No border-t here — the last accordion above already ends in
-              its own border-bottom; adding another divider + its own
-              padding on top of that read as a doubled gap. */}
+        <Reveal className="mt-12">
           <h2 className="mb-3 font-serif text-lg font-medium text-text-primary">
             More {roastLabel.toLowerCase()} roasts
           </h2>
@@ -247,7 +246,7 @@ export default async function ProductPage({
               <ProductCard key={p.id} product={p} withCart />
             ))}
           </div>
-        </section>
+        </Reveal>
       )}
 
       <div className="pb-16 lg:pb-0" />

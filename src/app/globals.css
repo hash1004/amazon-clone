@@ -22,11 +22,23 @@
   --bg-subtle: #f1ebe1;
   --bg-inverse: #1b140e;
 
-  /* ── Chrome (site header / nav belt / footer) ───────────────── */
-  --chrome-nav: #fffdfa;
+  /* ── Brown — structural, not decorative. Solid blocks (header,
+         footer, the home spotlight) alternate with cream sections
+         instead of brown living only as an accent line. Paired with
+         the `.grain` texture below for a kraft-paper feel rather than
+         flat digital brown. ─────────────────────────────────────── */
+  --bg-brown: #3a2a1e;
+  --bg-brown-deep: #241811;
+  --bg-black: #0d0906;
+  --text-on-brown: #f3ead9;
+  --text-on-brown-muted: #cbb9a3;
+  --border-on-brown: rgba(243, 234, 217, 0.16);
+
+  /* ── Chrome (site header / nav belt / footer) — brown blocks ─── */
+  --chrome-nav: var(--bg-brown);
   --chrome-belt: #f1ebe1;
   --chrome-belt-hover: #e6dccb;
-  --chrome-footer-deep: #1b140e;
+  --chrome-footer-deep: var(--bg-brown-deep);
   --chrome-search-btn: #b5732a;
   --chrome-search-btn-hover: #9c5f20;
 
@@ -97,6 +109,11 @@
   --color-elevated: var(--bg-elevated);
   --color-subtle: var(--bg-subtle);
   --color-inverse: var(--bg-inverse);
+  --color-brown: var(--bg-brown);
+  --color-brown-deep: var(--bg-brown-deep);
+  --color-text-on-brown: var(--text-on-brown);
+  --color-text-on-brown-muted: var(--text-on-brown-muted);
+  --color-border-on-brown: var(--border-on-brown);
 
   --color-chrome-nav: var(--chrome-nav);
   --color-chrome-belt: var(--chrome-belt);
@@ -243,6 +260,62 @@ a {
   }
   50% {
     transform: translate(-50%, -50%) rotate(var(--tile-rotate, 0deg)) translateY(-7px);
+  }
+}
+
+/* Brown-to-black gradient — the "stark contrast" block, for the footer
+   and any other full-bleed dramatic band. Deliberately separate from flat
+   `.grain`-on-brown (header, spotlight): those stay one solid color so
+   text sitting on them has predictable contrast everywhere; this is for
+   blocks that are allowed to get darker toward one edge. */
+.bg-brown-gradient {
+  background: linear-gradient(180deg, var(--bg-brown) 0%, var(--bg-brown-deep) 55%, var(--bg-black) 100%);
+}
+
+/* Icon-button hover overlay — theme-aware via inheritance. Header icons
+   (cart/wishlist/account) sit directly on the header's own background,
+   which is now brown; --icon-hover-bg is set to a light overlay on that
+   brown context and left at its dark-on-light default everywhere else
+   (e.g. the light mobile bottom nav) without each component needing to
+   know which background it's on. */
+.icon-hover:hover {
+  background-color: var(--icon-hover-bg, rgba(0, 0, 0, 0.05));
+}
+
+/* Grain texture — the tactile "kraft paper" layer on brown blocks. A
+   feTurbulence noise tile blended over the block's own background-color,
+   as a ::before so it always paints behind real content without needing
+   z-index. Subtle on purpose: opacity is doing the work, not the pattern. */
+.grain {
+  position: relative;
+}
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+
+/* Scroll-reveal — see ui/reveal.tsx. Plain opacity+translate transition;
+   the component just toggles this class when the element enters view. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 700ms var(--ease-standard), transform 700ms var(--ease-standard);
+}
+.reveal-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

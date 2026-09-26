@@ -131,9 +131,9 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
 
   return (
     <div className="mx-auto max-w-[1100px] px-4 py-6">
-      <h1 className="mb-4 border-b border-border-default pb-3 text-2xl font-normal">
+      <h1 className="mb-5 font-serif text-2xl italic font-medium text-text-primary">
         Checkout{" "}
-        <span className="text-sm text-text-secondary">
+        <span className="font-sans text-sm not-italic text-text-secondary">
           ({lines.reduce((n, l) => n + l.quantity, 0)} items)
         </span>
       </h1>
@@ -542,7 +542,7 @@ function Section({
         >
           {done ? "✓" : n}
         </span>
-        <h2 className="flex-1 text-lg font-bold">{title}</h2>
+        <h2 className="flex-1 font-serif text-lg font-medium">{title}</h2>
         {done && (
           <button type="button" onClick={onChange} className="link text-sm">
             Change

@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { Spotlight } from "@/components/home/spotlight";
 import { CategorySection } from "@/components/home/category-section";
 import { RecentlyViewedRow } from "@/components/recently-viewed-row";
+import { Reveal } from "@/components/ui/reveal";
 
 const SELECT = {
   id: true,
@@ -49,17 +50,25 @@ export default async function Home() {
         />
       )}
 
-      {ROAST_SECTIONS.map(({ level, title, blurb }) => {
+      <Reveal className="mx-auto max-w-[700px] px-6 py-14 text-center sm:py-20">
+        <p className="font-serif text-2xl italic leading-snug text-text-primary sm:text-3xl">
+          One coffee, done well — small-batch roasted, and shipped within 48
+          hours so it never sits on a shelf.
+        </p>
+      </Reveal>
+
+      {ROAST_SECTIONS.map(({ level, title, blurb }, i) => {
         const items = all.filter((p) => p.roastLevel === level);
         if (items.length === 0) return null;
         return (
-          <CategorySection
-            key={level}
-            title={title}
-            blurb={blurb}
-            href={`/s?roast=${level.toLowerCase()}`}
-            items={items}
-          />
+          <Reveal key={level} delayMs={i * 80}>
+            <CategorySection
+              title={title}
+              blurb={blurb}
+              href={`/s?roast=${level.toLowerCase()}`}
+              items={items}
+            />
+          </Reveal>
         );
       })}
 
