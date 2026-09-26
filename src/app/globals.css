@@ -213,9 +213,14 @@ a {
   text-decoration: underline;
 }
 
-:focus-visible {
-  outline: 2px solid var(--border-accent);
-  outline-offset: 2px;
+/* Site-wide focus ring. In @layer base, not unlayered: unlayered CSS beats
+   every Tailwind layer, so as a bare rule it overrode `outline-none` and
+   drew a stray offset box around fields that show focus their own way. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--border-accent);
+    outline-offset: 2px;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -329,13 +334,4 @@ a {
     transform: none;
     transition: none;
   }
-}
-
-/* The header search field opts out of the site-wide focus ring below —
-   it has its own pill background as the "you're in this field" affordance,
-   so the ring reads as a stray border. Needs a selector at least as
-   specific as `:focus-visible` (and placed after it) to win regardless of
-   Tailwind utility injection order. */
-.search-input:focus-visible {
-  outline: none;
 }
