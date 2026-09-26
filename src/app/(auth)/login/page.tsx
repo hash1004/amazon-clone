@@ -80,7 +80,7 @@ function LoginForm() {
       </form>
 
       <p className="mt-4 border-t border-border-default pt-3 text-sm">
-        New to Amazon?{" "}
+        New here?{" "}
         <Link href="/signup" className="link">
           Create your account
         </Link>

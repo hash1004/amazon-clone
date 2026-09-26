@@ -3,8 +3,7 @@ import Link from "next/link";
 import { discountPct, formatPrice } from "@/lib/format";
 import { RatingStars } from "@/components/rating-stars";
 import { PriceTag } from "@/components/ui/price-tag";
-import { ChoiceBadge } from "@/components/ui/badge";
-import { PrimeBadge } from "@/components/ui/prime-badge";
+import { HouseFavoriteBadge } from "@/components/ui/badge";
 import { boughtInPastMonth, deliveryEstimate } from "@/lib/product-display";
 import { QuickAdd } from "@/components/search/quick-add";
 import { WishlistButton } from "@/components/wishlist-button";
@@ -13,7 +12,8 @@ export type ProductCardData = {
   id: string;
   slug: string;
   title: string;
-  brand: string;
+  origin: string;
+  roastLevel: "LIGHT" | "MEDIUM" | "DARK";
   images: string[];
   priceCents: number;
   listPriceCents: number | null;
@@ -21,6 +21,12 @@ export type ProductCardData = {
   ratingCount: number;
   featured?: boolean;
   stock?: number;
+};
+
+const ROAST_LABEL: Record<ProductCardData["roastLevel"], string> = {
+  LIGHT: "Light roast",
+  MEDIUM: "Medium roast",
+  DARK: "Dark roast",
 };
 
 export function ProductCard({
@@ -66,9 +72,13 @@ export function ProductCard({
         </span>
       </div>
 
+      <p className="mb-1 text-xs text-text-muted">
+        {ROAST_LABEL[product.roastLevel]} · {product.origin}
+      </p>
+
       {product.featured && (
         <div className="mb-1">
-          <ChoiceBadge />
+          <HouseFavoriteBadge />
         </div>
       )}
 
@@ -106,7 +116,6 @@ export function ProductCard({
       {withCart && (
         <div className="mt-auto pt-1.5">
           <p className="flex min-h-[1.75rem] items-start gap-1 text-xs leading-tight text-text-secondary">
-            <PrimeBadge />
             <span>{deliveryEstimate()}</span>
           </p>
           <p className="min-h-[1rem] text-xs font-medium text-text-deal">

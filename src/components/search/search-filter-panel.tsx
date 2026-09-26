@@ -2,11 +2,16 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { DEPARTMENTS } from "@/lib/departments";
 import { PRICE_BUCKETS } from "@/lib/product-display";
 import { searchUrl, SORTS, type SearchParams } from "@/lib/search-query";
 import { CloseIcon } from "@/components/ui/icons";
 import { useSearchFilter } from "@/components/search/search-filter-context";
+
+const ROAST_LEVELS = [
+  { slug: "light", label: "Light" },
+  { slug: "medium", label: "Medium" },
+  { slug: "dark", label: "Dark" },
+];
 
 /**
  * Responsive: on phones this is a complete full-screen overlay (there's
@@ -23,10 +28,10 @@ import { useSearchFilter } from "@/components/search/search-filter-context";
  */
 export function SearchFilterPanel({
   params,
-  brands,
+  origins,
 }: {
   params: SearchParams;
-  brands: { brand: string; count: number }[];
+  origins: { origin: string; count: number }[];
 }) {
   const { open, setOpen } = useSearchFilter();
   const close = () => setOpen(false);
@@ -88,22 +93,22 @@ export function SearchFilterPanel({
             ))}
           </FGroup>
 
-          <FGroup title="Department">
+          <FGroup title="Roast level">
             <FLink
-              href={searchUrl(params, { dept: undefined, page: undefined })}
-              active={!params.dept}
+              href={searchUrl(params, { roast: undefined, page: undefined })}
+              active={!params.roast}
               onNav={close}
             >
               All
             </FLink>
-            {DEPARTMENTS.map((d) => (
+            {ROAST_LEVELS.map((r) => (
               <FLink
-                key={d.slug}
-                href={searchUrl(params, { dept: d.slug, page: undefined })}
-                active={params.dept === d.slug}
+                key={r.slug}
+                href={searchUrl(params, { roast: r.slug, page: undefined })}
+                active={params.roast === r.slug}
                 onNav={close}
               >
-                {d.label}
+                {r.label}
               </FLink>
             ))}
           </FGroup>
@@ -144,19 +149,19 @@ export function SearchFilterPanel({
             ))}
           </FGroup>
 
-          {brands.length > 0 && (
-            <FGroup title="Brands">
-              {brands.map((b) => (
+          {origins.length > 0 && (
+            <FGroup title="Origin">
+              {origins.map((o) => (
                 <FLink
-                  key={b.brand}
+                  key={o.origin}
                   href={searchUrl(params, {
-                    brand: params.brand === b.brand ? undefined : b.brand,
+                    origin: params.origin === o.origin ? undefined : o.origin,
                     page: undefined,
                   })}
-                  active={params.brand === b.brand}
+                  active={params.origin === o.origin}
                   onNav={close}
                 >
-                  {b.brand}
+                  {o.origin}
                 </FLink>
               ))}
             </FGroup>

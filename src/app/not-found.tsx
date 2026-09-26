@@ -1,19 +1,12 @@
 import Link from "next/link";
-import { SorryDog } from "@/components/ui/sorry-dog";
-
-const DOG_NAMES = ["Biscuit", "Rufus", "Nimbus", "Pepper", "Willow", "Gus"];
+import { SorryMug } from "@/components/ui/sorry-mug";
 
 export default function NotFound() {
-  const seed = 3;
-  const name = DOG_NAMES[seed % DOG_NAMES.length];
-
   return (
     <div className="mx-auto flex max-w-[820px] flex-col items-center gap-8 px-4 py-14 text-center sm:flex-row sm:text-left">
       <div className="shrink-0">
-        <SorryDog className="h-52 w-52" seed={seed} />
-        <p className="mt-1 text-xs text-text-muted">
-          {name}, one of the dogs of Amazon
-        </p>
+        <SorryMug className="h-52 w-52" />
+        <p className="mt-1 text-xs text-text-muted">This roast doesn&apos;t exist</p>
       </div>
 
       <div>
@@ -21,7 +14,7 @@ export default function NotFound() {
           Sorry! We couldn&apos;t find that page.
         </h1>
         <p className="mt-2 text-sm text-text-secondary">
-          But we have millions of other things to explore.
+          But we&apos;ve got a dozen coffees worth exploring.
         </p>
 
         <form action="/s" className="mt-5 flex max-w-sm overflow-hidden rounded-md border border-border-strong">
@@ -29,7 +22,7 @@ export default function NotFound() {
             type="search"
             name="q"
             aria-label="Search"
-            placeholder="Search for products"
+            placeholder="Search coffee"
             className="min-w-0 flex-1 px-3 py-2 text-sm outline-none"
           />
           <button
@@ -45,13 +38,13 @@ export default function NotFound() {
             href="/"
             className="rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
           >
-            Go to the Amazon.com home page
+            Back to Still Coffee Co.
           </Link>
           <Link
             href="/s?deals=1"
             className="rounded-pill border border-border-strong px-6 py-2 text-sm hover:bg-subtle"
           >
-            Today&apos;s Deals
+            On Sale
           </Link>
         </div>
       </div>

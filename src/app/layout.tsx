@@ -6,7 +6,6 @@ import { WishlistProvider } from "@/lib/wishlist-store";
 import { RecentlyViewedProvider } from "@/lib/recently-viewed";
 import { ToastProvider } from "@/lib/toast";
 
-// Redesign v2 type system — see design/redesign-v2-spec.md.
 const body = Work_Sans({
   variable: "--font-body",
   subsets: ["latin"],
@@ -28,11 +27,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://amazon.svdistributor.com",
   ),
   title: {
-    default: "Amazon.com. Spend less. Smile more.",
-    template: "Amazon.com: %s",
+    default: "Still Coffee Co. — One coffee, done well.",
+    template: "Still Coffee Co.: %s",
   },
   description:
-    "Online shopping from a great selection at a low price. Free shipping on qualifying orders.",
+    "Small-batch specialty coffee, roasted to order and shipped within 48 hours of roasting.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

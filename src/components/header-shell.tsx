@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Sticky header wrapper that slides out of view on scroll-down and back in on
- * scroll-up (like the Amazon app header).
+ * Sticky header wrapper that slides out of view on scroll-down and back in
+ * on scroll-up.
  */
 export function HeaderShell({ children }: { children: React.ReactNode }) {
   const [hidden, setHidden] = useState(false);

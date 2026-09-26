@@ -7,8 +7,8 @@ import { SearchIcon, CloseIcon, ArrowLeftIcon } from "@/components/ui/icons";
 
 type Suggestion =
   | { kind: "term"; text: string }
-  | { kind: "brand"; text: string }
-  | { kind: "department"; slug: string; text: string }
+  | { kind: "origin"; text: string }
+  | { kind: "roast"; slug: string; text: string }
   | { kind: "product"; slug: string; title: string; image: string };
 
 const MOBILE_QUERY = "(max-width: 639px)";
@@ -72,7 +72,7 @@ export function ExpandingSearch() {
     inputRef.current?.blur();
     setMobileOpen(false);
     if (s.kind === "product") router.push(`/p/${s.slug}`);
-    else if (s.kind === "department") router.push(`/s?dept=${s.slug}`);
+    else if (s.kind === "roast") router.push(`/s?roast=${s.slug}`);
     else router.push(`/s?q=${encodeURIComponent(s.text)}`);
   };
 
@@ -116,17 +116,17 @@ export function ExpandingSearch() {
         );
         const data = (await res.json()) as {
           products: { slug: string; title: string; image: string }[];
-          brands: string[];
-          departments: { slug: string; label: string }[];
+          origins: string[];
+          roastLevels: { slug: string; label: string }[];
         };
         setResults([
           { kind: "term", text: term },
-          ...data.departments.map((d) => ({
-            kind: "department" as const,
-            slug: d.slug,
-            text: d.label,
+          ...data.roastLevels.map((r) => ({
+            kind: "roast" as const,
+            slug: r.slug,
+            text: r.label,
           })),
-          ...data.brands.map((b) => ({ kind: "brand" as const, text: b })),
+          ...data.origins.map((o) => ({ kind: "origin" as const, text: o })),
           ...data.products.map((p) => ({
             kind: "product" as const,
             slug: p.slug,
@@ -191,11 +191,11 @@ export function ExpandingSearch() {
             value={q}
             autoComplete="off"
             role="combobox"
-            aria-label="Search Amazon"
+            aria-label="Search coffee"
             aria-expanded={open && items.length > 0}
             aria-controls={listId}
             aria-autocomplete="list"
-            placeholder="Search Amazon"
+            placeholder="Search coffee"
             onChange={(e) => {
               setQ(e.target.value);
               setOpen(true);
@@ -265,11 +265,11 @@ export function ExpandingSearch() {
                 value={q}
                 autoComplete="off"
                 role="combobox"
-                aria-label="Search Amazon"
+                aria-label="Search coffee"
                 aria-expanded={items.length > 0}
                 aria-controls={listId}
                 aria-autocomplete="list"
-                placeholder="Search Amazon"
+                placeholder="Search coffee"
                 onChange={(e) => setQ(e.target.value)}
                 className="search-input min-w-0 flex-1 border-none bg-transparent py-2.5 text-base text-text-primary outline-none"
               />
@@ -302,7 +302,7 @@ export function ExpandingSearch() {
             <p className="p-4 text-center text-sm text-text-secondary">
               {q.trim().length >= 2
                 ? "No matches yet."
-                : "Search for products, brands, or a department."}
+                : "Search by coffee, origin, or roast level."}
             </p>
           )}
         </div>
@@ -364,11 +364,11 @@ function SuggestionList({
               <SearchIcon className="h-4 w-4 shrink-0 text-text-muted" />
               <span>
                 {s.text}
-                {s.kind === "brand" && (
-                  <span className="ml-1 text-xs text-text-secondary">· brand</span>
+                {s.kind === "origin" && (
+                  <span className="ml-1 text-xs text-text-secondary">· origin</span>
                 )}
-                {s.kind === "department" && (
-                  <span className="ml-1 text-xs text-text-secondary">· department</span>
+                {s.kind === "roast" && (
+                  <span className="ml-1 text-xs text-text-secondary">· roast</span>
                 )}
               </span>
             </>

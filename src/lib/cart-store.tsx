@@ -28,8 +28,8 @@ type CartContextValue = {
   clear: () => void;
 };
 
-const STORAGE_KEY = "amazon-clone.cart.v1";
-const EVENT = "amazon-clone:cart";
+const STORAGE_KEY = "still-coffee.cart.v1";
+const EVENT = "still-coffee:cart";
 
 // ─── External store backed by localStorage ────────────────────────────────
 

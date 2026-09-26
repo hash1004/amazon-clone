@@ -20,8 +20,8 @@ export type WishlistEntry = {
   inStock: boolean;
 };
 
-const KEY = "amazon-clone.wishlist.v1";
-const EVENT = "amazon-clone:wishlist";
+const KEY = "still-coffee.wishlist.v1";
+const EVENT = "still-coffee:wishlist";
 
 let cachedRaw: string | null = null;
 let cached: WishlistEntry[] = [];

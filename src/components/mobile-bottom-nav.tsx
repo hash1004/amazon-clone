@@ -7,18 +7,18 @@ import { useWishlist } from "@/lib/wishlist-store";
 import { PulseDot } from "@/components/ui/pulse-dot";
 import {
   HomeIcon,
-  CategoriesIcon,
+  SearchIcon,
   CartIcon,
   HeartIcon,
   PersonIcon,
 } from "@/components/ui/icons";
 
 /**
- * Phone-only bottom nav (sm:hidden) — Home, Categories, Cart, Wishlist and
+ * Phone-only bottom nav (sm:hidden) — Home, Search, Cart, Wishlist and
  * Profile all move down here instead of being duplicated in the header,
- * which slims down to just the wordmark + search on phones (see
- * site-header.tsx). Categories and Profile open full pages rather than
- * dropdowns — a tap target is a worse fit for a hover-style flyout menu.
+ * which slims down to just the wordmark + search field on phones (see
+ * site-header.tsx). A single-category store has no department browse to
+ * dedicate a tab to, so Search takes that slot instead.
  */
 export function MobileBottomNav() {
   const pathname = usePathname();
@@ -28,10 +28,10 @@ export function MobileBottomNav() {
   const items = [
     { href: "/", label: "Home", icon: HomeIcon, active: pathname === "/" },
     {
-      href: "/categories",
-      label: "Categories",
-      icon: CategoriesIcon,
-      active: pathname.startsWith("/categories"),
+      href: "/s",
+      label: "Search",
+      icon: SearchIcon,
+      active: pathname.startsWith("/s"),
     },
     {
       href: "/cart",

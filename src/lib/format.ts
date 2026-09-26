@@ -5,7 +5,7 @@ export function formatPrice(cents: number): string {
   });
 }
 
-/** Splits a price into dollars and cents for the Amazon-style superscript layout. */
+/** Splits a price into dollars and cents for the superscript-cents price layout. */
 export function priceParts(cents: number): { whole: string; frac: string } {
   const whole = Math.floor(cents / 100).toLocaleString("en-US");
   const frac = String(cents % 100).padStart(2, "0");

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AmazonLogo } from "@/components/ui/amazon-logo";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 
 /**
@@ -19,7 +19,7 @@ export default function AuthLayout({
     <div className="flex min-h-full flex-col bg-surface pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0">
       <div className="flex justify-start border-b border-border-default px-4 py-4 sm:justify-center sm:px-0">
         <Link href="/">
-          <AmazonLogo className="h-9 w-auto" tone="dark" />
+          <BrandLogo className="h-9 w-auto" tone="dark" />
         </Link>
       </div>
 
@@ -39,7 +39,7 @@ export default function AuthLayout({
             Help
           </Link>
         </p>
-        <p className="mt-2">© 1996–2026, Amazon.com, Inc. or its affiliates</p>
+        <p className="mt-2">© 2026 Still Coffee Co.</p>
       </footer>
 
       <MobileBottomNav />

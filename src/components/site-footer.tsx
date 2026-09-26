@@ -1,17 +1,17 @@
 import Link from "next/link";
-import { AmazonLogo } from "@/components/ui/amazon-logo";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] = [
   {
-    heading: "Get to know us",
+    heading: "The roastery",
     links: [
-      { label: "About", href: "/info/about" },
+      { label: "Our Story", href: "/info/about" },
+      { label: "How We Roast", href: "/info/blog" },
       { label: "Careers", href: "/info/careers" },
-      { label: "Blog", href: "/info/blog" },
     ],
   },
   {
-    heading: "Let us help you",
+    heading: "Your account",
     links: [
       { label: "Your Account", href: "/account" },
       { label: "Your Orders", href: "/account/orders" },
@@ -29,11 +29,11 @@ export function SiteFooter() {
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div>
             <Link href="/" className="inline-block">
-              <AmazonLogo className="h-7 w-auto" tone="light" />
+              <BrandLogo className="h-7 w-auto" tone="light" />
             </Link>
             <p className="mt-3 max-w-[22ch] text-sm text-neutral-400">
-              A calmer way to shop — categorization and quiet deals-in-context,
-              not banners.
+              One coffee, done well — small-batch roasted, shipped within 48
+              hours of roasting.
             </p>
           </div>
           <div className="flex flex-wrap gap-10 sm:gap-16">
@@ -67,7 +67,7 @@ export function SiteFooter() {
             Terms of Use
           </Link>
         </p>
-        <p className="mt-2">© 1996–2026, Amazon.com, Inc. or its affiliates</p>
+        <p className="mt-2">© 2026 Still Coffee Co.</p>
       </div>
     </footer>
   );

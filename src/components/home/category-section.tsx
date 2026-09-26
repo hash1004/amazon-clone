@@ -4,12 +4,10 @@ import { ProductCard, type ProductCardData } from "@/components/product-card";
 export type CategoryProduct = ProductCardData;
 
 /**
- * One static 4-up grid per department — replaces v1's horizontally
- * scrolling themed rails ("Today's Deals" / "Best Sellers" / "New
- * Arrivals" / "Top Rated" / 5× "More to explore in X", 9 rails deep).
- * Discounts show inline on the card, quietly, instead of in a separate
- * red-ribboned deals rail. No bestseller rank chips — rating + review
- * count is the signal. See design/redesign-v2-spec.md.
+ * One static 4-up grid per roast level (Light/Medium/Dark) — a flat,
+ * calm listing instead of horizontally-scrolling themed rails. Discounts
+ * show inline on the card, quietly, instead of a red-ribboned deals rail.
+ * No bestseller rank chips — rating + review count is the signal.
  *
  * Uses the same ProductCard as Search results and the PDP's related
  * items — this used to be its own one-off tile with a different price

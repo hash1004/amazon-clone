@@ -1,53 +1,56 @@
-**Live:** https://amazon.svdistributor.com
+**Live:** https://amazon.svdistributor.com _(domain predates the rebrand below — see [Still open](#still-open))_
 
-# amazon-clone
+# Still Coffee Co.
 
-A working slice of [amazon.com](https://amazon.com), built as a timed
-assignment: chrome, home, search, product, cart, checkout, orders.
+A single-category coffee shop: one small-batch roaster, a dozen coffees,
+built as a timed assignment — chrome, home, search, product, cart,
+checkout, orders, all backed by a real database.
 
-## Design direction (v2 — resubmission)
+## Design direction (v3 — rebuild)
 
-The first submission matched amazon.com's own layout closely and was
-rejected for it: a faithful clone isn't a point of view. **The opinion this
-version leads with: amazon.com is too crowded.** Banner carousels,
-poster-tile grids, and a loud badge on every third card compete for
-attention instead of earning it. The redesign replaces that with a calm,
-considered layout that still surfaces categorization and deals — quietly
-(borders, one accent color, discounts priced inline) instead of loudly
-(carousels, ribbons, three competing CTA colors).
+The first two submissions kept amazon.com's shape — a general marketplace
+with departments, "Prime," "Amazon's Choice," Amazon's own wordmark and
+copyright line — even after a visual reskin. The brief changed: an interface
+designed from scratch, not a clone with new colors. **v3 is a different
+product, not a different skin:** a single-category specialty-coffee store,
+with its own name, palette, catalog, and layout, on the same real backend
+(Next.js + Prisma + PostgreSQL) as before.
 
-**What was built first:** the Home page and its token system, because
-that's where the opinion had to prove itself visually before anything
-else could inherit it. **What changed and where:**
+What actually changed:
 
-- **Home** and **Search** got the deep restructure — see below.
-- Everything else (product page, cart, checkout, orders, account,
-  wishlist, auth, header/footer chrome) kept its exact structure and every
-  feature — only the visual skin (tokens, badges, the wordmark) changed.
-  Nothing was cut from these flows; the opinion is about Home's layout,
-  not about removing functionality.
-
-Full rationale, the token table, and the exact module decisions are in
-[`design/redesign-v2-spec.md`](design/redesign-v2-spec.md).
+- **New brand.** "Still Coffee Co." — no more Amazon wordmark, Prime badge,
+  "Amazon's Choice," or copyright line. One roast-toned caramel accent
+  replaces Amazon's own button orange.
+- **New catalog.** ~194 dummyjson products across five departments →
+  12 curated coffees (origin, process, roast level, tasting notes), each
+  photographed with real, license-clean Unsplash photography instead of
+  the old generic e-commerce catalog shots.
+- **New structure, not just new colors.** The department mega-menu, the
+  "Categories" mobile tab, and the per-department home/search facets are
+  gone — there's only one category. Home is one **Spotlight** (a single
+  featured coffee, not a rotating carousel) plus roast-level sections
+  (Light / Medium / Dark). Search filters by roast level and origin
+  instead of department and brand. The product page adds coffee-specific
+  sections — tasting notes, a brew guide by roast level — in place of the
+  generic spec table.
+- **Reskinned, not rebuilt:** cart, checkout, account, auth, and the 404
+  page keep their exact working logic (real cart state, real address CRUD,
+  real order creation, real auth) — only copy, badges, and the wordmark
+  changed to match the new brand.
 
 ## What's implemented
 
-- **Home** — one **Spotlight**: a single considered pick (image, price,
-  discount, rating) instead of an auto-rotating carousel, plus a static
-  4-up product grid per department instead of nine horizontally-scrolling
-  themed rails (Deals / Best Sellers / New Arrivals / Top Rated / 5×
-  "More to explore"). Same catalog, reorganized — discounts now show
-  inline on the card instead of in a separate red-ribboned rail, and
-  bestseller rank chips are cut in favor of the rating itself. Recently-
-  viewed strip.
-- **Search** — full-text over title/brand, department + brand + price + rating
-  filters, sort, removable filter chips, pagination, **type-ahead autocomplete**
-  (products, brands, departments), and a mobile filter/sort sheet. Its
-  clutter wasn't structural, so its pass was restraint: quiet discount
-  pills instead of a bold ribbon, tightened copy.
-- **Product page** — image gallery with hover-zoom, MRP / price / savings,
-  stock + delivery date, quantity, Add to Cart / Buy Now / Add to List, spec
-  table, seller card, frequently-bought-together, related items.
+- **Home** — one **Spotlight**: this week's featured coffee (image, tasting
+  notes, price) instead of an auto-rotating carousel, plus a static 4-up
+  grid per roast level. Recently-viewed strip.
+- **Search** — full-text over title/description/origin, roast level +
+  origin + price + rating filters, sort, removable filter chips,
+  pagination, **type-ahead autocomplete** (coffees, origins, roast levels),
+  and a mobile filter/sort sheet.
+- **Product page** — image gallery with hover-zoom, price / savings, stock +
+  delivery date, quantity, Add to Cart / Buy Now / Add to List, tasting
+  notes, a roast-level brew guide (ratios + time by method), spec table,
+  related coffees at the same roast level.
 - **Cart** — guest cart in `localStorage`; quantities, remove, subtotal.
 - **Checkout** — 3-step accordion: saved-address picker + inline add, delivery
   option (standard / express with date ranges), payment (card / UPI / cash on
@@ -57,11 +60,11 @@ Full rationale, the token table, and the exact module decisions are in
   elapsed time), full breakdown, and "Buy it again".
 - **Account** — saved addresses CRUD, order history.
 - **Wishlist** (login required) + recently-viewed (local).
-- Auth (email + password), Amazon-style sign-in page, dogs-of-Amazon 404,
-  toasts, error boundaries, image fallbacks, mobile menu, auto-hiding header.
+- Auth (email + password), sign-in page, empty-mug 404, toasts, error
+  boundaries, image fallbacks, mobile menu, auto-hiding header.
 
 **Deliberately cut:** review authoring, seller accounts, recommendation ML,
-Prime membership, real returns/refunds, real payment processing, OAuth,
+subscriptions, real returns/refunds, real payment processing, OAuth,
 cross-device cart sync.
 
 ## Stack
@@ -69,7 +72,7 @@ cross-device cart sync.
 - **Next.js 16** (App Router, TypeScript, Turbopack), containerized and
   deployed on a self-hosted Docker Swarm host
 - **Tailwind CSS v4** — CSS-first design tokens (`src/app/globals.css`);
-  one accent color, Work Sans + Newsreader. See the design doc above.
+  one accent color (roast caramel), Work Sans + Newsreader.
 - **Prisma 7 + PostgreSQL**, driver adapter (`@prisma/adapter-pg`)
 - **Auth.js** (credentials, JWT sessions)
 
@@ -79,12 +82,20 @@ cross-device cart sync.
 npm install
 cp .env.example .env          # set DATABASE_URL and AUTH_SECRET
 npx prisma db push            # sync schema
-npx prisma db seed            # ~194 products from dummyjson.com
+npx prisma db seed            # 12 curated coffees, real Unsplash photography
 npm run dev
 ```
 
 Checkout test cards: `4242 4242 4242 4242` succeeds, any number ending `0002`
 is declined. UPI IDs starting `fail@` simulate a failed request.
+
+## Still open
+
+The production domain (`amazon.svdistributor.com`) predates this rebrand
+and is infrastructure this codebase doesn't control (DNS/hosting on the
+Contabo VPS) — it still works, it just no longer matches the name on the
+page. Pointing a new subdomain at the same deployment is a one-time
+infra change outside this repo.
 
 ## Agent logs
 

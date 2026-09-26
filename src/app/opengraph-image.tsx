@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "Amazon.com";
+export const alt = "Still Coffee Co.";
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -16,21 +16,21 @@ export default function OpengraphImage() {
           alignItems: "flex-start",
           justifyContent: "center",
           padding: "80px",
-          background: "#f8f7f2",
-          color: "#1f1d15",
+          background: "#f8f5ef",
+          color: "#221a12",
           fontFamily: "serif",
           fontStyle: "italic",
         }}
       >
         <div style={{ display: "flex", fontSize: 100, fontWeight: 500 }}>
-          <span>amazon</span>
+          <span>still</span>
         </div>
         <div
           style={{
             width: 260,
             height: 4,
             marginTop: 12,
-            background: "#284c32",
+            background: "#b5732a",
             borderRadius: 999,
           }}
         />
@@ -40,10 +40,10 @@ export default function OpengraphImage() {
             marginTop: 40,
             fontStyle: "normal",
             fontFamily: "sans-serif",
-            color: "#605d56",
+            color: "#66594a",
           }}
         >
-          Spend less. Smile more.
+          One coffee, done well.
         </div>
       </div>
     ),

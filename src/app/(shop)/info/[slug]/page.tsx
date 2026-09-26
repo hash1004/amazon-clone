@@ -3,56 +3,20 @@ import type { Metadata } from "next";
 
 const PAGES: Record<string, { title: string; blurb: string }> = {
   about: {
-    title: "About",
-    blurb: "On the real site, this covers the company, leadership and mission.",
+    title: "Our Story",
+    blurb: "On the real site, this covers the roastery, the people, and why we only do one thing.",
   },
   careers: {
     title: "Careers",
-    blurb: "Job listings and hiring information across the company.",
+    blurb: "Roasting, packing and shipping — a small team, listed here.",
   },
   blog: {
-    title: "Blog",
-    blurb: "Company news, announcements and stories.",
-  },
-  "investor-relations": {
-    title: "Investor Relations",
-    blurb: "Financial reports, filings and shareholder information.",
-  },
-  sell: {
-    title: "Sell products",
-    blurb: "Where third-party sellers register and manage a storefront.",
-  },
-  affiliate: {
-    title: "Become an Affiliate",
-    blurb: "Earn referral commissions by linking to products.",
-  },
-  advertise: {
-    title: "Advertise Your Products",
-    blurb: "Sponsored placements and advertising tools for sellers.",
-  },
-  "self-publish": {
-    title: "Self-Publish with Us",
-    blurb: "Publish and distribute books directly to the store.",
-  },
-  "business-card": {
-    title: "Business Card",
-    blurb: "A store-branded rewards credit card.",
-  },
-  "shop-with-points": {
-    title: "Shop with Points",
-    blurb: "Redeem credit-card reward points at checkout.",
-  },
-  "reload-balance": {
-    title: "Reload Your Balance",
-    blurb: "Add money to a gift-card balance to pay with later.",
-  },
-  "currency-converter": {
-    title: "Currency Converter",
-    blurb: "See prices and pay in your local currency.",
+    title: "How We Roast",
+    blurb: "Notes from the roastery: sourcing, roast curves, and new arrivals.",
   },
   "shipping-policy": {
-    title: "Shipping Rates & Policies",
-    blurb: "Delivery speeds, costs and regional availability.",
+    title: "Shipping & Policies",
+    blurb: "Delivery speeds, costs, and how fresh a bag is when it ships.",
   },
   help: {
     title: "Help",
@@ -65,14 +29,6 @@ const PAGES: Record<string, { title: string; blurb: string }> = {
   "privacy-notice": {
     title: "Privacy Notice",
     blurb: "How personal information is collected and used.",
-  },
-  "consumer-health-data": {
-    title: "Consumer Health Data Privacy Disclosure",
-    blurb: "How health-related data is handled.",
-  },
-  "ad-choices": {
-    title: "Your Ads Privacy Choices",
-    blurb: "Controls for interest-based advertising.",
   },
 };
 

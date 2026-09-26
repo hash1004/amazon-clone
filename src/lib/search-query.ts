@@ -1,7 +1,7 @@
 export type SearchParams = {
   q?: string;
-  dept?: string;
-  brand?: string;
+  roast?: string;
+  origin?: string;
   deals?: string;
   rating?: string;
   min?: string;

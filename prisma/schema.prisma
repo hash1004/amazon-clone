@@ -1,6 +1,8 @@
-// Amazon clone — data model.
-// Prices are integer cents. Order line items snapshot product fields so
-// order history survives later catalog edits. Payments are mocked.
+// Still Coffee Co. — data model.
+// Single-category catalog (specialty coffee only): no department/brand facet,
+// just this roaster's own beans. Prices are integer cents. Order line items
+// snapshot product fields so order history survives later catalog edits.
+// Payments are mocked.
 
 generator client {
   provider = "prisma-client"
@@ -13,27 +15,37 @@ datasource db {
 
 // ─── Catalog ──────────────────────────────────────────────────────────────
 
+enum RoastLevel {
+  LIGHT
+  MEDIUM
+  DARK
+}
+
 model Product {
-  id             String   @id @default(cuid())
-  slug           String   @unique
+  id             String     @id @default(cuid())
+  slug           String     @unique
   title          String
   description    String
-  brand          String
-  department     String // "electronics" | "home-kitchen" | "books" | "toys-games" | "sports-outdoors" | ...
-  bullets        String[] // feature bullets shown on the detail page
+  origin         String // "Ethiopia" | "Colombia" | "Blend" | ...
+  process        String // "Washed" | "Natural" | "Honey" | "Wet-Hulled" | "Blend"
+  roastLevel     RoastLevel
+  tastingNotes   String[] // e.g. ["Jasmine", "Bergamot", "Peach"]
+  weightGrams    Int        @default(340)
+  bullets        String[] // freshness/brew highlight lines shown on the detail page
   images         String[] // image URLs
   priceCents     Int
   listPriceCents Int? // "was" price for strikethrough / deal %
-  rating         Float    @default(0)
-  ratingCount    Int      @default(0)
-  stock          Int      @default(50)
-  featured       Boolean  @default(false)
-  createdAt      DateTime @default(now())
+  rating         Float      @default(0)
+  ratingCount    Int        @default(0)
+  stock          Int        @default(50)
+  featured       Boolean    @default(false)
+  createdAt      DateTime   @default(now())
 
   cartItems  CartItem[]
   orderItems OrderItem[]
 
-  @@index([department])
+  @@index([roastLevel])
+  @@index([origin])
   @@index([featured])
 }
 

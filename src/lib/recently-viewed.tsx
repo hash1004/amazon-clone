@@ -17,8 +17,8 @@ export type ViewedEntry = {
   priceCents: number;
 };
 
-const KEY = "amazon-clone.viewed.v1";
-const EVENT = "amazon-clone:viewed";
+const KEY = "still-coffee.viewed.v1";
+const EVENT = "still-coffee:viewed";
 const MAX = 15;
 
 let cachedRaw: string | null = null;
