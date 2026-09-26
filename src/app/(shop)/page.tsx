@@ -18,6 +18,7 @@ const SELECT = {
   rating: true,
   ratingCount: true,
   featured: true,
+  stock: true,
 } as const;
 
 const ROAST_SECTIONS = [

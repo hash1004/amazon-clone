@@ -1,3 +1,6 @@
+/** At or below this many bags, product pages and cards say "Only N left". */
+export const LOW_STOCK_THRESHOLD = 10;
+
 export const PRICE_BUCKETS = [
   { label: "Under $25", min: undefined, max: 2500 },
   { label: "$25 to $50", min: 2500, max: 5000 },

@@ -92,7 +92,7 @@ const COFFEES: Coffee[] = [
     weightGrams: 340,
     rating: 4.7,
     ratingCount: 388,
-    stock: 47,
+    stock: 3,
     images: [img.beansPile, img.handsClose],
   },
   {
@@ -124,7 +124,7 @@ const COFFEES: Coffee[] = [
     weightGrams: 340,
     rating: 4.6,
     ratingCount: 201,
-    stock: 29,
+    stock: 5,
     images: [img.cupSteamDark, img.clinkingLattes],
   },
   {
@@ -154,7 +154,7 @@ const COFFEES: Coffee[] = [
     weightGrams: 340,
     rating: 4.6,
     ratingCount: 165,
-    stock: 33,
+    stock: 8,
     images: [img.groundAndBeans, img.moodyHold],
   },
   {
@@ -216,7 +216,7 @@ const COFFEES: Coffee[] = [
     weightGrams: 340,
     rating: 4.5,
     ratingCount: 231,
-    stock: 26,
+    stock: 6,
     images: [img.beansDark, img.shopInterior],
   },
   {

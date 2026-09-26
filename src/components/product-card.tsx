@@ -1,6 +1,7 @@
 import { SafeImage as Image } from "@/components/ui/safe-image";
 import Link from "next/link";
 import { discountPct, formatPrice } from "@/lib/format";
+import { LOW_STOCK_THRESHOLD } from "@/lib/product-display";
 import { PriceTag } from "@/components/ui/price-tag";
 import { WishlistButton } from "@/components/wishlist-button";
 
@@ -93,8 +94,13 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         )}
       </div>
 
-      {!inStock && (
-        <p className="mt-1 text-xs font-medium text-text-deal">Currently unavailable</p>
+      {!inStock ? (
+        <p className="mt-1 text-xs font-medium text-text-deal">Sold out</p>
+      ) : (
+        product.stock !== undefined &&
+        product.stock <= LOW_STOCK_THRESHOLD && (
+          <p className="mt-1 text-xs font-medium text-text-deal">Only {product.stock} left</p>
+        )
       )}
     </div>
   );

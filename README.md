@@ -27,9 +27,9 @@ What actually changed:
   the old generic e-commerce catalog shots.
 - **New structure, not just new colors.** The department mega-menu, the
   "Categories" mobile tab, and the per-department home/search facets are
-  gone — there's only one category. Home is one **Spotlight** (a single
-  featured coffee, not a rotating carousel) plus roast-level sections
-  (Light / Medium / Dark). Search filters by roast level and origin
+  gone — there's only one category. Home is one full-screen **Spotlight**
+  (a slow carousel of featured coffees, one brown block per slide) plus
+  roast-level sections (Light / Medium / Dark). Search filters by roast level and origin
   instead of department and brand. The product page adds coffee-specific
   sections — tasting notes, a brew guide by roast level — in place of the
   generic spec table.
@@ -40,15 +40,19 @@ What actually changed:
 
 ## What's implemented
 
-- **Home** — one **Spotlight**: this week's featured coffee (image, tasting
-  notes, price) instead of an auto-rotating carousel, plus a static 4-up
-  grid per roast level. Recently-viewed strip.
-- **Search** — full-text over title/description/origin, roast level +
-  origin + price + rating filters, sort, removable filter chips,
-  pagination, **type-ahead autocomplete** (coffees, origins, roast levels),
-  and a mobile filter/sort sheet.
+- **Home** — a **Spotlight** hero that fills the first screen on phones and
+  laptops: featured coffees (image, origin, tasting notes) that advance on
+  their own, pause on hover/touch, and swipe on phones. Then a 4-up grid per
+  roast level and a recently-viewed strip.
+- **Search** — relevance search (`src/lib/product-search.ts`): every word
+  must match somewhere (title, origin, tasting notes, roast, process,
+  description) in any order, tolerates typos and missing accents, maps taste
+  words like "fruity" or "nutty" to notes. Roast level + origin + price +
+  rating filters in one "Filters & Sort" panel, removable filter chips,
+  pagination, and **type-ahead suggestions** (coffees, origins, roast levels)
+  from the same search.
 - **Product page** — image gallery with hover-zoom, price / savings, stock +
-  delivery date, quantity, Add to Cart / Buy Now / Add to List, tasting
+  delivery date, quantity, Add to Cart / Buy Now / Save beans, tasting
   notes, a roast-level brew guide (ratios + time by method), spec table,
   related coffees at the same roast level.
 - **Cart** — guest cart in `localStorage`; quantities, remove, subtotal.
@@ -59,9 +63,10 @@ What actually changed:
 - **Orders** — order detail with a delivery-tracking timeline (advances by
   elapsed time), full breakdown, and "Buy it again".
 - **Account** — saved addresses CRUD, order history.
-- **Wishlist** (login required) + recently-viewed (local).
+- **Saved Beans** (the wishlist; login required) — stored on the account so it
+  follows you across devices; recently-viewed stays local to the browser.
 - Auth (email + password), sign-in page, empty-mug 404, toasts, error
-  boundaries, image fallbacks, mobile menu, auto-hiding header.
+  boundaries, image fallbacks, mobile menu, sticky header.
 
 **Deliberately cut:** review authoring, seller accounts, recommendation ML,
 subscriptions, real returns/refunds, real payment processing, OAuth,
@@ -72,7 +77,8 @@ cross-device cart sync.
 - **Next.js 16** (App Router, TypeScript, Turbopack), containerized and
   deployed on a self-hosted Docker Swarm host
 - **Tailwind CSS v4** — CSS-first design tokens (`src/app/globals.css`);
-  one accent color (roast caramel), Work Sans + Newsreader.
+  one accent color (roast caramel), sharp corners throughout (buttons
+  included), Archivo body + Fraunces display type.
 - **Prisma 7 + PostgreSQL**, driver adapter (`@prisma/adapter-pg`)
 - **Auth.js** (credentials, JWT sessions)
 
@@ -138,6 +144,11 @@ forcing it.
 Prefer pulling from GitHub `main` instead of pushing directly? Run
 `./scripts/deploy.sh` on the VPS — it fetches `origin/main` and calls
 the same `release.sh`.
+
+A few coffees are deliberately kept low on stock (3–8 bags) so the "Only N
+left" states show; orders decrement stock and refuse to oversell. To apply
+those levels to the live catalog without reseeding — or reset them after
+test orders — run `./scripts/set-low-stock.sh` on the VPS.
 
 Reseeding the catalog is a separate, deliberately manual step
 (`prisma/seed.ts` deletes every `Product`/`Cart`/`Order` row first) —

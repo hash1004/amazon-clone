@@ -8,10 +8,14 @@ import { formatPrice } from "@/lib/format";
 export function AddToCart({
   product,
   inStock,
+  maxQty = 10,
 }: {
   product: Omit<CartLine, "quantity">;
   inStock: boolean;
+  /** Bags left in stock; the picker never goes past it (or past 10). */
+  maxQty?: number;
 }) {
+  const limit = Math.max(1, Math.min(10, maxQty));
   const { add } = useCart();
   const { toast } = useToast();
   const [qty, setQty] = useState(1);
@@ -42,8 +46,9 @@ export function AddToCart({
         <button
           type="button"
           aria-label="Increase quantity"
-          onClick={() => setQty((q) => Math.min(10, q + 1))}
-          className="flex h-8 w-8 items-center justify-center text-lg leading-none transition hover:bg-subtle active:scale-95"
+          onClick={() => setQty((q) => Math.min(limit, q + 1))}
+          disabled={qty >= limit}
+          className="flex h-8 w-8 items-center justify-center text-lg leading-none transition hover:bg-subtle active:scale-95 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
         >
           +
         </button>

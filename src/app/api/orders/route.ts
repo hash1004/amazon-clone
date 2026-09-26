@@ -6,6 +6,15 @@ import { estimateDelivery } from "@/lib/delivery";
 
 type IncomingItem = { productId: string; quantity: number };
 
+class OutOfStock extends Error {
+  constructor(
+    readonly title: string,
+    readonly left: number,
+  ) {
+    super(`Out of stock: ${title}`);
+  }
+}
+
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
@@ -160,38 +169,68 @@ export async function POST(req: Request) {
   );
   const totals = orderTotals(subtotalCents, { deliverySpeed, listSubtotalCents });
 
-  const order = await db.order.create({
-    data: {
-      userId: session.user.id,
-      status: "CONFIRMED",
-      subtotalCents: totals.subtotalCents,
-      discountCents: totals.discountCents,
-      shippingCents: totals.shippingCents,
-      taxCents: totals.taxCents,
-      totalCents: totals.totalCents,
-      deliverySpeed,
-      paymentMethod,
-      estimatedDelivery: estimateDelivery(deliverySpeed),
-      shipName: ship.name,
-      shipPhone: ship.phone,
-      shipLine1: ship.line1,
-      shipLine2: ship.line2,
-      shipCity: ship.city,
-      shipState: ship.state,
-      shipPostal: ship.postal,
-      shipCountry: "US",
-      paymentLast4,
-      items: {
-        create: lineItems.map((li) => ({
-          productId: li.productId,
-          titleSnapshot: li.titleSnapshot,
-          priceCentsSnapshot: li.priceCentsSnapshot,
-          imageSnapshot: li.imageSnapshot,
-          quantity: li.quantity,
-        })),
-      },
-    },
-  });
+  // Take the stock and create the order in one transaction: each line only
+  // decrements if that many bags are still there, so two shoppers can't
+  // both buy the last bag. Any shortfall rolls the whole order back.
+  let order: { id: string };
+  try {
+    order = await db.$transaction(async (tx) => {
+      for (const li of lineItems) {
+        const taken = await tx.product.updateMany({
+          where: { id: li.productId, stock: { gte: li.quantity } },
+          data: { stock: { decrement: li.quantity } },
+        });
+        if (taken.count === 0) {
+          const left =
+            (await tx.product.findUnique({ where: { id: li.productId }, select: { stock: true } }))
+              ?.stock ?? 0;
+          throw new OutOfStock(li.titleSnapshot, left);
+        }
+      }
+
+      return tx.order.create({
+        data: {
+          userId: session.user.id,
+          status: "CONFIRMED",
+          subtotalCents: totals.subtotalCents,
+          discountCents: totals.discountCents,
+          shippingCents: totals.shippingCents,
+          taxCents: totals.taxCents,
+          totalCents: totals.totalCents,
+          deliverySpeed,
+          paymentMethod,
+          estimatedDelivery: estimateDelivery(deliverySpeed),
+          shipName: ship.name,
+          shipPhone: ship.phone,
+          shipLine1: ship.line1,
+          shipLine2: ship.line2,
+          shipCity: ship.city,
+          shipState: ship.state,
+          shipPostal: ship.postal,
+          shipCountry: "US",
+          paymentLast4,
+          items: {
+            create: lineItems.map((li) => ({
+              productId: li.productId,
+              titleSnapshot: li.titleSnapshot,
+              priceCentsSnapshot: li.priceCentsSnapshot,
+              imageSnapshot: li.imageSnapshot,
+              quantity: li.quantity,
+            })),
+          },
+        },
+      });
+    });
+  } catch (e) {
+    if (e instanceof OutOfStock) {
+      const error =
+        e.left > 0
+          ? `Only ${e.left} ${e.left === 1 ? "bag" : "bags"} of ${e.title} left. Lower the quantity in your cart and try again.`
+          : `${e.title} just sold out. Remove it from your cart to continue.`;
+      return NextResponse.json({ error, code: "out_of_stock" }, { status: 409 });
+    }
+    throw e;
+  }
 
   return NextResponse.json({ orderId: order.id });
 }

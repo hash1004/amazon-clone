@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { discountPct, formatPrice } from "@/lib/format";
 import { estimateDelivery, formatDeliveryDate } from "@/lib/delivery";
+import { LOW_STOCK_THRESHOLD } from "@/lib/product-display";
 import { PriceTag } from "@/components/ui/price-tag";
 import { ProductGallery } from "@/components/product-gallery";
 import { AddToCart } from "@/components/add-to-cart";
@@ -54,7 +55,7 @@ export default async function ProductPage({
 
   const pct = discountPct(product.priceCents, product.listPriceCents);
   const inStock = product.stock > 0;
-  const lowStock = inStock && product.stock <= 10;
+  const lowStock = inStock && product.stock <= LOW_STOCK_THRESHOLD;
   const eta = estimateDelivery("standard");
   const roastLabel = ROAST_LABEL[product.roastLevel];
   const sku = `${roastLabel.slice(0, 2).toUpperCase()}-${product.id.slice(-6).toUpperCase()}`;
@@ -171,7 +172,7 @@ export default async function ProductPage({
           </p>
 
           <div className="mt-5">
-            <AddToCart inStock={inStock} product={cartLine} />
+            <AddToCart inStock={inStock} maxQty={product.stock} product={cartLine} />
           </div>
 
           <h2 className="mb-2 mt-6 font-serif text-lg font-medium text-text-primary">
