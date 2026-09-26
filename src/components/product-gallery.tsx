@@ -15,12 +15,21 @@ export function ProductGallery({
 }) {
   const [active, setActive] = useState(0);
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
+  // Hover-zoom is a mouse thing — a touch device has no hover state to
+  // trigger it from, and (some browsers firing a synthetic mousemove on
+  // tap) it could otherwise flash the crosshair square while someone's
+  // just trying to swipe between photos. Gate on a real pointer, not
+  // screen width — a touch-only tablet can still be "wide."
+  const [canZoom] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches,
+  );
   const frameRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
   const list = images.length ? images : ["/icon.svg"];
   const n = list.length;
 
   function onMove(e: React.MouseEvent) {
+    if (!canZoom) return;
     const el = frameRef.current;
     if (!el) return;
     const r = el.getBoundingClientRect();

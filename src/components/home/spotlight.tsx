@@ -22,7 +22,11 @@ const SWIPE_THRESHOLD_PX = 40;
  * Auto-advancing carousel over the featured coffees — a handful of slides,
  * not nine rails; each one is the full brown block (not a tint + floating
  * product cutout) so the identity stays consistent slide to slide. Pauses
- * on hover/touch; swipe on phones, arrows + dots on desktop.
+ * on hover/touch; swipe on phones, arrows + dots on desktop. Full-height
+ * on phones and smaller laptops (min-h-dvh, not vh — avoids the mobile
+ * address-bar resize jump); released back to content height at lg since a
+ * forced full screen on a big desktop monitor just means more empty space,
+ * not more drama.
  */
 export function Spotlight({ products }: { products: SpotlightProduct[] }) {
   const [i, setI] = useState(0);
@@ -62,7 +66,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
 
   return (
     <section
-      className="grain bg-chrome-nav text-text-on-brown"
+      className="grain flex min-h-dvh items-center bg-chrome-nav text-text-on-brown lg:min-h-0"
       style={{ ["--icon-hover-bg" as string]: "rgba(243, 234, 217, 0.14)" }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -70,7 +74,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
       onTouchEnd={onTouchEnd}
     >
       <div
-        className="mx-auto grid max-w-[1400px] gap-8 px-6 py-14 sm:px-10 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16"
+        className="mx-auto grid w-full max-w-[1400px] gap-8 px-6 py-14 sm:px-10 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16"
         style={{ opacity: visible ? 1 : 0, transition: `opacity ${FADE_MS}ms ease-out` }}
       >
         <Link
