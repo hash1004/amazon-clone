@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PRICE_BUCKETS } from "@/lib/product-display";
 import { searchUrl, SORTS, type SearchParams } from "@/lib/search-query";
-import { ChevronDownIcon } from "@/components/ui/icons";
+import { FilterIcon, ChevronDownIcon } from "@/components/ui/icons";
 
 const ROAST_LEVELS = [
   { slug: "light", label: "Light" },
@@ -13,7 +13,7 @@ const ROAST_LEVELS = [
 ];
 
 /**
- * One "Filters" toggle that expands a single full-width panel — each
+ * One "Filters & Sort" toggle that expands a single full-width panel — each
  * filter (Sort / Roast / Price / Rating / Origin) is one dropdown select,
  * not a wrapped row of pills, laid out two to a row on desktop and full
  * width, one per row, on mobile.
@@ -49,15 +49,18 @@ export function SearchFilters({
           type="button"
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
-          className={`inline-flex items-center gap-1.5 border px-3 py-1.5 text-sm transition ${
-            activeCount > 0
-              ? "border-border-accent text-text-accent"
-              : "border-border-default text-text-primary hover:border-border-strong"
-          }`}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-text-primary transition hover:text-text-accent"
         >
-          Filters
-          {activeCount > 0 && <span>({activeCount})</span>}
-          <ChevronDownIcon className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
+          <FilterIcon className="h-3.5 w-3.5" />
+          Filters &amp; Sort
+          {activeCount > 0 && (
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-fg">
+              {activeCount}
+            </span>
+          )}
+          <ChevronDownIcon
+            className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          />
         </button>
         <p className="text-sm text-text-secondary">{resultsText}</p>
       </div>
