@@ -1,6 +1,6 @@
 "use client";
 
-import { FilterIcon } from "@/components/ui/icons";
+import { FilterIcon, ChevronDownIcon } from "@/components/ui/icons";
 import { useSearchFilter } from "@/components/search/search-filter-context";
 
 export function SearchFilterToggle({ activeCount }: { activeCount: number }) {
@@ -19,6 +19,9 @@ export function SearchFilterToggle({ activeCount }: { activeCount: number }) {
           {activeCount}
         </span>
       )}
+      <ChevronDownIcon
+        className={`h-3.5 w-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+      />
     </button>
   );
 }

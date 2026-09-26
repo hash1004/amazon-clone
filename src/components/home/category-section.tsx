@@ -7,13 +7,9 @@ export type CategoryProduct = ProductCardData;
  * One static 4-up grid per roast level (Light/Medium/Dark) — a flat,
  * calm listing instead of horizontally-scrolling themed rails. Discounts
  * show inline on the card, quietly, instead of a red-ribboned deals rail.
- * No bestseller rank chips — rating + review count is the signal.
  *
  * Uses the same ProductCard as Search results and the PDP's related
- * items — this used to be its own one-off tile with a different price
- * layout, rating style and an unconditional QuickAdd, which meant cards
- * looked different depending on which page you were on. One component,
- * one look, everywhere.
+ * items — one component, one look, everywhere, no per-page variants.
  */
 export function CategorySection({
   title,

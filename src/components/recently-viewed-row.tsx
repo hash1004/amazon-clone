@@ -34,7 +34,7 @@ export function RecentlyViewedRow({
                   alt={p.title}
                   fill
                   sizes="128px"
-                  className="object-contain p-1 group-hover:scale-105"
+                  className="object-cover group-hover:scale-105"
                 />
               </div>
               <p className="line-clamp-2 text-xs group-hover:text-text-accent">

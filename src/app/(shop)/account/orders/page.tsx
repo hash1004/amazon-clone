@@ -96,7 +96,7 @@ export default async function OrdersPage() {
                               alt={it.titleSnapshot}
                               fill
                               sizes="56px"
-                              className="object-contain p-1"
+                              className="object-cover"
                             />
                           )}
                         </div>

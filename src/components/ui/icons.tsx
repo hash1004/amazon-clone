@@ -11,8 +11,6 @@ import {
   ChevronDown,
   ChevronRight,
   X,
-  Bean,
-  Check,
 } from "lucide-react";
 
 type P = { className?: string };
@@ -64,14 +62,6 @@ export function ChevronDownIcon({ className = "h-4 w-4" }: P) {
 
 export function ChevronRightIcon({ className = "h-4 w-4" }: P) {
   return <ChevronRight className={className} strokeWidth={2} aria-hidden />;
-}
-
-export function BeanIcon({ className = "h-5 w-5" }: P) {
-  return <Bean className={className} strokeWidth={1.8} aria-hidden />;
-}
-
-export function CheckIcon({ className = "h-5 w-5" }: P) {
-  return <Check className={className} strokeWidth={2.2} aria-hidden />;
 }
 
 export function HeartIcon({

@@ -24,7 +24,7 @@ export async function SiteHeader() {
       className="grain bg-chrome-nav text-text-on-brown"
       style={{ ["--icon-hover-bg" as string]: "rgba(243, 234, 217, 0.14)" }}
     >
-      <div className="mx-auto grid max-w-[1500px] grid-cols-[auto_1fr_auto] items-center gap-2 px-3 py-2.5 sm:px-6">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-[auto_1fr_auto] items-center gap-2 px-6 py-2.5 sm:px-10">
         <BrowseMenu />
 
         <Link

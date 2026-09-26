@@ -143,7 +143,7 @@ export default async function SearchPage({
     <div className="bg-canvas">
       {/* Results bar */}
       <div className="border-b border-border-default bg-surface">
-        <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-2 px-4 py-2">
+        <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-2 px-6 py-2 sm:px-10">
           <SearchFilterToggle activeCount={activeCount} />
           <p className="text-sm text-text-secondary">
             {from}-{to} of {total.toLocaleString()} results
@@ -157,7 +157,7 @@ export default async function SearchPage({
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1500px] px-4 py-4">
+      <div className="mx-auto max-w-[1400px] px-6 py-4 sm:px-10">
         <div className="relative">
           <SearchFilterPanel params={sp} origins={origins} />
           <div className="mb-2 border-b border-border-default pb-2">
@@ -217,7 +217,7 @@ export default async function SearchPage({
           ) : (
             <Reveal className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
               {products.map((p) => (
-                <ProductCard key={p.id} product={p} withCart />
+                <ProductCard key={p.id} product={p} />
               ))}
             </Reveal>
           )}

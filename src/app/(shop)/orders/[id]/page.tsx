@@ -108,7 +108,7 @@ export default async function OrderPage({
                         alt={it.titleSnapshot}
                         fill
                         sizes="64px"
-                        className="object-contain p-1"
+                        className="object-cover"
                       />
                     )}
                   </Link>

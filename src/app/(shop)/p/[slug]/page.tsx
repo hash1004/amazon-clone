@@ -244,7 +244,7 @@ export default async function ProductPage({
           </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {related.slice(0, 5).map((p) => (
-              <ProductCard key={p.id} product={p} withCart />
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </Reveal>

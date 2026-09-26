@@ -2,7 +2,6 @@ import { SafeImage as Image } from "@/components/ui/safe-image";
 import Link from "next/link";
 import { discountPct, formatPrice } from "@/lib/format";
 import { PriceTag } from "@/components/ui/price-tag";
-import { QuickAdd } from "@/components/search/quick-add";
 import { WishlistButton } from "@/components/wishlist-button";
 
 export type ProductCardData = {
@@ -27,19 +26,13 @@ const ROAST_LABEL: Record<ProductCardData["roastLevel"], string> = {
 };
 
 /**
- * Deliberately spare: image, roast+origin, title, price, add-to-cart.
- * No stars, no review count, no "bought in past month," no per-card
- * delivery estimate, no badge — those are the Amazon-shaped signals that
- * turn a card into a wall of text. One considered coffee doesn't need a
- * sales pitch on every tile.
+ * Deliberately spare: image, roast+origin, title, price. No add-to-cart
+ * on the card at all — adding means opening the product first, everywhere,
+ * not just on Home. No stars, no review count, no "bought in past month,"
+ * no badge either — those are the Amazon-shaped signals that turn a card
+ * into a wall of text.
  */
-export function ProductCard({
-  product,
-  withCart = false,
-}: {
-  product: ProductCardData;
-  withCart?: boolean;
-}) {
+export function ProductCard({ product }: { product: ProductCardData }) {
   const pct = discountPct(product.priceCents, product.listPriceCents);
   const inStock = product.stock === undefined ? true : product.stock > 0;
 
@@ -53,7 +46,7 @@ export function ProductCard({
               alt={product.title}
               fill
               sizes="(max-width:640px) 45vw, (max-width:1024px) 30vw, 280px"
-              className="object-contain p-4 transition-transform duration-200 group-hover:scale-105"
+              className="object-cover transition-transform duration-200 group-hover:scale-105"
             />
           </div>
         </Link>
@@ -100,22 +93,8 @@ export function ProductCard({
         )}
       </div>
 
-      {withCart && (
-        <div className="mt-auto pt-2">
-          <p className="min-h-[1rem] text-xs font-medium text-text-deal">
-            {!inStock ? "Currently unavailable" : ""}
-          </p>
-          <QuickAdd
-            disabled={!inStock}
-            product={{
-              productId: product.id,
-              slug: product.slug,
-              title: product.title,
-              image: product.images[0] ?? "",
-              priceCents: product.priceCents,
-            }}
-          />
-        </div>
+      {!inStock && (
+        <p className="mt-1 text-xs font-medium text-text-deal">Currently unavailable</p>
       )}
     </div>
   );

@@ -485,14 +485,14 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
           <ul className="mt-3 space-y-2 border-t border-border-default pt-3">
             {lines.map((l) => (
               <li key={l.productId} className="flex gap-2 text-xs">
-                <div className="relative h-10 w-10 shrink-0 bg-white">
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden bg-subtle">
                   {l.image && (
                     <Image
                       src={l.image}
                       alt={l.title}
                       fill
                       sizes="40px"
-                      className="object-contain"
+                      className="object-cover"
                     />
                   )}
                 </div>
