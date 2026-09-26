@@ -94,10 +94,43 @@ is declined. UPI IDs starting `fail@` simulate a failed request.
 Production is a two-service Docker Swarm stack (`amazon-clone_web` +
 `amazon-clone_db`) on a self-hosted Contabo VPS, behind Traefik
 (`/root/compose/amazon-clone.yml` on that host — not in this repo, since
-it holds the DB password). No CI — deploy is triggered by `git push`
-straight to the VPS.
+it holds the DB password).
 
-### One-time setup (already done on the current VPS)
+**Every push to `main` on GitHub redeploys automatically.** The
+[Deploy workflow](.github/workflows/deploy.yml) SSHes into the VPS and runs
+`scripts/deploy.sh` (fetch `origin/main`, build, sync schema, roll the
+service). It can also be re-run by hand from the Actions tab.
+
+### Automatic deploy setup (one-time)
+
+1. On the VPS, make a key GitHub Actions will log in with:
+
+   ```bash
+   ssh contabo
+   ssh-keygen -t ed25519 -N "" -f ~/.ssh/github_deploy -C github-actions-deploy
+   cat ~/.ssh/github_deploy.pub >> ~/.ssh/authorized_keys
+   cat ~/.ssh/github_deploy          # private key — paste into VPS_SSH_KEY
+   ```
+
+2. Make sure `/root/amazon-clone` can `git fetch origin` from GitHub on its
+   own (`cd /root/amazon-clone && git fetch origin`): `deploy.sh` pulls from
+   there. For a private repo that means a read-only deploy key on the repo.
+
+3. In GitHub → Settings → Secrets and variables → Actions, add:
+
+   | Secret | Value |
+   | --- | --- |
+   | `VPS_HOST` | the VPS IP or hostname |
+   | `VPS_SSH_KEY` | the private key from step 1 |
+   | `VPS_USER` | optional, defaults to `root` |
+   | `VPS_PORT` | optional, defaults to `22` |
+   | `VPS_KNOWN_HOSTS` | optional, output of `ssh-keyscan <VPS_HOST>` to pin the host key; without it the workflow trusts whatever key the host presents on each run |
+
+### Manual deploy (fallback)
+
+`git push production main` from a laptop still works too:
+
+#### Push-to-VPS setup (already done on the current VPS)
 
 ```bash
 ssh contabo
@@ -117,7 +150,7 @@ invocation only picks up the right `IdentityFile` through the alias:
 git remote add production contabo:/root/amazon-clone
 ```
 
-### Deploying
+#### Deploying by push
 
 ```bash
 git push production main
