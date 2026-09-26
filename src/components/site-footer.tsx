@@ -26,20 +26,23 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
 export function SiteFooter() {
   return (
     <footer className="grain bg-brown-gradient mt-10 text-text-on-brown">
-      <Reveal className="px-6 pb-14 pt-16 sm:px-10 sm:pt-20">
-        <p className="max-w-[18ch] font-serif text-3xl leading-[1.15] tracking-tight sm:max-w-[22ch] sm:text-4xl">
-          Coffee, slowly considered.
-        </p>
-
-        <div className="mt-12 flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
-          <Link href="/" className="inline-block">
-            <BrandLogo className="h-8 w-auto" tone="light" />
-          </Link>
+      <Reveal className="mx-auto max-w-[1400px] px-6 pb-14 pt-16 sm:px-10 sm:pt-20">
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          {/* Brand tier: wordmark bold/bright, tagline muted/lighter below it */}
+          <div>
+            <Link href="/" className="inline-block">
+              <BrandLogo className="h-8 w-auto" tone="light" />
+            </Link>
+            <p className="mt-3 max-w-[22ch] text-sm font-normal text-text-on-brown-muted">
+              Coffee, slowly considered.
+            </p>
+          </div>
 
           <div className="flex flex-wrap gap-10 sm:gap-16">
             {COLUMNS.map((col) => (
               <div key={col.heading}>
-                <h3 className="mb-3 text-xs font-medium uppercase tracking-wide text-text-on-brown-muted">
+                {/* Heading tier matches the wordmark: bright + heavier weight */}
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-text-on-brown">
                   {col.heading}
                 </h3>
                 <ul className="space-y-2 text-sm text-text-on-brown-muted">

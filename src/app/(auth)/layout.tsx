@@ -1,42 +1,34 @@
-import Link from "next/link";
-import { BrandLogo } from "@/components/ui/brand-logo";
+import { auth } from "@/auth";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { HeaderShell } from "@/components/header-shell";
+import { AuthedProvider } from "@/lib/auth-context";
 
 /**
- * This layout deliberately drops the full header/footer chrome for a
- * focused sign-in screen — the logo above the form is the only way back
- * home, which is enough now that there's no bottom nav to fall back to.
+ * Same header/footer/structure as the shop layout — a separately-styled
+ * auth chrome meant the sign-in flow never quite matched the rest of the
+ * site, and its own nested flex wrapper (min-h-full inside body's own
+ * min-h-full) never actually resolved to a real height, so the footer
+ * sat right under a short form instead of at the bottom of the viewport.
+ * Reusing the exact shop-layout structure (main as a direct flex child of
+ * body, footer as its sibling) fixes both at once.
  */
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
-    <div className="flex min-h-full flex-col bg-surface">
-      <div className="flex justify-start border-b border-border-default px-4 py-4 sm:justify-center sm:px-0">
-        <Link href="/">
-          <BrandLogo className="h-7 w-auto" tone="dark" />
-        </Link>
-      </div>
-
-      <div className="mx-auto w-full max-w-[350px] flex-1 px-4 py-6">
-        {children}
-      </div>
-
-      <footer className="border-t border-border-default bg-gradient-to-b from-surface to-subtle py-6 text-center text-xs text-text-secondary">
-        <p className="space-x-4">
-          <Link href="/info/conditions-of-use" className="link">
-            Conditions of Use
-          </Link>
-          <Link href="/info/privacy-notice" className="link">
-            Privacy Notice
-          </Link>
-          <Link href="/info/help" className="link">
-            Help
-          </Link>
-        </p>
-        <p className="mt-2">© 2026 Still Coffee and Co.</p>
-      </footer>
-    </div>
+    <AuthedProvider value={!!session?.user}>
+      <HeaderShell>
+        <SiteHeader />
+      </HeaderShell>
+      <main className="w-full min-w-0 flex-1 overflow-x-clip">
+        <div className="mx-auto w-full max-w-[350px] px-4 py-10">{children}</div>
+      </main>
+      <SiteFooter />
+    </AuthedProvider>
   );
 }

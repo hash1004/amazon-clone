@@ -40,7 +40,7 @@ export function CategorySection({
       </div>
       <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
         {items.slice(0, 4).map((p) => (
-          <ProductCard key={p.id} product={p} withCart />
+          <ProductCard key={p.id} product={p} />
         ))}
       </div>
       <div className="mt-8 text-center">

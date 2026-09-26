@@ -2,16 +2,22 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/ui/brand-logo";
 import { BrowseMenu } from "@/components/browse-menu";
 import { ShopMenu } from "@/components/shop-menu";
+import { AccountMenu } from "@/components/account-menu";
+import { WishlistBadge } from "@/components/wishlist-badge";
+import { CartBadge } from "@/components/cart-badge";
 import { auth } from "@/auth";
 
 /**
- * Three-zone header — browse/search (left) — wordmark (center) — cart,
- * wishlist and account behind one icon (right). No bottom nav to fall
- * back to on phones anymore, so every icon here is visible at every
- * width instead of half of them hiding until sm:.
+ * Three-zone header — browse/search (left) — wordmark (center) — account,
+ * wishlist and cart (right). On phones those three collapse into one
+ * ShopMenu icon (no room for three, and no bottom nav to fall back to);
+ * on wider screens there's space to show them separately instead of
+ * hiding everything behind one door.
  */
 export async function SiteHeader() {
   const session = await auth();
+  const isAuthed = !!session?.user;
+  const firstName = session?.user?.name?.split(" ")[0] ?? session?.user?.email;
 
   return (
     <header
@@ -32,10 +38,16 @@ export async function SiteHeader() {
           />
         </Link>
 
-        <ShopMenu
-          isAuthed={!!session?.user}
-          firstName={session?.user?.name?.split(" ")[0] ?? session?.user?.email}
-        />
+        <div className="flex items-center gap-1">
+          <span className="hidden items-center gap-1 sm:flex">
+            <AccountMenu isAuthed={isAuthed} firstName={firstName} />
+            <WishlistBadge />
+            <CartBadge />
+          </span>
+          <span className="sm:hidden">
+            <ShopMenu isAuthed={isAuthed} firstName={firstName} />
+          </span>
+        </div>
       </div>
     </header>
   );

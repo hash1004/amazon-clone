@@ -2,6 +2,7 @@ import {
   Search,
   ShoppingCart,
   Heart,
+  User,
   Menu,
   ArrowLeft,
   ArrowRight,
@@ -31,6 +32,10 @@ export function CartIcon({ className = "h-5 w-5" }: P) {
 
 export function CategoriesIcon({ className = "h-5 w-5" }: P) {
   return <Menu className={className} strokeWidth={2} aria-hidden />;
+}
+
+export function PersonIcon({ className = "h-5 w-5" }: P) {
+  return <User className={className} strokeWidth={1.8} aria-hidden />;
 }
 
 export function ArrowLeftIcon({ className = "h-4 w-4" }: P) {
