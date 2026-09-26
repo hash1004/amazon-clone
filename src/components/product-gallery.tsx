@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ui/icons";
 
 const SWIPE_THRESHOLD_PX = 40;
+const ZOOM = 2.2;
 
 export function ProductGallery({
   images,
@@ -17,8 +18,8 @@ export function ProductGallery({
   const [zoom, setZoom] = useState<{ x: number; y: number } | null>(null);
   // Hover-zoom is a mouse thing — a touch device has no hover state to
   // trigger it from, and (some browsers firing a synthetic mousemove on
-  // tap) it could otherwise flash the crosshair square while someone's
-  // just trying to swipe between photos. Gate on a real pointer, not
+  // tap) it could otherwise flash a zoomed frame while someone's just
+  // trying to swipe between photos. Gate on a real pointer, not
   // screen width — a touch-only tablet can still be "wide."
   const [canZoom] = useState(
     () => typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches,
@@ -60,25 +61,25 @@ export function ProductGallery({
         onMouseLeave={() => setZoom(null)}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        className="group relative aspect-[4/5] w-full cursor-crosshair touch-pan-y overflow-hidden border border-border-default bg-subtle"
+        className="group relative aspect-[4/5] w-full cursor-zoom-in touch-pan-y overflow-hidden border border-border-default bg-subtle"
       >
+        {/* Hover zoom happens in the frame itself: the photo scales up around
+            the cursor. Works at every screen width (the old side panel only
+            existed from xl up, so smaller laptops got the lens with no zoom),
+            reuses the already-loaded image, and never covers the buy box. */}
         <Image
           src={list[active]}
           alt={title}
           fill
-          sizes="(max-width:1024px) 90vw, 560px"
+          sizes="(max-width:1024px) 90vw, 1120px"
           priority
-          className="object-cover"
+          className="object-cover transition-transform duration-150 ease-out"
+          style={
+            zoom
+              ? { transform: `scale(${ZOOM})`, transformOrigin: `${zoom.x}% ${zoom.y}%` }
+              : undefined
+          }
         />
-        {zoom && (
-          <span
-            className="pointer-events-none absolute h-24 w-24 border border-border-strong bg-black/10"
-            style={{
-              left: `calc(${zoom.x}% - 3rem)`,
-              top: `calc(${zoom.y}% - 3rem)`,
-            }}
-          />
-        )}
 
         {n > 1 && (
           <>
@@ -132,17 +133,6 @@ export function ProductGallery({
         </div>
       )}
 
-      {/* Zoom panel (desktop) — overlays to the right, never widens the page */}
-      {zoom && (
-        <div
-          className="pointer-events-none absolute left-full top-0 z-20 ml-4 hidden h-[460px] w-[380px] border border-border-default bg-subtle bg-no-repeat shadow-xl xl:block"
-          style={{
-            backgroundImage: `url(${list[active]})`,
-            backgroundSize: "220%",
-            backgroundPosition: `${zoom.x}% ${zoom.y}%`,
-          }}
-        />
-      )}
     </div>
   );
 }
