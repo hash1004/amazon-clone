@@ -89,6 +89,30 @@ npm run dev
 Checkout test cards: `4242 4242 4242 4242` succeeds, any number ending `0002`
 is declined. UPI IDs starting `fail@` simulate a failed request.
 
+## Deploying
+
+Production is a two-service Docker Swarm stack (`amazon-clone_web` +
+`amazon-clone_db`) on a self-hosted Contabo VPS, behind Traefik
+(`/root/compose/amazon-clone.yml` on that host — not in this repo, since
+it holds the DB password). There's no CI/CD; deploys are manual, run by
+hand on the VPS:
+
+```bash
+ssh contabo
+cd /root/amazon-clone
+./scripts/deploy.sh          # pull main, rebuild, sync schema, roll the service
+```
+
+`deploy.sh` is safe to re-run for routine code changes — it does **not**
+touch the catalog. Schema sync (`prisma db push`, no `--accept-data-loss`)
+fails loudly instead of dropping data if a change would be destructive;
+if that happens, resolve it by hand rather than forcing it.
+
+Reseeding the catalog is a separate, deliberately manual step
+(`prisma/seed.ts` deletes every `Product`/`Cart`/`Order` row first) —
+run `./scripts/seed-prod.sh` only when you actually mean to replace the
+whole catalog, never as part of a routine deploy.
+
 ## Still open
 
 The production domain (`amazon.svdistributor.com`) predates this rebrand
