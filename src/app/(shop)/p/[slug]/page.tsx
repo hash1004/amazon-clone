@@ -193,9 +193,32 @@ export default async function ProductPage({
             </ul>
           )}
 
-          <p className="mt-6 text-xs text-text-muted">
-            {product.rating.toFixed(1)} · {product.ratingCount.toLocaleString()} reviews
-          </p>
+          <h2 className="mb-3 mt-6 font-serif text-lg font-medium text-text-primary">
+            Product details
+          </h2>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+            {specs.map(([k, v]) => (
+              <div key={k} className="contents">
+                <dt className="text-text-secondary">{k}</dt>
+                <dd className="text-text-primary">{v}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="mt-6 flex items-center gap-2">
+            <span aria-hidden className="text-base leading-none text-border-strong">
+              <span className="text-text-accent">
+                {"★".repeat(Math.round(product.rating))}
+              </span>
+              {"★".repeat(5 - Math.round(product.rating))}
+            </span>
+            <span className="text-sm font-semibold text-text-primary">
+              {product.rating.toFixed(1)}
+            </span>
+            <span className="text-sm text-text-secondary">
+              ({product.ratingCount.toLocaleString()} reviews)
+            </span>
+          </div>
         </div>
       </div>
 
@@ -221,20 +244,6 @@ export default async function ProductPage({
             </tbody>
           </table>
         </div>
-      </Reveal>
-
-      <Reveal className="mt-10 max-w-[70ch]">
-        <h2 className="mb-3 font-serif text-lg font-medium text-text-primary">
-          Product details
-        </h2>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-          {specs.map(([k, v]) => (
-            <div key={k} className="contents">
-              <dt className="text-text-secondary">{k}</dt>
-              <dd className="text-text-primary">{v}</dd>
-            </div>
-          ))}
-        </dl>
       </Reveal>
 
       {related.length > 0 && (

@@ -122,17 +122,22 @@ export default async function SearchPage({
   return (
     <div className="bg-canvas">
       <div className="mx-auto max-w-[1400px] px-6 py-4 sm:px-10">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <SearchFilters params={sp} origins={origins} />
-          <p className="text-sm text-text-secondary">
-            {from}-{to} of {total.toLocaleString()} results
-            {sp.q && (
+        <div className="mb-4">
+          <SearchFilters
+            params={sp}
+            origins={origins}
+            resultsText={
               <>
-                {" "}
-                for <span className="font-bold text-text-accent">&quot;{sp.q}&quot;</span>
+                {from}-{to} of {total.toLocaleString()} results
+                {sp.q && (
+                  <>
+                    {" "}
+                    for <span className="font-bold text-text-accent">&quot;{sp.q}&quot;</span>
+                  </>
+                )}
               </>
-            )}
-          </p>
+            }
+          />
         </div>
 
         <div className="mb-2 border-b border-border-default pb-2">
