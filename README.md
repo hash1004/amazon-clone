@@ -1,4 +1,4 @@
-**Live:** https://amazon.svdistributor.com _(moving to https://stillcoffeeandco.svdistributor.com once its DNS record is added — see [Still open](#still-open))_
+**Live:** https://stillcoffeeandco.svdistributor.com
 
 # Still Coffee and Co.
 
@@ -51,17 +51,25 @@ What actually changed:
   rating filters in one "Filters & Sort" panel, removable filter chips,
   pagination, and **type-ahead suggestions** (coffees, origins, roast levels)
   from the same search.
-- **Product page** — image gallery with hover-zoom, price / savings, stock +
-  delivery date, quantity, Add to Cart / Buy Now / Save beans, tasting
+- **Product page** — image gallery with in-frame hover zoom (mouse only;
+  swipe on touch), price / savings, stock ("Only N left") + delivery date, quantity, Add to Cart / Buy Now / Save beans, tasting
   notes, a roast-level brew guide (ratios + time by method), spec table,
   related coffees at the same roast level.
-- **Cart** — guest cart in `localStorage`; quantities, remove, subtotal.
+- **Cart** — guest cart in `localStorage`; quantities, remove, subtotal. Checks
+  live stock (`/api/stock`): flags low or sold-out lines, caps quantities at
+  what's left, and holds checkout until every line can be filled.
 - **Checkout** — 3-step accordion: saved-address picker + inline add, delivery
   option (standard / express with date ranges), payment (card / UPI / cash on
   delivery) with client-side formatting + validation and a mock decline + retry
-  path. Live order summary with discount, delivery and tax.
-- **Orders** — order detail with a delivery-tracking timeline (advances by
-  elapsed time), full breakdown, and "Buy it again".
+  path. Live order summary with discount, delivery and tax. Every address and
+  payment field only accepts what belongs in it (letters-only names, digits-only
+  ZIP/PIN, etc.), filtered as you type and enforced again on the server
+  (`src/lib/field-rules.ts`). Placing an order takes stock in the same
+  transaction, so the last bag can't be sold twice.
+- **Orders** — list with short order numbers, status badge, progress bar and a
+  compact item strip (a few thumbnails + "+N") that stays tidy for big orders;
+  order detail with a delivery-tracking timeline (advances by elapsed time),
+  full breakdown, and "Buy it again".
 - **Account** — saved addresses CRUD, order history.
 - **Saved Beans** (the wishlist; login required) — stored on the account so it
   follows you across devices; recently-viewed stays local to the browser.
@@ -155,16 +163,16 @@ Reseeding the catalog is a separate, deliberately manual step
 run `./scripts/seed-prod.sh` only when you actually mean to replace the
 whole catalog, never as part of a routine deploy.
 
-## Still open
+## Domain
 
-`stillcoffeeandco.svdistributor.com` is a subdomain of the existing
-`svdistributor.com` — no new domain purchase needed, just a DNS record
-(an A record pointed at `194.163.153.158`, the same VPS) added wherever
-`svdistributor.com`'s DNS is managed. Traefik on the VPS is already
-configured to route it to this same deployment once that record exists
-(see the `amazon-clone.yml` compose file on the host, not in this repo —
-it holds the DB password). Until then, the original
-`amazon.svdistributor.com` domain keeps working exactly as before.
+The shop is served at `stillcoffeeandco.svdistributor.com`, a subdomain of
+the existing `svdistributor.com`: an A record pointing at the same VPS,
+routed by Traefik to this deployment (see the `amazon-clone.yml` compose
+file on the host, not in this repo — it holds the DB password). Site
+metadata and Open Graph links default to this domain; set
+`NEXT_PUBLIC_SITE_URL` to override. The original `amazon.svdistributor.com`
+hostname was the pre-rebrand address; keep or drop its Traefik route as
+you prefer.
 
 ## Agent logs
 
