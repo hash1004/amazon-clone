@@ -1,18 +1,29 @@
 import { Skeleton, ProductTileSkeleton } from "@/components/ui/skeleton";
 
+/** Skeleton block for the brown hero — the light default would glare on brown. */
+function OnBrown({ className }: { className: string }) {
+  return <div className={`animate-pulse bg-[rgba(243,234,217,0.1)] ${className}`} />;
+}
+
 export default function HomeLoading() {
   return (
     <div className="pb-8">
-      {/* Hero */}
-      <section className="border-b border-border-default">
-        <div className="mx-auto flex max-w-[1400px] flex-col gap-12 px-6 py-14 sm:px-10 lg:flex-row lg:items-center lg:gap-16 lg:py-20">
-          <div className="flex max-w-[480px] flex-col gap-4">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-3/4" />
-            <Skeleton className="mt-2 h-11 w-36 rounded-pill" />
+      {/* Hero — same box as Spotlight (full first screen under the header,
+          same grid and image sizing) so nothing jumps when it swaps in. */}
+      <section className="grain flex min-h-[calc(100dvh-3.5rem)] flex-col bg-chrome-nav 3xl:min-h-0">
+        <div className="mx-auto grid w-full max-w-[1400px] flex-1 grid-rows-[minmax(11rem,1fr)_auto] gap-4 px-6 py-6 sm:gap-8 sm:px-10 sm:py-10 lg:grid-cols-2 lg:grid-rows-none lg:items-center lg:gap-16 lg:py-12 3xl:py-20">
+          <OnBrown className="w-full lg:order-2 lg:aspect-square lg:max-h-[calc(100dvh-3.5rem-6rem)] 3xl:max-h-none" />
+          <div className="flex flex-col gap-3 lg:order-1">
+            <OnBrown className="h-3 w-24" />
+            <OnBrown className="h-9 w-4/5 sm:h-12 lg:h-14" />
+            <OnBrown className="h-3 w-40" />
+            <div className="mt-2 flex gap-2">
+              <OnBrown className="h-6 w-16" />
+              <OnBrown className="h-6 w-16" />
+              <OnBrown className="h-6 w-16" />
+            </div>
+            <OnBrown className="mt-3 h-10 w-36 sm:h-12 sm:w-40" />
           </div>
-          <Skeleton className="mx-auto h-[360px] w-[360px] shrink-0 rounded-[2rem]" />
         </div>
       </section>
 

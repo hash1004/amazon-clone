@@ -50,7 +50,7 @@ export default async function OrderPage({
 
       {placed && (
         <div className="mb-4 rounded-lg border border-success/40 bg-success-subtle p-4">
-          <h1 className="text-xl font-bold text-success">
+          <h1 className="font-serif text-xl font-medium text-success">
             Order placed, thank you!
           </h1>
           <p className="text-sm text-text-secondary">

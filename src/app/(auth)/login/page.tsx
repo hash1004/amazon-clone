@@ -40,7 +40,7 @@ function LoginForm() {
 
   return (
     <div className="w-full rounded-lg border border-border-default bg-surface p-6 shadow-sm">
-      <h1 className="mb-1 text-2xl font-medium">Sign in</h1>
+      <h1 className="mb-1 font-serif text-2xl font-medium text-text-primary">Sign in</h1>
       {reason && (
         <p className="mb-3 text-sm text-text-secondary">{reason}</p>
       )}

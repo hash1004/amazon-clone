@@ -1,29 +1,31 @@
 "use client";
 
 import Link from "next/link";
+import { SorryMug } from "@/components/ui/sorry-mug";
 
 export default function ShopError({ reset }: { error: Error; reset: () => void }) {
   return (
-    <div className="mx-auto max-w-[600px] px-4 py-16 text-center">
-      <p className="text-4xl">😕</p>
-      <h1 className="mt-3 text-xl font-bold">Something went wrong</h1>
-      <p className="mt-2 text-sm text-text-secondary">
-        We hit a snag loading this page. Please try again.
-      </p>
-      <div className="mt-5 flex justify-center gap-3">
-        <button
-          type="button"
-          onClick={reset}
-          className="rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
-        >
-          Try again
-        </button>
-        <Link
-          href="/"
-          className="rounded-pill border border-border-strong px-6 py-2 text-sm hover:bg-subtle"
-        >
-          Go to home
-        </Link>
+    <div className="mx-auto flex max-w-[820px] flex-col items-center gap-8 px-4 py-14 text-center sm:flex-row sm:text-left">
+      <SorryMug className="h-52 w-52 shrink-0" />
+
+      <div>
+        <h1 className="font-serif text-2xl font-medium text-text-primary sm:text-3xl">Spilled the pour.</h1>
+        <p className="mt-2 text-sm text-text-secondary">
+          Something went wrong loading this page. Give it another go.
+        </p>
+
+        <div className="mt-5 flex flex-wrap justify-center gap-3 sm:justify-start">
+          <button
+            type="button"
+            onClick={reset}
+            className="bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          >
+            Try again
+          </button>
+          <Link href="/" className="border border-border-strong px-6 py-2 text-sm hover:bg-subtle">
+            Back to Still Coffee and Co.
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -1,39 +1,32 @@
 "use client";
 
+// Replaces the root layout when that layout itself fails, so it brings its
+// own <html>/<body> and stylesheet rather than relying on the layout's.
+import "./globals.css";
+import { SorryMug } from "@/components/ui/sorry-mug";
+
 export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
   return (
     <html lang="en">
-      <body
-        style={{
-          fontFamily: "Arial, sans-serif",
-          display: "flex",
-          minHeight: "100vh",
-          alignItems: "center",
-          justifyContent: "center",
-          textAlign: "center",
-          padding: "2rem",
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: "1.25rem", fontWeight: 700 }}>
-            Something went wrong
-          </h1>
-          <p style={{ margin: "0.5rem 0 1rem", color: "#605d56" }}>
-            An unexpected error occurred.
-          </p>
-          <button
-            onClick={reset}
-            style={{
-              background: "#284c32",
-              color: "#faf8f4",
-              border: "none",
-              borderRadius: "999px",
-              padding: "0.5rem 1.5rem",
-              cursor: "pointer",
-            }}
-          >
-            Try again
-          </button>
+      <body className="flex min-h-screen items-center justify-center bg-canvas px-4 text-center text-text-primary antialiased">
+        <div className="flex flex-col items-center">
+          <SorryMug className="h-44 w-44" />
+          <h1 className="mt-4 font-serif text-2xl font-medium">Spilled the pour.</h1>
+          <p className="mt-2 text-sm text-text-secondary">Something went wrong on our end. Give it another go.</p>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <button
+              type="button"
+              onClick={reset}
+              className="bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+            >
+              Try again
+            </button>
+            {/* Plain <a>, not <Link>: a full reload is the point when the app shell broke. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a href="/" className="border border-border-strong px-6 py-2 text-sm hover:bg-subtle">
+              Back to home
+            </a>
+          </div>
         </div>
       </body>
     </html>

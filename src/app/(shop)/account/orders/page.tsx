@@ -23,7 +23,7 @@ export default async function OrdersPage() {
 
   return (
     <div className="mx-auto max-w-[1000px] px-4 py-6">
-      <h1 className="mb-4 text-2xl font-bold">Your Orders</h1>
+      <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">Your Orders</h1>
 
       {orders.length === 0 ? (
         <div className="rounded-lg border border-border-default bg-surface p-8 text-center">

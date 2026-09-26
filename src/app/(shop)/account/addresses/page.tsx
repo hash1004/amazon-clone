@@ -24,7 +24,7 @@ export default async function AddressesPage() {
         </Link>{" "}
         › <span>Your Addresses</span>
       </nav>
-      <h1 className="mb-4 text-2xl font-bold">Your Addresses</h1>
+      <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">Your Addresses</h1>
       <AddressManager addresses={addresses} />
     </div>
   );

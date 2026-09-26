@@ -45,7 +45,7 @@ export default function SignupPage() {
 
   return (
     <div className="w-full rounded-lg border border-border-default bg-surface p-6 shadow-sm">
-      <h1 className="mb-4 text-2xl font-medium">Create account</h1>
+      <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">Create account</h1>
       {error && (
         <p className="mb-3 rounded-md bg-danger-subtle p-2 text-sm text-danger">
           {error}

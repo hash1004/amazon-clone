@@ -70,7 +70,7 @@ export default async function InfoPage({
         › <span>{page.title}</span>
       </nav>
 
-      <h1 className="text-2xl font-bold">{page.title}</h1>
+      <h1 className="font-serif text-2xl font-medium text-text-primary">{page.title}</h1>
 
       <div className="mt-4 rounded-lg border border-border-default bg-surface p-6">
         <p className="text-sm font-medium">
