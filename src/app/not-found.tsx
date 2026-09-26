@@ -1,7 +1,40 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { SorryMug } from "@/components/ui/sorry-mug";
 
+const MESSAGES = [
+  {
+    title: "This blend doesn't exist. Yet.",
+    subtitle: "Sorry, that page isn't in stock. Browse what we've actually got.",
+  },
+  {
+    title: "Ground to dust.",
+    subtitle: "This page didn't survive the roast. Head back before it's fully gone.",
+  },
+  {
+    title: "Over-extracted.",
+    subtitle: "Whatever you were looking for came out bitter and wrong. Try a fresh page.",
+  },
+  {
+    title: "Wrong shelf.",
+    subtitle: "This coffee's been moved, sold out, or never existed. Let's get you back to the good stuff.",
+  },
+  {
+    title: "Cold cup.",
+    subtitle: "This page has been sitting too long. Let's pour you a fresh one.",
+  },
+] as const;
+
 export default function NotFound() {
+  // Picked once per mount. This page is statically prerendered, so the
+  // server-baked HTML always has message #0 baked in while each visitor's
+  // client picks its own random one on hydration — an intentional,
+  // expected mismatch (not a bug), so it's marked suppressHydrationWarning
+  // below rather than deferred to an effect.
+  const [message] = useState(() => MESSAGES[Math.floor(Math.random() * MESSAGES.length)]);
+
   return (
     <div className="mx-auto flex max-w-[820px] flex-col items-center gap-8 px-4 py-14 text-center sm:flex-row sm:text-left">
       <div className="shrink-0">
@@ -10,11 +43,11 @@ export default function NotFound() {
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">
-          Sorry! We couldn&apos;t find that page.
+        <h1 className="text-2xl font-bold text-text-primary" suppressHydrationWarning>
+          {message.title}
         </h1>
-        <p className="mt-2 text-sm text-text-secondary">
-          But we&apos;ve got a dozen coffees worth exploring.
+        <p className="mt-2 text-sm text-text-secondary" suppressHydrationWarning>
+          {message.subtitle}
         </p>
 
         <form action="/s" className="mt-5 flex max-w-sm overflow-hidden rounded-md border border-border-strong">

@@ -289,19 +289,28 @@ a {
 /* Grain texture — the tactile "kraft paper" layer on brown blocks. A
    feTurbulence noise tile blended over the block's own background-color,
    as a ::before so it always paints behind real content without needing
-   z-index. Subtle on purpose: opacity is doing the work, not the pattern. */
-.grain {
-  position: relative;
-}
-.grain::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  background-size: 160px 160px;
+   z-index. Subtle on purpose: opacity is doing the work, not the pattern.
+   Wrapped in @layer components: Tailwind v4's utilities (`@import
+   "tailwindcss"`) live in @layer utilities, and unlayered CSS always beats
+   layered CSS regardless of specificity or source order. Left unlayered,
+   this `position: relative` permanently won over any `fixed`/`absolute`
+   utility applied alongside it — which is why the portalled browse-menu
+   panel (`grain ... fixed inset-0 ...`) never actually became `fixed` and
+   rendered in normal flow at the end of the page, below the footer. */
+@layer components {
+  .grain {
+    position: relative;
+  }
+  .grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 160px 160px;
+  }
 }
 
 /* Scroll-reveal — see ui/reveal.tsx. Plain opacity+translate transition;
