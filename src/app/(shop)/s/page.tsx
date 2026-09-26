@@ -11,6 +11,9 @@ import { searchProducts } from "@/lib/product-search";
 
 const PAGE_SIZE = 24;
 
+// Shown when a search finds nothing — one of each kind of thing search understands.
+const POPULAR_SEARCHES = ["Ethiopia", "Chocolate", "Fruity", "Dark roast", "Natural"];
+
 const ROAST_LABEL: Record<string, string> = {
   light: "Light Roasts",
   medium: "Medium Roasts",
@@ -205,11 +208,24 @@ export default async function SearchPage({
           <div className="flex flex-col items-center gap-6 border border-border-default bg-surface p-10 text-center sm:flex-row sm:text-left">
             <SorryMug className="h-40 w-40 shrink-0" />
             <div>
-              <p className="text-lg font-bold">No results{sp.q ? ` for "${sp.q}"` : ""}</p>
-              <p className="mt-1 text-sm text-text-secondary">
-                Check your spelling or try more general terms — or just browse the whole roast
-                list below.
+              <p className="font-serif text-xl font-medium text-text-primary">
+                No results{sp.q ? ` for "${sp.q}"` : ""}
               </p>
+              <p className="mt-1 text-sm text-text-secondary">
+                Try fewer words, or search by origin, flavor or roast.
+              </p>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                <span className="text-xs text-text-muted">Try</span>
+                {POPULAR_SEARCHES.map((term) => (
+                  <Link
+                    key={term}
+                    href={searchUrl({}, { q: term })}
+                    className="border border-border-strong px-3 py-1 text-xs hover:bg-subtle"
+                  >
+                    {term}
+                  </Link>
+                ))}
+              </div>
               <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <Link
                   href="/s"

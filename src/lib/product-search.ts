@@ -39,7 +39,7 @@ const FIELD_WEIGHT: Record<SearchField, number> = {
   title: 5,
   origin: 4,
   notes: 3,
-  roast: 3,
+  roast: 4.5, // above notes, so "dark" ranks dark roasts over a "Dark Chocolate" note
   process: 2,
   description: 1,
 };
