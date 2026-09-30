@@ -8,6 +8,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: "Our story", href: "/info/about" },
       { label: "How we roast", href: "/info/blog" },
+      { label: "Brew guides", href: "/brew" },
     ],
   },
   {

@@ -11,6 +11,7 @@ export type ProductCardData = {
   title: string;
   origin: string;
   roastLevel: "LIGHT" | "MEDIUM" | "DARK";
+  tastingNotes?: string[];
   images: string[];
   priceCents: number;
   listPriceCents: number | null;
@@ -27,7 +28,9 @@ const ROAST_LABEL: Record<ProductCardData["roastLevel"], string> = {
 };
 
 /**
- * Deliberately spare: image, roast+origin, title, price. No add-to-cart
+ * Deliberately spare: image, roast+origin, title, tasting notes, price.
+ * Tasting notes are the one extra line — they're what actually tells two
+ * specialty coffees apart, where origin alone doesn't. No add-to-cart
  * on the card at all — adding means opening the product first, everywhere,
  * not just on Home. No stars, no review count, no "bought in past month,"
  * no badge either — those are the Amazon-shaped signals that turn a card
@@ -79,6 +82,13 @@ export function ProductCard({ product }: { product: ProductCardData }) {
       >
         {product.title}
       </Link>
+
+      {product.tastingNotes && product.tastingNotes.length > 0 && (
+        <p className="mt-0.5 line-clamp-1 text-xs text-text-secondary">
+          <span className="sr-only">Tasting notes: </span>
+          {product.tastingNotes.slice(0, 3).join(" · ")}
+        </p>
+      )}
 
       <div className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
         <PriceTag cents={product.priceCents} size="md" />

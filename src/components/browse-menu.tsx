@@ -18,6 +18,7 @@ const SHOP_LINKS = [
   { label: "Light roasts", href: "/s?roast=light" },
   { label: "Medium roasts", href: "/s?roast=medium" },
   { label: "Dark roasts", href: "/s?roast=dark" },
+  { label: "Brew guides", href: "/brew" },
   { label: "Our story", href: "/info/about" },
 ];
 

@@ -14,6 +14,7 @@ import { ProductCard } from "@/components/product-card";
 import { Stars } from "@/components/ui/stars";
 import { ProductReviews } from "@/components/reviews/product-reviews";
 import { RecordView } from "@/lib/recently-viewed";
+import { brewSlugFor } from "@/lib/brew-guides";
 
 const ROAST_LABEL = { LIGHT: "Light", MEDIUM: "Medium", DARK: "Dark" } as const;
 
@@ -254,9 +255,14 @@ export default async function ProductPage({
       </div>
 
       <section className="mt-12" aria-labelledby="brew-guide">
-        <h2 id="brew-guide" className="mb-4 font-serif text-xl font-medium text-text-primary">
-          Brew guide
-        </h2>
+        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+          <h2 id="brew-guide" className="font-serif text-xl font-medium text-text-primary">
+            Brew guide
+          </h2>
+          <Link href="/brew" className="link text-sm">
+            All brew guides
+          </Link>
+        </div>
         <div className="grain overflow-x-auto bg-chrome-nav text-text-on-brown">
           <table className="w-full text-sm">
             <thead>
@@ -270,7 +276,19 @@ export default async function ProductPage({
             <tbody>
               {BREW_GUIDE[product.roastLevel].map((row) => (
                 <tr key={row.method} className="border-b border-border-on-brown last:border-0">
-                  <td className="px-5 py-3 font-medium">{row.method}</td>
+                  <td className="px-5 py-3 font-medium">
+                    {brewSlugFor(row.method) ? (
+                      <Link
+                        href={`/brew/${brewSlugFor(row.method)}`}
+                        className="underline decoration-border-on-brown underline-offset-4 hover:decoration-current"
+                      >
+                        {row.method}
+                        <span className="sr-only"> recipe</span>
+                      </Link>
+                    ) : (
+                      row.method
+                    )}
+                  </td>
                   <td className="px-5 py-3 text-text-on-brown-muted">{row.grind}</td>
                   <td className="px-5 py-3 text-text-on-brown-muted">{row.ratio}</td>
                   <td className="px-5 py-3 text-text-on-brown-muted">{row.time}</td>
