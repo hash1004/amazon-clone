@@ -2,7 +2,6 @@ export type SearchParams = {
   q?: string;
   roast?: string;
   origin?: string;
-  rating?: string;
   min?: string;
   max?: string;
   sort?: string;
@@ -25,8 +24,7 @@ export function searchUrl(
 
 export const SORTS = [
   { key: "featured", label: "Featured" },
-  { key: "price-asc", label: "Price: Low to High" },
-  { key: "price-desc", label: "Price: High to Low" },
-  { key: "rating", label: "Avg. customer review" },
-  { key: "newest", label: "Newest arrivals" },
+  { key: "price-asc", label: "Price: low to high" },
+  { key: "price-desc", label: "Price: high to low" },
+  { key: "newest", label: "Newest" },
 ] as const;

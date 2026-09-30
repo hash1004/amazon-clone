@@ -51,7 +51,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
             />
           </div>
         </Link>
-        <span className="absolute right-1 top-1 opacity-100 transition-opacity focus-within:opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+        <span className="show-on-hover absolute right-1 top-1 transition-opacity">
           <WishlistButton
             variant="icon"
             entry={{

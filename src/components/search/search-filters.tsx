@@ -14,7 +14,7 @@ const ROAST_LEVELS = [
 
 /**
  * One "Filters & Sort" toggle that expands a single full-width panel — each
- * filter (Sort / Roast / Price / Rating / Origin) is one dropdown select,
+ * filter (Sort / Roast / Price / Origin) is one dropdown select,
  * not a wrapped row of pills, laid out two to a row on desktop and full
  * width, one per row, on mobile.
  */
@@ -36,7 +36,7 @@ export function SearchFilters({
       params.max === (b.max ? String(b.max) : undefined),
   );
 
-  const activeCount = [params.roast, params.origin, params.rating, priceIndex >= 0 ? "1" : undefined].filter(
+  const activeCount = [params.roast, params.origin, priceIndex >= 0 ? "1" : undefined].filter(
     Boolean,
   ).length;
 
@@ -52,7 +52,7 @@ export function SearchFilters({
           className="inline-flex items-center gap-1.5 text-sm font-medium text-text-primary transition hover:text-text-accent"
         >
           <FilterIcon className="h-3.5 w-3.5" />
-          Filters &amp; Sort
+          Filters &amp; sort
           {activeCount > 0 && (
             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-fg">
               {activeCount}
@@ -116,16 +116,6 @@ export function SearchFilters({
                   {b.label}
                 </option>
               ))}
-            </FilterSelect>
-
-            <FilterSelect
-              label="Rating"
-              value={params.rating ?? ""}
-              onChange={(v) => go(searchUrl(params, { rating: v || undefined, page: undefined }))}
-            >
-              <option value="">Any rating</option>
-              <option value="4">4★ &amp; Up</option>
-              <option value="3">3★ &amp; Up</option>
             </FilterSelect>
 
             {origins.length > 0 && (

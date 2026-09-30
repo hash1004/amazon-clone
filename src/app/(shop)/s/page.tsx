@@ -7,6 +7,7 @@ import { SearchFilters } from "@/components/search/search-filters";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { SorryMug } from "@/components/ui/sorry-mug";
 import { searchProducts } from "@/lib/product-search";
+import { formatPrice } from "@/lib/format";
 
 const PAGE_SIZE = 24;
 
@@ -23,7 +24,6 @@ const ORDER_BY: Record<string, Prisma.ProductOrderByWithRelationInput> = {
   featured: { ratingCount: "desc" },
   "price-asc": { priceCents: "asc" },
   "price-desc": { priceCents: "desc" },
-  rating: { rating: "desc" },
   newest: { createdAt: "desc" },
 };
 
@@ -44,7 +44,6 @@ function buildWhere(sp: SearchParams): Prisma.ProductWhereInput {
   const where: Prisma.ProductWhereInput = {};
   if (sp.roast && ROAST_LABEL[sp.roast]) where.roastLevel = sp.roast.toUpperCase() as never;
   if (sp.origin) where.origin = sp.origin;
-  if (sp.rating) where.rating = { gte: Number(sp.rating) };
   const min = sp.min ? Number(sp.min) : undefined;
   const max = sp.max ? Number(sp.max) : undefined;
   if (min !== undefined || max !== undefined) {
@@ -58,7 +57,6 @@ type Product = Awaited<ReturnType<typeof db.product.findMany>>[number];
 const COMPARE: Record<string, (a: Product, b: Product) => number> = {
   "price-asc": (a, b) => a.priceCents - b.priceCents,
   "price-desc": (a, b) => b.priceCents - a.priceCents,
-  rating: (a, b) => b.rating - a.rating,
   newest: (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
 };
 
@@ -144,16 +142,13 @@ export default async function SearchPage({
       label: sp.origin,
       href: searchUrl(sp, { origin: undefined, page: undefined }),
     });
-  if (sp.rating)
-    chips.push({
-      label: `${sp.rating}★ & Up`,
-      href: searchUrl(sp, { rating: undefined, page: undefined }),
-    });
   if (sp.min || sp.max)
     chips.push({
-      label: `${sp.min ? "$" + Number(sp.min) / 100 : "$0"} – ${
-        sp.max ? "$" + Number(sp.max) / 100 : "any"
-      }`,
+      label: sp.min && sp.max
+        ? `${formatPrice(Number(sp.min))} to ${formatPrice(Number(sp.max))}`
+        : sp.max
+          ? `Under ${formatPrice(Number(sp.max))}`
+          : `${formatPrice(Number(sp.min))} and up`,
       href: searchUrl(sp, { min: undefined, max: undefined, page: undefined }),
     });
 
@@ -165,15 +160,9 @@ export default async function SearchPage({
             params={sp}
             origins={origins}
             resultsText={
-              <>
-                {from}-{to} of {total.toLocaleString()} results
-                {sp.q && (
-                  <>
-                    {" "}
-                    for <span className="font-bold text-text-accent">&quot;{sp.q}&quot;</span>
-                  </>
-                )}
-              </>
+              total === 0
+                ? "No results"
+                : `${from}–${to} of ${total.toLocaleString()} ${total === 1 ? "coffee" : "coffees"}`
             }
           />
         </div>
@@ -245,29 +234,60 @@ export default async function SearchPage({
         )}
 
         {totalPages > 1 && (
-          <div className="mt-8 flex items-center justify-center gap-1">
+          <nav aria-label="Pagination" className="mt-8 flex flex-wrap items-center justify-center gap-1 text-sm">
             {page > 1 && (
               <Link
                 href={searchUrl(sp, { page: String(page - 1) })}
-                className="rounded-md border border-border-strong px-3 py-1.5 text-sm hover:bg-subtle"
+                className="border border-border-strong px-3 py-1.5 hover:bg-subtle"
               >
                 ‹ Previous
               </Link>
             )}
-            <span className="px-3 py-1.5 text-sm text-text-secondary">
-              {page} / {totalPages}
-            </span>
+            {pageList(page, totalPages).map((n, i) =>
+              n === null ? (
+                <span key={`gap-${i}`} aria-hidden className="px-2 text-text-secondary">
+                  …
+                </span>
+              ) : n === page ? (
+                <span
+                  key={n}
+                  aria-current="page"
+                  className="border border-border-accent bg-accent-subtle px-3 py-1.5 font-semibold"
+                >
+                  {n}
+                </span>
+              ) : (
+                <Link
+                  key={n}
+                  href={searchUrl(sp, { page: n === 1 ? undefined : String(n) })}
+                  aria-label={`Page ${n}`}
+                  className="border border-border-strong px-3 py-1.5 hover:bg-subtle"
+                >
+                  {n}
+                </Link>
+              ),
+            )}
             {page < totalPages && (
               <Link
                 href={searchUrl(sp, { page: String(page + 1) })}
-                className="rounded-md border border-border-strong px-3 py-1.5 text-sm hover:bg-subtle"
+                className="border border-border-strong px-3 py-1.5 hover:bg-subtle"
               >
                 Next ›
               </Link>
             )}
-          </div>
+          </nav>
         )}
       </div>
     </div>
   );
+}
+
+/** First, last, and the pages around the current one; null marks a gap. */
+function pageList(page: number, total: number): (number | null)[] {
+  const out: (number | null)[] = [];
+  for (let n = 1; n <= total; n++) {
+    if (n === 1 || n === total || Math.abs(n - page) <= 1) out.push(n);
+    else if (out[out.length - 1] !== null) out.push(null);
+  }
+  return out;
 }

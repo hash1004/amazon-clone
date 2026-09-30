@@ -327,6 +327,20 @@ a {
   }
 }
 
+/* Shown on hover (or keyboard focus) only where a real hover exists — by
+   input capability, not screen width, so touch tablets always see it. */
+@layer components {
+  @media (hover: hover) {
+    .show-on-hover {
+      opacity: 0;
+    }
+    .group:hover .show-on-hover,
+    .show-on-hover:focus-within {
+      opacity: 1;
+    }
+  }
+}
+
 /* Scroll-reveal — see ui/reveal.tsx. Plain opacity+translate transition;
    the component just toggles this class when the element enters view. */
 .reveal {

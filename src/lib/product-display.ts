@@ -1,9 +1,9 @@
 /** At or below this many bags, product pages and cards say "Only N left". */
 export const LOW_STOCK_THRESHOLD = 10;
 
+/** Price bands for the standard bag, sized to the actual catalog ($14–$21). */
 export const PRICE_BUCKETS = [
-  { label: "Under $25", min: undefined, max: 2500 },
-  { label: "$25 to $50", min: 2500, max: 5000 },
-  { label: "$50 to $100", min: 5000, max: 10000 },
-  { label: "$100 & Above", min: 10000, max: undefined },
+  { label: "Under $17", min: undefined, max: 1700 },
+  { label: "$17 to $20", min: 1700, max: 2000 },
+  { label: "$20 and up", min: 2000, max: undefined },
 ] as const;
