@@ -64,8 +64,3 @@ export function validateCard(card: CardFields): Partial<Record<keyof CardFields,
   return errors;
 }
 
-export function validateUpi(id: string): string | null {
-  if (!/^[\w.\-]{2,}@[a-z]{2,}$/i.test(id.trim()))
-    return "Enter a valid UPI ID (name@bank).";
-  return null;
-}

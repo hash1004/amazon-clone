@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { seedSampleReviews } from "./sample-reviews";
 
 const db = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -288,6 +289,8 @@ async function main() {
       },
     });
   }
+
+  console.log(`Added ${await seedSampleReviews(db)} sample reviews.`);
 
   const byRoast = await db.product.groupBy({ by: ["roastLevel"], _count: true });
   console.log(`Seeded ${COFFEES.length} coffees:`);

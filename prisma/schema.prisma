@@ -44,6 +44,7 @@ model Product {
   cartItems     CartItem[]
   orderItems    OrderItem[]
   wishlistItems WishlistItem[]
+  reviews       Review[]
 
   @@index([roastLevel])
   @@index([origin])
@@ -67,6 +68,7 @@ model User {
   orders        Order[]
   addresses     Address[]
   wishlistItems WishlistItem[]
+  reviews       Review[]
 }
 
 // ─── Saved delivery addresses ─────────────────────────────────────────────
@@ -201,6 +203,11 @@ model OrderItem {
   priceCentsSnapshot Int
   imageSnapshot      String
   quantity           Int
+  // The bag as bought — see src/lib/variants.ts. Defaults describe orders
+  // placed before grind/size existed (one standard whole-bean bag).
+  grind              String @default("whole")
+  size               String @default("standard")
+  grams              Int?
 
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id])
@@ -218,4 +225,28 @@ model WishlistItem {
 
   @@id([userId, productId])
   @@index([userId, createdAt])
+}
+
+// ─── Reviews ──────────────────────────────────────────────────────────────
+// Written reviews. Product.rating / ratingCount stay the summary figures
+// (they include star-only ratings from before written reviews existed);
+// a new review folds its stars into them. Seeded sample reviews have no
+// user; a signed-in customer gets one review per coffee.
+model Review {
+  id         String   @id @default(cuid())
+  productId  String
+  userId     String?
+  authorName String
+  rating     Int // 1–5
+  title      String
+  body       String
+  grind      String? // what they brewed it as, if they said
+  verified   Boolean  @default(false) // reviewer has an order containing this coffee
+  createdAt  DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([productId, userId])
+  @@index([productId, createdAt])
 }

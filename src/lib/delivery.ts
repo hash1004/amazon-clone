@@ -10,15 +10,15 @@ export const DELIVERY_OPTIONS: {
 }[] = [
   {
     id: "standard",
-    label: "Standard Delivery",
-    blurb: "FREE delivery on eligible orders",
+    label: "Standard delivery",
+    blurb: "Free delivery",
     feeCents: 0,
     minDays: 4,
     maxDays: 6,
   },
   {
     id: "express",
-    label: "Express Delivery",
+    label: "Express delivery",
     blurb: "Get it faster",
     feeCents: 999,
     minDays: 1,

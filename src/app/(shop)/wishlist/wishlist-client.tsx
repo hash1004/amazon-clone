@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useWishlist } from "@/lib/wishlist-store";
 import { useCart } from "@/lib/cart-store";
 import { useToast } from "@/lib/toast";
+import { DEFAULT_GRIND, DEFAULT_SIZE } from "@/lib/variants";
 import { formatPrice, discountPct } from "@/lib/format";
 
 export function WishlistClient() {
@@ -102,15 +103,18 @@ export function WishlistClient() {
                           title: it.title,
                           image: it.image,
                           priceCents: it.priceCents,
+                          grind: DEFAULT_GRIND,
+                          size: DEFAULT_SIZE,
+                          units: 1,
                         },
                         1,
                       );
                       remove(it.productId);
-                      toast("Moved to your Cart");
+                      toast("Moved to your cart as whole bean. You can change the grind there.");
                     }}
                     className="rounded-control bg-accent px-4 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
                   >
-                    Move to Cart
+                    Move to cart
                   </button>
                   <button
                     type="button"

@@ -4,8 +4,17 @@ import { db } from "@/lib/db";
 import { validateAddress } from "@/lib/field-rules";
 import { orderTotals } from "@/lib/pricing";
 import { estimateDelivery } from "@/lib/delivery";
+import { checkoutTestMode } from "@/lib/checkout-mode";
+import { DECLINE_SUFFIX, TEST_CARD_NUMBERS } from "@/lib/test-cards";
+import {
+  DEFAULT_GRIND,
+  DEFAULT_SIZE,
+  isGrind,
+  isSize,
+  variantFor,
+} from "@/lib/variants";
 
-type IncomingItem = { productId: string; quantity: number };
+type IncomingItem = { productId: string; quantity: number; grind?: string; size?: string };
 
 class OutOfStock extends Error {
   constructor(
@@ -34,6 +43,8 @@ export async function POST(req: Request) {
     .map((i) => ({
       productId: String(i.productId),
       quantity: Math.max(1, Math.min(99, Math.floor(Number(i.quantity) || 0))),
+      grind: isGrind(i.grind) ? i.grind : DEFAULT_GRIND,
+      size: isSize(i.size) ? i.size : DEFAULT_SIZE,
     }))
     .filter((i) => i.productId);
 
@@ -91,47 +102,32 @@ export async function POST(req: Request) {
   }
 
   const deliverySpeed = body.deliverySpeed === "express" ? "express" : "standard";
-  const paymentMethod = ["card", "upi", "cod"].includes(String(body.paymentMethod))
-    ? String(body.paymentMethod)
-    : "card";
+  // US store: cards only.
+  const paymentMethod = "card";
 
   // ── Mock payment ───────────────────────────────────────────────
-  let paymentLast4 = "";
-  if (paymentMethod === "card") {
-    const digits = String(body.cardNumber ?? "").replace(/\D/g, "");
-    if (digits.length < 15) {
-      return NextResponse.json(
-        { error: "Enter a valid card number." },
-        { status: 400 },
-      );
-    }
+  const digits = String(body.cardNumber ?? "").replace(/\D/g, "");
+  if (digits.length < 15) {
+    return NextResponse.json({ error: "Enter a valid card number." }, { status: 400 });
+  }
+  if (checkoutTestMode()) {
     // Test decline card, mirrors Stripe's 4000 0000 0000 0002
-    if (digits.endsWith("0002")) {
+    if (digits.endsWith(DECLINE_SUFFIX)) {
       return NextResponse.json(
         {
-          error:
-            "Your card was declined. Please try a different card or payment method.",
+          error: "Your card was declined. Try a different card.",
           code: "payment_declined",
         },
         { status: 402 },
       );
     }
-    paymentLast4 = digits.slice(-4);
-  } else if (paymentMethod === "upi") {
-    const upi = String(body.upiId ?? "").trim();
-    if (!/^[\w.\-]{2,}@[a-z]{2,}$/i.test(upi)) {
-      return NextResponse.json(
-        { error: "Enter a valid UPI ID (name@bank)." },
-        { status: 400 },
-      );
-    }
-    if (upi.startsWith("fail@")) {
-      return NextResponse.json(
-        { error: "The UPI payment request failed. Please retry.", code: "payment_declined" },
-        { status: 402 },
-      );
-    }
+  } else if (TEST_CARD_NUMBERS.has(digits)) {
+    return NextResponse.json(
+      { error: "Test cards can't be used for real orders.", code: "payment_declined" },
+      { status: 402 },
+    );
   }
+  const paymentLast4 = digits.slice(-4);
 
   // ── Authoritative prices from the DB ──────────────────────────
   const products = await db.product.findMany({
@@ -139,17 +135,24 @@ export async function POST(req: Request) {
   });
   const byId = new Map(products.map((p) => [p.id, p]));
 
+  // Price comes from the size the customer chose, computed here from the
+  // catalog — never from what the browser sent.
   const lineItems = items
     .filter((i) => byId.has(i.productId))
     .map((i) => {
       const p = byId.get(i.productId)!;
+      const v = variantFor(p, i.size);
       return {
         productId: p.id,
         titleSnapshot: p.title,
-        priceCentsSnapshot: p.priceCents,
+        priceCentsSnapshot: v.priceCents,
         imageSnapshot: p.images[0] ?? "",
         quantity: i.quantity,
-        _list: p.listPriceCents ?? p.priceCents,
+        grind: i.grind,
+        size: i.size,
+        grams: v.grams,
+        _list: v.listPriceCents ?? v.priceCents,
+        _units: v.units * i.quantity,
       };
     });
 
@@ -170,22 +173,33 @@ export async function POST(req: Request) {
   );
   const totals = orderTotals(subtotalCents, { deliverySpeed, listSubtotalCents });
 
-  // Take the stock and create the order in one transaction: each line only
-  // decrements if that many bags are still there, so two shoppers can't
-  // both buy the last bag. Any shortfall rolls the whole order back.
+  // Stock is counted in standard bags; one coffee can be on several lines
+  // (different grinds/sizes), so take it per coffee, not per line.
+  const unitsByProduct = new Map<string, { units: number; title: string }>();
+  for (const li of lineItems) {
+    const cur = unitsByProduct.get(li.productId);
+    unitsByProduct.set(li.productId, {
+      units: (cur?.units ?? 0) + li._units,
+      title: li.titleSnapshot,
+    });
+  }
+
+  // Take the stock and create the order in one transaction: each coffee only
+  // decrements if that much is still there, so two shoppers can't both buy
+  // the last bag. Any shortfall rolls the whole order back.
   let order: { id: string };
   try {
     order = await db.$transaction(async (tx) => {
-      for (const li of lineItems) {
+      for (const [productId, { units, title }] of unitsByProduct) {
         const taken = await tx.product.updateMany({
-          where: { id: li.productId, stock: { gte: li.quantity } },
-          data: { stock: { decrement: li.quantity } },
+          where: { id: productId, stock: { gte: units } },
+          data: { stock: { decrement: units } },
         });
         if (taken.count === 0) {
           const left =
-            (await tx.product.findUnique({ where: { id: li.productId }, select: { stock: true } }))
+            (await tx.product.findUnique({ where: { id: productId }, select: { stock: true } }))
               ?.stock ?? 0;
-          throw new OutOfStock(li.titleSnapshot, left);
+          throw new OutOfStock(title, left);
         }
       }
 
@@ -217,6 +231,9 @@ export async function POST(req: Request) {
               priceCentsSnapshot: li.priceCentsSnapshot,
               imageSnapshot: li.imageSnapshot,
               quantity: li.quantity,
+              grind: li.grind,
+              size: li.size,
+              grams: li.grams,
             })),
           },
         },
@@ -226,7 +243,7 @@ export async function POST(req: Request) {
     if (e instanceof OutOfStock) {
       const error =
         e.left > 0
-          ? `Only ${e.left} ${e.left === 1 ? "bag" : "bags"} of ${e.title} left. Lower the quantity in your cart and try again.`
+          ? `Not enough ${e.title} left for this order (${e.left} standard ${e.left === 1 ? "bag" : "bags"}). Lower the quantity in your cart and try again.`
           : `${e.title} just sold out. Remove it from your cart to continue.`;
       return NextResponse.json({ error, code: "out_of_stock" }, { status: 409 });
     }

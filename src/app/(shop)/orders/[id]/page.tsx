@@ -9,6 +9,8 @@ import { formatDeliveryDate } from "@/lib/delivery";
 import { derivedStage, orderNumber, PAYMENT_LABEL } from "@/lib/tracking";
 import { TrackingTimeline } from "@/components/orders/tracking-timeline";
 import { ReorderButton } from "@/components/orders/reorder-button";
+import { reorderLine, REORDER_PRODUCT_SELECT } from "@/lib/reorder";
+import { isGrind, variantSummary } from "@/lib/variants";
 import { OrderProgress, OrderStatusBadge } from "@/components/orders/order-status";
 
 export const metadata: Metadata = { title: "Order details" };
@@ -28,7 +30,7 @@ export default async function OrderPage({
 
   const order = await db.order.findUnique({
     where: { id },
-    include: { items: { include: { product: { select: { slug: true } } } } },
+    include: { items: { include: { product: { select: REORDER_PRODUCT_SELECT } } } },
   });
   if (!order || order.userId !== session.user.id) notFound();
 
@@ -127,6 +129,9 @@ export default async function OrderPage({
                       {it.titleSnapshot}
                     </Link>
                     <p className="text-xs text-text-secondary">
+                      {variantSummary(isGrind(it.grind) ? it.grind : "whole", it.grams ?? undefined)}
+                    </p>
+                    <p className="text-xs text-text-secondary">
                       Qty {it.quantity} ·{" "}
                       {formatPrice(it.priceCentsSnapshot)} each
                     </p>
@@ -139,14 +144,7 @@ export default async function OrderPage({
             </ul>
             <div className="mt-3 border-t border-border-default pt-3">
               <ReorderButton
-                items={order.items.map((it) => ({
-                  productId: it.productId,
-                  slug: it.product.slug,
-                  title: it.titleSnapshot,
-                  image: it.imageSnapshot,
-                  priceCents: it.priceCentsSnapshot,
-                  quantity: it.quantity,
-                }))}
+                items={order.items.map(reorderLine)}
               />
             </div>
           </section>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useCart } from "@/lib/cart-store";
+import { lineKey, useCart } from "@/lib/cart-store";
 import { useWishlist } from "@/lib/wishlist-store";
 import { formatPrice } from "@/lib/format";
 import { CartIcon } from "@/components/ui/icons";
@@ -79,7 +79,7 @@ export function ShopMenu({
               <>
                 <ul className="mt-2 space-y-1 text-sm text-text-secondary">
                   {lines.slice(0, 3).map((l) => (
-                    <li key={l.productId} className="line-clamp-1">
+                    <li key={lineKey(l)} className="line-clamp-1">
                       {l.quantity}× {l.title}
                     </li>
                   ))}

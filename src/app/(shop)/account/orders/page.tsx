@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/format";
 import { formatDeliveryDate } from "@/lib/delivery";
 import { derivedStage, orderNumber, TRACKING_STAGES } from "@/lib/tracking";
 import { ReorderButton } from "@/components/orders/reorder-button";
+import { reorderLine, REORDER_PRODUCT_SELECT } from "@/lib/reorder";
 import { OrderProgress, OrderStatusBadge } from "@/components/orders/order-status";
 import { SorryMug } from "@/components/ui/sorry-mug";
 
@@ -22,7 +23,7 @@ export default async function OrdersPage() {
 
   const orders = await db.order.findMany({
     where: { userId: session.user.id },
-    include: { items: { include: { product: { select: { slug: true } } } } },
+    include: { items: { include: { product: { select: REORDER_PRODUCT_SELECT } } } },
     orderBy: { createdAt: "desc" },
   });
 
@@ -152,14 +153,7 @@ export default async function OrdersPage() {
                       Track &amp; view details
                     </Link>
                     <ReorderButton
-                      items={order.items.map((it) => ({
-                        productId: it.productId,
-                        slug: it.product.slug,
-                        title: it.titleSnapshot,
-                        image: it.imageSnapshot,
-                        priceCents: it.priceCentsSnapshot,
-                        quantity: it.quantity,
-                      }))}
+                      items={order.items.map(reorderLine)}
                     />
                     <span className="ml-auto text-xs text-text-secondary">
                       {bags} {bags === 1 ? "bag" : "bags"}

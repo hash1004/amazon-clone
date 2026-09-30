@@ -3,20 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
-import { useCart } from "@/lib/cart-store";
+import { useState } from "react";
+import { lineKey, useCart } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
 import { orderTotals } from "@/lib/pricing";
 import { DELIVERY_OPTIONS, deliveryRange, type DeliverySpeed } from "@/lib/delivery";
 import { createAddress } from "@/lib/address-actions";
 import { AddressFields } from "@/components/checkout/address-form";
 import { sanitize } from "@/lib/field-rules";
+import { variantSummary } from "@/lib/variants";
+import { DECLINE_SUFFIX, TEST_CARD, testCardExpiry } from "@/lib/test-cards";
 import {
   formatCardNumber,
   formatExpiry,
   formatCvv,
   validateCard,
-  validateUpi,
   type CardFields,
 } from "@/lib/payment";
 
@@ -32,10 +33,17 @@ type Address = {
   isDefault: boolean;
 };
 
-type PayMethod = "card" | "upi" | "cod";
+const STEPS = ["Address", "Delivery", "Payment"] as const;
 
-export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
-  const { lines, subtotalCents, ready, clear } = useCart();
+export function CheckoutFlow({
+  addresses,
+  testMode,
+}: {
+  addresses: Address[];
+  /** Payments are mocked: show the test-mode banner and "Fill test card". */
+  testMode: boolean;
+}) {
+  const { lines, count, subtotalCents, ready, clear } = useCart();
   const router = useRouter();
 
   const [step, setStep] = useState(1);
@@ -45,30 +53,14 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
   );
   const [addingAddr, setAddingAddr] = useState(addresses.length === 0);
   const [speed, setSpeed] = useState<DeliverySpeed>("standard");
-  const [pay, setPay] = useState<PayMethod>("card");
-  const [card, setCard] = useState<CardFields>({
-    number: "",
-    name: "",
-    exp: "",
-    cvv: "",
-  });
-  const [cardErrors, setCardErrors] = useState<
-    Partial<Record<keyof CardFields, string>>
-  >({});
-  const [upiId, setUpiId] = useState("");
-  const [upiError, setUpiError] = useState<string | null>(null);
+  const [card, setCard] = useState<CardFields>({ number: "", name: "", exp: "", cvv: "" });
+  const [cardErrors, setCardErrors] = useState<Partial<Record<keyof CardFields, string>>>({});
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  const listSubtotalCents = useMemo(
-    () => lines.reduce((n, l) => n + l.priceCents * l.quantity, 0),
-    [lines],
-  );
-  const totals = orderTotals(subtotalCents, {
-    deliverySpeed: speed,
-    listSubtotalCents,
-  });
+  const totals = orderTotals(subtotalCents, { deliverySpeed: speed });
   const selectedAddr = addrList.find((a) => a.id === selectedId);
+  const bags = `${count} ${count === 1 ? "bag" : "bags"}`;
 
   if (ready && lines.length === 0) {
     return (
@@ -81,6 +73,11 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
     );
   }
 
+  const editCard = (k: keyof CardFields, v: string) => {
+    setCard((c) => ({ ...c, [k]: v }));
+    setCardErrors((e) => ({ ...e, [k]: undefined }));
+  };
+
   async function placeOrder() {
     setError(null);
     if (!selectedAddr) {
@@ -89,22 +86,12 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
       return;
     }
 
-    if (pay === "card") {
-      const errs = validateCard(card);
-      setCardErrors(errs);
-      if (Object.keys(errs).length > 0) {
-        setStep(3);
-        setError("Check the card details below.");
-        return;
-      }
-    }
-    if (pay === "upi") {
-      const e = validateUpi(upiId);
-      setUpiError(e);
-      if (e) {
-        setStep(3);
-        return;
-      }
+    const errs = validateCard(card);
+    setCardErrors(errs);
+    if (Object.keys(errs).length > 0) {
+      setStep(3);
+      setError("Check the card details below.");
+      return;
     }
 
     setPending(true);
@@ -112,12 +99,16 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        items: lines.map((l) => ({ productId: l.productId, quantity: l.quantity })),
+        items: lines.map((l) => ({
+          productId: l.productId,
+          quantity: l.quantity,
+          grind: l.grind,
+          size: l.size,
+        })),
         addressId: selectedAddr.id,
         deliverySpeed: speed,
-        paymentMethod: pay,
-        cardNumber: pay === "card" ? card.number : undefined,
-        upiId: pay === "upi" ? upiId : undefined,
+        paymentMethod: "card",
+        cardNumber: card.number,
       }),
     });
     const data = await res.json().catch(() => ({}));
@@ -132,12 +123,36 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
 
   return (
     <div className="mx-auto max-w-[1100px] px-4 py-6">
-      <h1 className="mb-5 font-serif text-2xl font-medium text-text-primary">
+      <h1 className="font-serif text-2xl font-medium text-text-primary">
         Checkout{" "}
-        <span className="font-sans text-sm not-italic text-text-secondary">
-          ({lines.reduce((n, l) => n + l.quantity, 0)} items)
-        </span>
+        <span className="font-sans text-sm text-text-secondary">({bags})</span>
       </h1>
+
+      <ol className="mb-5 mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm" aria-label="Checkout steps">
+        {STEPS.map((label, i) => {
+          const n = i + 1;
+          const state = n < step ? "done" : n === step ? "current" : "todo";
+          return (
+            <li key={label} className="flex items-center gap-2">
+              {i > 0 && <span aria-hidden className="h-px w-6 bg-border-strong" />}
+              <span
+                aria-current={state === "current" ? "step" : undefined}
+                className={
+                  state === "current"
+                    ? "font-semibold text-text-primary"
+                    : state === "done"
+                      ? "text-success"
+                      : "text-text-secondary"
+                }
+              >
+                {state === "done" && <span aria-hidden>✓ </span>}
+                {label}
+                {state === "done" && <span className="sr-only"> (done)</span>}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-3">
@@ -149,7 +164,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
             done={step > 1 && !!selectedAddr}
             summary={
               selectedAddr &&
-              `${selectedAddr.fullName}, ${selectedAddr.line1}, ${selectedAddr.city} ${selectedAddr.postal}`
+              `${selectedAddr.fullName}, ${selectedAddr.line1}, ${selectedAddr.city}, ${selectedAddr.state} ${selectedAddr.postal}`
             }
             onChange={() => setStep(1)}
           >
@@ -157,7 +172,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
               {addrList.map((a) => (
                 <label
                   key={a.id}
-                  className={`flex cursor-pointer gap-3 rounded-md border p-3 text-sm ${
+                  className={`flex cursor-pointer gap-3 border p-3 text-sm ${
                     selectedId === a.id
                       ? "border-border-accent bg-accent-subtle/40"
                       : "border-border-default"
@@ -173,7 +188,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                   <span>
                     <span className="font-bold">{a.fullName}</span>
                     {a.isDefault && (
-                      <span className="ml-2 rounded bg-subtle px-1.5 py-0.5 text-xs text-text-secondary">
+                      <span className="ml-2 bg-subtle px-1.5 py-0.5 text-xs text-text-secondary">
                         Default
                       </span>
                     )}
@@ -187,13 +202,11 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
               ))}
 
               {addingAddr ? (
-                <div className="rounded-md border border-border-default p-3">
+                <div className="border border-border-default p-3">
                   <p className="mb-2 text-sm font-bold">Add a new address</p>
                   <AddressFields
                     submitLabel="Use this address"
-                    onCancel={
-                      addrList.length ? () => setAddingAddr(false) : undefined
-                    }
+                    onCancel={addrList.length ? () => setAddingAddr(false) : undefined}
                     onSubmit={async (form) => {
                       const res = await createAddress(form);
                       if (res.ok && res.id) {
@@ -206,13 +219,10 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                           city: String(form.get("city")),
                           state: String(form.get("state")),
                           postal: String(form.get("postal")),
-                          isDefault:
-                            form.get("isDefault") === "on" || addrList.length === 0,
+                          isDefault: form.get("isDefault") === "on" || addrList.length === 0,
                         };
                         setAddrList((l) => [
-                          ...l.map((x) =>
-                            draft.isDefault ? { ...x, isDefault: false } : x,
-                          ),
+                          ...l.map((x) => (draft.isDefault ? { ...x, isDefault: false } : x)),
                           draft,
                         ]);
                         setSelectedId(res.id);
@@ -223,11 +233,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                   />
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => setAddingAddr(true)}
-                  className="link text-sm"
-                >
+                <button type="button" onClick={() => setAddingAddr(true)} className="link text-sm">
                   + Add a new address
                 </button>
               )}
@@ -260,11 +266,12 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
             }
             onChange={() => setStep(2)}
           >
-            <div className="space-y-2">
+            <fieldset className="space-y-2">
+              <legend className="sr-only">Delivery speed</legend>
               {DELIVERY_OPTIONS.map((o) => (
                 <label
                   key={o.id}
-                  className={`flex cursor-pointer items-start gap-3 rounded-md border p-3 text-sm ${
+                  className={`flex cursor-pointer items-start gap-3 border p-3 text-sm ${
                     speed === o.id
                       ? "border-border-accent bg-accent-subtle/40"
                       : "border-border-default"
@@ -279,13 +286,11 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                   />
                   <span>
                     <span className="font-bold">
-                      {o.feeCents === 0 ? "FREE" : formatPrice(o.feeCents)}
+                      {o.feeCents === 0 ? "Free" : formatPrice(o.feeCents)}
                     </span>{" "}
                     — {o.label}
                     <br />
-                    <span className="text-text-secondary">
-                      Arrives {deliveryRange(o.id)}
-                    </span>
+                    <span className="text-text-secondary">Arrives {deliveryRange(o.id)}</span>
                   </span>
                 </label>
               ))}
@@ -296,132 +301,76 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
               >
                 Continue to payment
               </button>
-            </div>
+            </fieldset>
           </Section>
 
           {/* STEP 3 — payment */}
-          <Section
-            n={3}
-            title="Payment method"
-            open={step === 3}
-            done={false}
-            onChange={() => setStep(3)}
-          >
+          <Section n={3} title="Payment" open={step === 3} done={false} onChange={() => setStep(3)}>
             <div className="min-w-0 space-y-3">
-              <div className="flex flex-wrap gap-2">
-                {(
-                  [
-                    ["card", "Credit or debit card"],
-                    ["upi", "UPI"],
-                    ["cod", "Cash on Delivery"],
-                  ] as [PayMethod, string][]
-                ).map(([id, label]) => (
+              {testMode && (
+                <div className="flex flex-wrap items-center justify-between gap-3 border border-warning bg-warning-subtle p-3 text-sm">
+                  <p className="text-text-primary">
+                    <span className="font-semibold text-warning">Test mode.</span> No card is
+                    charged. A card number ending in {DECLINE_SUFFIX} shows a decline.
+                  </p>
                   <button
-                    key={id}
                     type="button"
-                    onClick={() => setPay(id)}
-                    className={`rounded-md border px-3 py-1.5 text-sm ${
-                      pay === id
-                        ? "border-border-accent bg-accent-subtle/40 font-medium"
-                        : "border-border-strong"
-                    }`}
+                    onClick={() => {
+                      setCard({
+                        number: TEST_CARD.number,
+                        name: TEST_CARD.name,
+                        exp: testCardExpiry(),
+                        cvv: TEST_CARD.cvv,
+                      });
+                      setCardErrors({});
+                      setError(null);
+                    }}
+                    className="rounded-control border border-border-strong bg-surface px-3 py-1 text-xs font-medium hover:bg-subtle"
                   >
-                    {label}
+                    Fill test card
                   </button>
-                ))}
+                </div>
+              )}
+
+              <p className="text-sm text-text-secondary">Credit or debit card</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <CardInput
+                  label="Card number"
+                  span2
+                  inputMode="numeric"
+                  autoComplete="cc-number"
+                  value={card.number}
+                  error={cardErrors.number}
+                  onChange={(v) => editCard("number", formatCardNumber(v))}
+                />
+                <CardInput
+                  label="Name on card"
+                  span2
+                  autoComplete="cc-name"
+                  value={card.name}
+                  error={cardErrors.name}
+                  onChange={(v) => editCard("name", sanitize.name(v))}
+                />
+                <CardInput
+                  label="Expiry (MM/YY)"
+                  inputMode="numeric"
+                  autoComplete="cc-exp"
+                  value={card.exp}
+                  error={cardErrors.exp}
+                  onChange={(v) => editCard("exp", formatExpiry(v))}
+                />
+                <CardInput
+                  label="Security code"
+                  inputMode="numeric"
+                  autoComplete="cc-csc"
+                  value={card.cvv}
+                  error={cardErrors.cvv}
+                  onChange={(v) => editCard("cvv", formatCvv(v))}
+                />
               </div>
 
-              {pay === "card" && (
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <CardInput
-                    label="Card number"
-                    span2
-                    inputMode="numeric"
-                    autoComplete="cc-number"
-                    value={card.number}
-                    error={cardErrors.number}
-                    onChange={(v) => {
-                      setCard({ ...card, number: formatCardNumber(v) });
-                      setCardErrors((e) => ({ ...e, number: undefined }));
-                    }}
-                    placeholder="4242 4242 4242 4242"
-                  />
-                  <CardInput
-                    label="Name on card"
-                    span2
-                    autoComplete="cc-name"
-                    value={card.name}
-                    error={cardErrors.name}
-                    onChange={(v) => {
-                      setCard({ ...card, name: sanitize.name(v) });
-                      setCardErrors((e) => ({ ...e, name: undefined }));
-                    }}
-                  />
-                  <CardInput
-                    label="Expiry (MM/YY)"
-                    inputMode="numeric"
-                    autoComplete="cc-exp"
-                    value={card.exp}
-                    error={cardErrors.exp}
-                    onChange={(v) => {
-                      setCard({ ...card, exp: formatExpiry(v) });
-                      setCardErrors((e) => ({ ...e, exp: undefined }));
-                    }}
-                    placeholder="12/28"
-                  />
-                  <CardInput
-                    label="CVV"
-                    inputMode="numeric"
-                    autoComplete="cc-csc"
-                    value={card.cvv}
-                    error={cardErrors.cvv}
-                    onChange={(v) => {
-                      setCard({ ...card, cvv: formatCvv(v) });
-                      setCardErrors((e) => ({ ...e, cvv: undefined }));
-                    }}
-                    placeholder="123"
-                  />
-                  <p className="text-xs text-text-secondary sm:col-span-2">
-                    Cards are not charged. Use{" "}
-                    <code className="rounded bg-subtle px-1">
-                      4242 4242 4242 4242
-                    </code>{" "}
-                    to succeed or a number ending{" "}
-                    <code className="rounded bg-subtle px-1">0002</code> to see a
-                    decline.
-                  </p>
-                </div>
-              )}
-
-              {pay === "upi" && (
-                <div>
-                  <CardInput
-                    label="UPI ID"
-                    value={upiId}
-                    error={upiError ?? undefined}
-                    onChange={(v) => {
-                      setUpiId(v.replace(/[^\w.@-]/g, "").slice(0, 60));
-                      setUpiError(null);
-                    }}
-                    placeholder="name@bank"
-                  />
-                  <p className="mt-1 text-xs text-text-secondary">
-                    Any valid-looking ID works; start it with{" "}
-                    <code className="rounded bg-subtle px-1">fail@</code> to test a
-                    failed request.
-                  </p>
-                </div>
-              )}
-
-              {pay === "cod" && (
-                <p className="rounded-md bg-subtle p-3 text-sm text-text-secondary">
-                  Pay with cash when your order is delivered. An extra handling
-                  fee may apply on real orders.
-                </p>
-              )}
-
               {error && (
-                <p className="rounded-md bg-danger-subtle p-2 text-sm text-danger">
+                <p role="alert" className="bg-danger-subtle p-2 text-sm text-danger">
                   {error}
                 </p>
               )}
@@ -430,79 +379,51 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                 type="button"
                 onClick={placeOrder}
                 disabled={pending || !ready}
-                className="w-full rounded-control bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60 sm:w-auto sm:px-10"
+                className="w-full rounded-control bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60 sm:w-auto sm:px-10"
               >
                 {pending
                   ? "Placing order…"
-                  : error
-                    ? "Retry payment & place order"
-                    : "Place your order"}
+                  : `${error ? "Try again" : "Place your order"} · ${formatPrice(totals.totalCents)}`}
               </button>
+              <p className="text-xs text-text-secondary">
+                By placing your order you agree to our{" "}
+                <Link href="/info/conditions-of-use" className="link">
+                  Terms of Use
+                </Link>{" "}
+                and{" "}
+                <Link href="/info/privacy-notice" className="link">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
             </div>
           </Section>
         </div>
 
-        {/* Summary */}
-        <aside className="h-fit rounded-lg border border-border-default bg-surface p-4">
-          <button
-            type="button"
-            onClick={placeOrder}
-            disabled={pending || step < 3 || !ready}
-            className="w-full rounded-control bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
-          >
-            {pending ? "Placing order…" : "Place your order"}
-          </button>
-          <p className="mt-2 text-xs text-text-secondary">
-            By placing your order, you agree to Still Coffee and Co.&apos;s
-            Conditions of Use and Privacy Notice.
-          </p>
-
-          <h2 className="mt-4 border-t border-border-default pt-3 font-serif text-lg font-medium">
-            Order Summary
-          </h2>
+        {/* Summary — totals only; the one Place order button is in step 3. */}
+        <aside className="h-fit border border-border-default bg-surface p-4">
+          <h2 className="font-serif text-lg font-medium">Order summary</h2>
           <dl className="mt-2 space-y-1 text-sm">
-            <Row label={`Items (${lines.length})`} value={formatPrice(listSubtotalCents)} />
-            {totals.discountCents > 0 && (
-              <Row
-                label="Discount"
-                value={`−${formatPrice(totals.discountCents)}`}
-                accent="text-text-accent"
-              />
-            )}
+            <Row label={`Items (${bags})`} value={formatPrice(subtotalCents)} />
             <Row
               label="Delivery"
-              value={
-                totals.shippingCents === 0
-                  ? "FREE"
-                  : formatPrice(totals.shippingCents)
-              }
+              value={totals.shippingCents === 0 ? "Free" : formatPrice(totals.shippingCents)}
             />
             <Row label="Estimated tax" value={formatPrice(totals.taxCents)} />
             <div className="border-t border-border-default pt-1">
-              <Row
-                label="Order total"
-                value={formatPrice(totals.totalCents)}
-                bold
-              />
+              <Row label="Order total" value={formatPrice(totals.totalCents)} bold />
             </div>
           </dl>
 
           <ul className="mt-3 space-y-2 border-t border-border-default pt-3">
             {lines.map((l) => (
-              <li key={l.productId} className="flex gap-2 text-xs">
+              <li key={lineKey(l)} className="flex gap-2 text-xs">
                 <div className="relative h-10 w-10 shrink-0 overflow-hidden bg-subtle">
-                  {l.image && (
-                    <Image
-                      src={l.image}
-                      alt={l.title}
-                      fill
-                      sizes="40px"
-                      className="object-cover"
-                    />
-                  )}
+                  {l.image && <Image src={l.image} alt="" fill sizes="40px" className="object-cover" />}
                 </div>
                 <span className="min-w-0 flex-1">
                   <span className="line-clamp-2">{l.title}</span>
+                  <span className="block text-text-secondary">{variantSummary(l.grind, l.grams)}</span>
                   <span className="text-text-secondary">
                     Qty {l.quantity} · {formatPrice(l.priceCents * l.quantity)}
                   </span>
@@ -534,12 +455,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-lg border border-border-default bg-surface">
+    <section className="border border-border-default bg-surface">
       <div className="flex items-center gap-2 px-4 py-3">
         <span
+          aria-hidden
           className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
             done
-              ? "bg-text-accent text-text-inverse"
+              ? "bg-success text-text-inverse"
               : open
                 ? "bg-accent text-accent-fg"
                 : "bg-subtle text-text-secondary"
@@ -547,36 +469,29 @@ function Section({
         >
           {done ? "✓" : n}
         </span>
-        <h2 className="flex-1 font-serif text-lg font-medium">{title}</h2>
+        <h2 className="flex-1 font-serif text-lg font-medium">
+          <span className="sr-only">
+            Step {n} of {STEPS.length}:{" "}
+          </span>
+          {title}
+        </h2>
         {done && (
           <button type="button" onClick={onChange} className="link text-sm">
-            Change
+            Change<span className="sr-only"> {title.toLowerCase()}</span>
           </button>
         )}
       </div>
       {open && <div className="border-t border-border-default p-4">{children}</div>}
-      {!open && summary && (
-        <p className="px-4 pb-3 pl-12 text-sm text-text-secondary">{summary}</p>
-      )}
+      {!open && summary && <p className="px-4 pb-3 pl-12 text-sm text-text-secondary">{summary}</p>}
     </section>
   );
 }
 
-function Row({
-  label,
-  value,
-  bold,
-  accent,
-}: {
-  label: string;
-  value: string;
-  bold?: boolean;
-  accent?: string;
-}) {
+function Row({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
   return (
     <div className={`flex justify-between ${bold ? "text-base font-bold" : ""}`}>
       <dt>{label}</dt>
-      <dd className={accent}>{value}</dd>
+      <dd>{value}</dd>
     </div>
   );
 }
@@ -585,7 +500,6 @@ function CardInput({
   label,
   value,
   onChange,
-  placeholder,
   span2,
   error,
   inputMode,
@@ -594,7 +508,6 @@ function CardInput({
   label: string;
   value: string;
   onChange: (v: string) => void;
-  placeholder?: string;
   span2?: boolean;
   error?: string;
   inputMode?: "numeric" | "text";
@@ -606,21 +519,14 @@ function CardInput({
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
         inputMode={inputMode}
         autoComplete={autoComplete}
         aria-invalid={!!error}
-        className={`mt-1 w-full rounded-md border px-2 py-1.5 text-sm font-normal focus:outline-none ${
-          error
-            ? "border-danger focus:border-danger"
-            : "border-border-strong focus:border-border-accent"
+        className={`mt-1 w-full border px-2 py-1.5 text-sm font-normal focus:outline-none ${
+          error ? "border-danger focus:border-danger" : "border-border-strong focus:border-border-accent"
         }`}
       />
-      {error && (
-        <span className="mt-0.5 block text-xs font-normal text-danger">
-          {error}
-        </span>
-      )}
+      {error && <span className="mt-0.5 block text-xs font-normal text-danger">{error}</span>}
     </label>
   );
 }

@@ -7,6 +7,7 @@ import {
   type AddressErrors,
   type SanitizeKind,
 } from "@/lib/field-rules";
+import { isUsState, US_STATES } from "@/lib/us-states";
 
 export type AddressDraft = {
   id?: string;
@@ -122,19 +123,37 @@ export function AddressFields({
           onEdit={clear}
           required
         />
-        <Field
-          name="state"
-          label="State"
-          kind="place"
-          autoComplete="address-level1"
-          defaultValue={initial?.state}
-          error={fieldErrors.state}
-          onEdit={clear}
-          required
-        />
+        <label className="block text-sm font-bold">
+          State
+          <select
+            name="state"
+            autoComplete="address-level1"
+            required
+            defaultValue={initial?.state && isUsState(initial.state) ? initial.state.toUpperCase() : ""}
+            aria-invalid={!!fieldErrors.state}
+            onChange={() => clear("state")}
+            className={`mt-1 w-full border bg-surface px-2 py-1.5 text-sm font-normal focus:outline-none ${
+              fieldErrors.state
+                ? "border-danger focus:border-danger"
+                : "border-border-strong focus:border-border-accent"
+            }`}
+          >
+            <option value="" disabled>
+              Choose a state
+            </option>
+            {US_STATES.map((s) => (
+              <option key={s.code} value={s.code}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+          {fieldErrors.state && (
+            <span className="mt-0.5 block text-xs font-normal text-danger">{fieldErrors.state}</span>
+          )}
+        </label>
         <Field
           name="postal"
-          label="ZIP / PIN code"
+          label="ZIP code"
           kind="postal"
           inputMode="numeric"
           autoComplete="postal-code"

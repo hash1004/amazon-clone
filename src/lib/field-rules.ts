@@ -6,6 +6,8 @@
  * feedback.
  */
 
+import { isUsState } from "@/lib/us-states";
+
 // Letters in any script (so "José", "Zoë", "अब्दुल" are fine), plus the
 // punctuation real names use.
 const NAME_CHARS = /[^\p{L}\p{M} .'-]/gu;
@@ -19,14 +21,14 @@ export const sanitize = {
   name: (v: string) => v.replace(NAME_CHARS, "").replace(/\s{2,}/g, " ").slice(0, 60),
   place: (v: string) => v.replace(NAME_CHARS, "").replace(/\s{2,}/g, " ").slice(0, 40),
   address: (v: string) => v.replace(ADDRESS_CHARS, "").replace(/\s{2,}/g, " ").slice(0, 100),
-  phone: (v: string) => v.replace(PHONE_CHARS, "").slice(0, 20),
-  postal: (v: string) => v.replace(/\D/g, "").slice(0, 6),
+  phone: (v: string) => v.replace(PHONE_CHARS, "").slice(0, 17),
+  // ZIP or ZIP+4: digits, one hyphen.
+  postal: (v: string) => v.replace(/[^\d-]/g, "").replace(/-(?=.*-)/g, "").slice(0, 10),
 };
 
 export type SanitizeKind = keyof typeof sanitize;
 
 const hasLetter = (v: string) => /\p{L}/u.test(v);
-const digitCount = (v: string) => (v.match(/\d/g) ?? []).length;
 
 export type AddressInput = {
   fullName: string;
@@ -49,9 +51,10 @@ export function validateAddress(a: AddressInput): AddressErrors {
     e.fullName = "Use letters only (spaces, . ' - are fine).";
 
   const phone = a.phone.trim();
+  const phoneDigits = phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
   if (!phone) e.phone = "Enter a phone number.";
-  else if (/[^0-9+()\s-]/.test(phone) || digitCount(phone) < 7 || digitCount(phone) > 15)
-    e.phone = "Enter a valid phone number (7–15 digits).";
+  else if (/[^0-9+()\s.-]/.test(phone) || phoneDigits.length !== 10)
+    e.phone = "Enter a 10-digit US phone number.";
 
   const line1 = a.line1.trim();
   if (!line1) e.line1 = "Enter a street address.";
@@ -60,16 +63,16 @@ export function validateAddress(a: AddressInput): AddressErrors {
   const line2 = (a.line2 ?? "").trim();
   if (line2 && /[^\p{L}\p{M}\p{N} .,'#/()&-]/u.test(line2)) e.line2 = "Remove special characters.";
 
-  for (const k of ["city", "state"] as const) {
-    const v = a[k].trim();
-    const label = k === "city" ? "city" : "state";
-    if (!v) e[k] = `Enter a ${label}.`;
-    else if (NOT_NAME.test(v) || !hasLetter(v)) e[k] = "Use letters only.";
-  }
+  const city = a.city.trim();
+  if (!city) e.city = "Enter a city.";
+  else if (NOT_NAME.test(city) || !hasLetter(city)) e.city = "Use letters only.";
+
+  if (!a.state.trim()) e.state = "Choose a state.";
+  else if (!isUsState(a.state)) e.state = "Choose a US state.";
 
   const postal = a.postal.trim();
-  if (!postal) e.postal = "Enter a ZIP or PIN code.";
-  else if (!/^\d{5,6}$/.test(postal)) e.postal = "Use a 5-digit ZIP or 6-digit PIN code.";
+  if (!postal) e.postal = "Enter a ZIP code.";
+  else if (!/^\d{5}(-\d{4})?$/.test(postal)) e.postal = "Use a 5-digit ZIP code (or ZIP+4).";
 
   return e;
 }
