@@ -35,7 +35,7 @@ accessibility or conversion today. **P1** is a clear UX gap. **P2** is polish.
 - [x] **P1 — Payment method toggles.** They are plain buttons with no selected
       state for assistive tech. Use a radio group, matching the address and
       delivery steps. (`checkout-flow.tsx`)
-- [ ] **P2 — Dark mode.** There are no dark tokens. The brown chrome already
+- [x] **P2 — Dark mode.** There are no dark tokens. The brown chrome already
       suits dark mode, so define a `prefers-color-scheme: dark` set for canvas,
       surface and text.
 - [x] **P2 — Motion audit.** `Reveal` fades in whole search result grids and
@@ -70,7 +70,7 @@ accessibility or conversion today. **P1** is a clear UX gap. **P2** is polish.
       'x'" and the H1 below says "Results for 'x'". Keep one.
 - [x] **P1 — Pagination.** "‹ Previous 2 / 5 Next ›" gives no way to jump pages.
       Add numbered pages or "Load more".
-- [ ] **P2 — Add tasting notes to cards.** Show 2–3 note chips. They sell
+- [x] **P2 — Add tasting notes to cards.** Show 2–3 note chips. They sell
       specialty coffee better than the origin line alone.
 - [x] **P2 — The price chip hardcodes `$`.** Build the label with `formatPrice`.
 
@@ -92,8 +92,8 @@ accessibility or conversion today. **P1** is a clear UX gap. **P2** is polish.
 - [x] **P1 — Use a flavor profile, not a spec table.** SKU and net weight are
       warehouse data. A visual scale for acidity, body and sweetness would
       tell shoppers more.
-- [ ] **P2 — Brew guide.** Link each method to a full recipe. *(Grind column
-      added; recipe links still to do.)*
+- [x] **P2 — Brew guide.** Link each method to a full recipe. *(Done: grind
+      column, and /brew recipe pages linked from every coffee.)*
 
 ## 5. Cart & checkout (`checkout-flow.tsx`)
 
@@ -128,8 +128,10 @@ accessibility or conversion today. **P1** is a clear UX gap. **P2** is polish.
       1 to Cart"), which doesn't match the editorial serif voice elsewhere.
       Write a one-page microcopy guide (sentence case, how to name
       bags/coffees, error tone).
-- [ ] **P2 — Photography direction.** Define shot types (bag front, beans
+- [x] **P2 — Photography direction.** Define shot types (bag front, beans
       macro, brew in use) so every product has a consistent gallery.
+      *(Brief written: `docs/PHOTOGRAPHY.md`. The photos themselves are
+      still to shoot.)*
 
 ## 7. Research & validation
 
@@ -146,9 +148,8 @@ accessibility or conversion today. **P1** is a clear UX gap. **P2** is polish.
 
 ### Status
 
-All P0 and P1 items are done, plus the motion audit. Remaining: dark mode,
-tasting notes on cards, brew-guide recipes,
-photography direction, and the research tasks.
+All P0, P1 and P2 design items are done (P2 photography is a brief; the
+shoot is still to happen). Remaining: the research and validation tasks.
 
 ### Suggested order
 

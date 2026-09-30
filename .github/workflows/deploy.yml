@@ -1,5 +1,6 @@
 # Deploys to production on every push to main (a merged PR is a push to
-# main). Two jobs:
+# main). Pull requests run the check job only, so a broken change shows
+# red before it's merged. Two jobs:
 #   check  — lint, typecheck and a production build, with no database, the
 #            same way the Docker build runs. A red check never deploys.
 #   deploy — SSHes into the VPS and runs scripts/deploy.sh there (fetch
@@ -22,13 +23,14 @@ name: Deploy
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 # One deploy at a time; a newer push waits for the running one instead of
 # cancelling it halfway through a schema sync.
 concurrency:
-  group: deploy-production
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('check-{0}', github.ref) || 'deploy-production' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -54,6 +56,7 @@ jobs:
 
   deploy:
     needs: check
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:

@@ -112,10 +112,38 @@ set it on the running service, not at build.
 Production is a two-service Docker Swarm stack (`amazon-clone_web` +
 `amazon-clone_db`) on a self-hosted Contabo VPS, behind Traefik
 (`/root/compose/amazon-clone.yml` on that host — not in this repo, since
-it holds the DB password). No CI — deploy is triggered by `git push`
-straight to the VPS.
+it holds the DB password).
 
-### One-time setup (already done on the current VPS)
+### Automatic: every merge to `main`
+
+`.github/workflows/deploy.yml` runs lint, typecheck and a production build
+on every pull request and every push to `main`. On `main`, if those pass,
+it SSHes into the VPS, runs `scripts/deploy.sh` (fetch `origin/main`, then
+`release.sh`), runs the insert-only review seed, and checks the site
+answers. Deploys queue rather than overlap.
+
+One-time setup:
+
+1. On the VPS, create a deploy-only key pair and authorize it:
+   `ssh-keygen -t ed25519 -f ~/.ssh/github_deploy -N ""` then
+   `cat ~/.ssh/github_deploy.pub >> ~/.ssh/authorized_keys`.
+2. Make sure the VPS checkout can fetch this repo: `git -C /root/amazon-clone
+   fetch origin` should work (add a read-only GitHub deploy key if the repo
+   is private).
+3. In GitHub → Settings → Environments, create `production` (optionally
+   with required reviewers, to approve each deploy).
+4. In GitHub → Settings → Secrets and variables → Actions, add
+   `DEPLOY_HOST`, `DEPLOY_USER` (`root`), `DEPLOY_SSH_KEY` (the private
+   key from step 1) and `DEPLOY_KNOWN_HOSTS` (output of
+   `ssh-keyscan <host>`, run from a machine you trust).
+
+Until the secrets exist, the check job still runs and the deploy job
+fails at the SSH step without touching anything. The manual routes below
+keep working either way.
+
+### Manual: push to the VPS
+
+#### One-time setup (already done on the current VPS)
 
 ```bash
 ssh contabo
@@ -135,7 +163,7 @@ invocation only picks up the right `IdentityFile` through the alias:
 git remote add production contabo:/root/amazon-clone
 ```
 
-### Deploying
+#### Push to deploy
 
 ```bash
 git push production main
