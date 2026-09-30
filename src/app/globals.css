@@ -15,6 +15,10 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
+  color-scheme: light;
+  /* Hover overlay for icon buttons on the page background (see .icon-hover). */
+  --hover-overlay: rgba(0, 0, 0, 0.05);
+
   /* ── Backgrounds ─────────────────────────────────────────────── */
   --bg-canvas: #f8f5ef;
   --bg-surface: #fffdfa;
@@ -39,8 +43,8 @@
   --chrome-belt: #f1ebe1;
   --chrome-belt-hover: #e6dccb;
   --chrome-footer-deep: var(--bg-brown-deep);
-  --chrome-search-btn: #b5732a;
-  --chrome-search-btn-hover: #9c5f20;
+  --chrome-search-btn: #b8762d;
+  --chrome-search-btn-hover: #c4843a;
 
   /* ── Borders ─────────────────────────────────────────────────── */
   --border-default: #ded6c8;
@@ -58,14 +62,16 @@
   --text-deal: #7a4419;
 
   /* ── Accent — the one brand accent (roast caramel) ───────────── */
-  --accent-primary: #b5732a;
-  --accent-hover: #9c5f20;
+  /* Tuned so its dark label clears 4.5:1 (4.6:1); hover goes lighter, not
+     darker, because a darker caramel drops the label below AA. */
+  --accent-primary: #b8762d;
+  --accent-hover: #c4843a;
   --accent-subtle: #f6e9d6;
   --accent-foreground: #221a12;
 
   /* ── Second CTA color retired — aliased to the one accent ────── */
-  --accent-buy: #b5732a;
-  --accent-buy-hover: #9c5f20;
+  --accent-buy: #b8762d;
+  --accent-buy-hover: #c4843a;
 
   /* ── Status (system-owned — kept genuinely distinct from the
          brand accent so real errors/warnings still read as such) ── */
@@ -106,6 +112,68 @@
   --duration-base: 200ms;
   --duration-slow: 350ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE — follows the OS setting. Same roles, espresso-dark surfaces.
+   The brown chrome (header, footer, spotlight) keeps its own tokens: it's
+   already dark, and it stays the brand's anchor in both themes. Text and
+   accent shades are picked for ≥4.5:1 on --bg-surface; the caramel button
+   keeps dark text, as in light mode.
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --hover-overlay: rgba(255, 255, 255, 0.07);
+
+    --bg-canvas: #16110d;
+    --bg-surface: #1f1813;
+    --bg-elevated: #261e18;
+    --bg-subtle: #2a211a;
+    --bg-inverse: #f3ead9;
+
+    /* Chrome stays brown; a hairline separates it from the dark canvas. */
+    --chrome-belt: #2a211a;
+    --chrome-belt-hover: #342920;
+
+    --border-default: #3a2f26;
+    --border-strong: #5c4d40;
+    --border-accent: #d69a58;
+
+    --text-primary: #f1e8da;
+    --text-secondary: #c4b5a2;
+    --text-muted: #a09080;
+    --text-inverse: #1b140e;
+    --text-accent: #e3a562;
+    --text-accent-hover: #f0bd84;
+    --text-price: #f1e8da;
+    --text-deal: #e3a562;
+
+    --accent-primary: #c7843a;
+    --accent-hover: #d6944b;
+    --accent-subtle: #3a2a1b;
+    --accent-foreground: #1b140e;
+    --accent-buy: #c7843a;
+    --accent-buy-hover: #d6944b;
+
+    --status-success: #9cc58c;
+    --status-warning: #e5b552;
+    --status-danger: #f0906f;
+    --status-info: #8fc2e3;
+    --status-success-subtle: #1f2a1c;
+    --status-warning-subtle: #33270f;
+    --status-danger-subtle: #3a1d15;
+    --status-info-subtle: #16242e;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.55);
+  }
+
+  /* The brown chrome sits on a near-black canvas; give it an edge. */
+  header.grain {
+    border-bottom: 1px solid var(--border-on-brown);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -210,9 +278,15 @@ body.scroll-locked {
   overflow: hidden;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* In @layer base, not unlayered: unlayered CSS beats every Tailwind layer,
+   so as a bare rule this silently overrode every text-* color and
+   hover:underline utility on links (a caramel button's dark label rendered
+   in the page's text color, footer links never underlined on hover). */
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 }
 
 .link {
@@ -297,7 +371,7 @@ a {
    (e.g. the light mobile bottom nav) without each component needing to
    know which background it's on. */
 .icon-hover:hover {
-  background-color: var(--icon-hover-bg, rgba(0, 0, 0, 0.05));
+  background-color: var(--icon-hover-bg, var(--hover-overlay));
 }
 
 /* Grain texture — the tactile "kraft paper" layer on brown blocks. A

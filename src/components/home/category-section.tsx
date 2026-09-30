@@ -44,7 +44,7 @@ export function CategorySection({
           href={href}
           className="inline-flex items-center rounded-control border border-border-strong px-6 py-2.5 text-sm font-medium text-text-primary transition hover:bg-subtle"
         >
-          See more {title}
+          See more {title.toLowerCase()}
         </Link>
       </div>
     </section>
