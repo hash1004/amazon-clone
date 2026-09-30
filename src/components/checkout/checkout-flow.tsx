@@ -238,7 +238,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                     type="button"
                     onClick={() => selectedAddr && setStep(2)}
                     disabled={!selectedAddr}
-                    className="mt-2 rounded-pill bg-accent px-8 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60"
+                    className="mt-2 rounded-control bg-accent px-8 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60"
                   >
                     Deliver to this address
                   </button>
@@ -292,7 +292,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
               <button
                 type="button"
                 onClick={() => setStep(3)}
-                className="mt-2 rounded-pill bg-accent px-8 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+                className="mt-2 rounded-control bg-accent px-8 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
               >
                 Continue to payment
               </button>
@@ -430,7 +430,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
                 type="button"
                 onClick={placeOrder}
                 disabled={pending || !ready}
-                className="w-full rounded-pill bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60 sm:w-auto sm:px-10"
+                className="w-full rounded-control bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60 sm:w-auto sm:px-10"
               >
                 {pending
                   ? "Placing order…"
@@ -448,7 +448,7 @@ export function CheckoutFlow({ addresses }: { addresses: Address[] }) {
             type="button"
             onClick={placeOrder}
             disabled={pending || step < 3 || !ready}
-            className="w-full rounded-pill bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
+            className="w-full rounded-control bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
           >
             {pending ? "Placing order…" : "Place your order"}
           </button>

@@ -54,7 +54,7 @@ export function WishlistButton({
       type="button"
       onClick={onToggle}
       aria-pressed={saved}
-      className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-pill border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
+      className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-control border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
     >
       <HeartIcon className={`h-4 w-4 ${saved ? "text-accent" : ""}`} filled={saved} />
       {saved ? "Saved" : "Save beans"}

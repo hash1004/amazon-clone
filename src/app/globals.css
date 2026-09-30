@@ -50,7 +50,7 @@
   /* ── Text ────────────────────────────────────────────────────── */
   --text-primary: #221a12;
   --text-secondary: #66594a;
-  --text-muted: #948a78;
+  --text-muted: #736857;
   --text-inverse: #faf6f0;
   --text-accent: #7a4419;
   --text-accent-hover: #5e3411;
@@ -69,27 +69,31 @@
 
   /* ── Status (system-owned — kept genuinely distinct from the
          brand accent so real errors/warnings still read as such) ── */
-  /* success and danger are tuned into the brown/caramel family: "done" reads
-     as the brand's own brown, errors as a warm rust rather than a cold red. */
-  --status-success: #7a4419;
+  /* Each status has one job, and none of them is the brand brown, so a
+     link, a discount and a status never read as the same thing:
+     success = done/confirmed (muted olive), warning = scarcity ("Only 3
+     left"), danger = errors and unavailable ("Sold out"), a warm rust
+     rather than a cold red. --text-deal stays the brand shade and is for
+     discounts only. */
+  --status-success: #3f6b3a;
   --status-warning: #9a6500;
   --status-danger: #9b3a1e;
   --status-info: #345a73;
-  --status-success-subtle: #f6e9d6;
+  --status-success-subtle: #e8efe2;
   --status-warning-subtle: #fbecd9;
   --status-danger-subtle: #f8e4dc;
   --status-info-subtle: #e3f1fb;
 
-  /* ── Radius — pointed everywhere, buttons included. --radius-pill is
-         0 too, so every rounded-pill CTA and chip renders square; the
-         name is kept only so existing classes don't all need renaming.
-         rounded-full is reserved for small non-interactive shapes
-         (status dots, count badges, step markers). ────────────────── */
+  /* ── Radius — pointed everywhere, buttons included. rounded-control
+         is the radius for buttons, inputs and chips (0 today, one token
+         to change if that ever moves). rounded-full is reserved for
+         small non-interactive shapes (status dots, count badges, step
+         markers) — never text badges. ─────────────────────────────── */
   --radius-sm: 0px;
   --radius-md: 0px;
   --radius-lg: 0px;
   --radius-xl: 0px;
-  --radius-pill: 0px;
+  --radius-control: 0px;
 
   /* ── Shadow — quieter everywhere; Home's own new modules skip
          shadow entirely in favor of a 1px border (per mockup) ───── */
@@ -163,7 +167,7 @@
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
-  --radius-pill: var(--radius-pill);
+  --radius-control: var(--radius-control);
 
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
@@ -335,6 +339,16 @@ a {
   transform: none;
 }
 @media (prefers-reduced-motion: reduce) {
+  /* Site-wide: no movement for reduced-motion users. State changes still
+     happen, they just land instantly instead of animating. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
   .reveal {
     opacity: 1;
     transform: none;

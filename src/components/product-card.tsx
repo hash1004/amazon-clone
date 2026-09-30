@@ -47,7 +47,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
               alt={product.title}
               fill
               sizes="(max-width:640px) 45vw, (max-width:1024px) 30vw, 280px"
-              className="object-cover transition-transform duration-200 group-hover:scale-105"
+              className="object-cover transition-transform duration-200 motion-safe:group-hover:scale-105"
             />
           </div>
         </Link>
@@ -95,11 +95,11 @@ export function ProductCard({ product }: { product: ProductCardData }) {
       </div>
 
       {!inStock ? (
-        <p className="mt-1 text-xs font-medium text-text-deal">Sold out</p>
+        <p className="mt-1 text-xs font-medium text-danger">Sold out</p>
       ) : (
         product.stock !== undefined &&
         product.stock <= LOW_STOCK_THRESHOLD && (
-          <p className="mt-1 text-xs font-medium text-text-deal">Only {product.stock} left</p>
+          <p className="mt-1 text-xs font-medium text-warning">Only {product.stock} left</p>
         )
       )}
     </div>

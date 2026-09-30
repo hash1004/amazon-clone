@@ -20,7 +20,7 @@ export default function ProductLoading() {
           <Skeleton className="mt-3 h-4 w-32" />
           <Skeleton className="mt-4 h-8 w-28" />
           <Skeleton className="mt-2 h-4 w-56" />
-          <Skeleton className="mt-5 h-12 w-full max-w-sm rounded-pill" />
+          <Skeleton className="mt-5 h-12 w-full max-w-sm rounded-control" />
           <Skeleton className="mt-6 h-4 w-40" />
           <Skeleton className="mt-2 h-16 w-full" />
           <Skeleton className="mt-6 h-24 w-full rounded-lg" />

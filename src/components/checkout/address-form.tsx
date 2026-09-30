@@ -159,7 +159,7 @@ export function AddressFields({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-pill bg-accent px-6 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60"
+          className="rounded-control bg-accent px-6 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60"
         >
           {pending ? "Saving…" : submitLabel}
         </button>
@@ -167,7 +167,7 @@ export function AddressFields({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-pill border border-border-strong px-6 py-1.5 text-sm hover:bg-subtle"
+            className="rounded-control border border-border-strong px-6 py-1.5 text-sm hover:bg-subtle"
           >
             Cancel
           </button>

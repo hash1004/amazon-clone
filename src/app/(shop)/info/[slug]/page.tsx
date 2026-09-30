@@ -86,13 +86,13 @@ export default async function InfoPage({
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/s"
-            className="rounded-pill bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+            className="rounded-control bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
           >
             Continue shopping
           </Link>
           <Link
             href="/"
-            className="rounded-pill border border-border-strong px-6 py-2 text-sm hover:bg-subtle"
+            className="rounded-control border border-border-strong px-6 py-2 text-sm hover:bg-subtle"
           >
             Back to home
           </Link>

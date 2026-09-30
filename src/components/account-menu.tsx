@@ -65,7 +65,7 @@ export function AccountMenu({
               <Link
                 href="/login"
                 onClick={close}
-                className="block rounded-pill bg-accent px-4 py-1.5 text-center text-sm font-medium text-accent-fg hover:bg-accent-hover"
+                className="block rounded-control bg-accent px-4 py-1.5 text-center text-sm font-medium text-accent-fg hover:bg-accent-hover"
               >
                 Sign in
               </Link>

@@ -26,7 +26,7 @@ export function MobileBuyBar({
           add(product, 1);
           toast("Added to Cart");
         }}
-        className="flex-1 rounded-pill bg-accent px-3 py-2 text-sm font-medium text-accent-fg disabled:opacity-50"
+        className="flex-1 rounded-control bg-accent px-3 py-2 text-sm font-medium text-accent-fg disabled:opacity-50"
       >
         Add to Cart
       </button>

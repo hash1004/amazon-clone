@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
-import { Reveal } from "@/components/ui/reveal";
 import { useStock } from "@/lib/use-stock";
 import { LOW_STOCK_THRESHOLD } from "@/lib/product-display";
 
@@ -27,7 +26,7 @@ export default function CartPage() {
         </p>
         <Link
           href="/s"
-          className="mt-5 inline-block rounded-pill bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          className="mt-5 inline-block rounded-control bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
         >
           Keep shopping
         </Link>
@@ -36,7 +35,7 @@ export default function CartPage() {
   }
 
   return (
-    <Reveal className="mx-auto grid max-w-[1200px] gap-6 px-4 py-8 lg:grid-cols-[1fr_320px]">
+    <div className="mx-auto grid max-w-[1200px] gap-6 px-4 py-8 lg:grid-cols-[1fr_320px]">
       <div>
         <h1 className="font-serif text-2xl font-medium text-text-primary">
           Your cart
@@ -125,12 +124,12 @@ export default function CartPage() {
           type="button"
           onClick={() => router.push("/checkout")}
           disabled={shortLines.length > 0}
-          className="mt-4 w-full rounded-pill bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-accent"
+          className="mt-4 w-full rounded-control bg-accent px-4 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-accent"
         >
           Proceed to checkout
         </button>
       </aside>
-    </Reveal>
+    </div>
   );
 }
 
@@ -145,6 +144,6 @@ function StockNote({ left, quantity }: { left: number | undefined; quantity: num
       </p>
     );
   if (left <= LOW_STOCK_THRESHOLD)
-    return <p className="mt-2 text-xs font-medium text-text-deal">Only {left} left in stock</p>;
+    return <p className="mt-2 text-xs font-medium text-warning">Only {left} left in stock</p>;
   return null;
 }

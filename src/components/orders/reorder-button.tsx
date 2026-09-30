@@ -29,7 +29,7 @@ export function ReorderButton({ items }: { items: ReorderItem[] }) {
         setDone(true);
         setTimeout(() => router.push("/cart"), 500);
       }}
-      className="rounded-pill border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
+      className="rounded-control border border-border-strong px-4 py-1.5 text-sm hover:bg-subtle"
     >
       {done ? "Added to cart…" : "Buy it again"}
     </button>

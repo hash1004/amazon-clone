@@ -23,7 +23,7 @@ export function AddToCart({
 
   if (!inStock) {
     return (
-      <p className="bg-subtle p-3 text-sm font-medium text-text-deal">
+      <p className="bg-subtle p-3 text-sm font-medium text-danger">
         Currently unavailable.
       </p>
     );
@@ -31,7 +31,7 @@ export function AddToCart({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <div className="flex items-center gap-3 rounded-pill border border-border-strong px-1 py-1">
+      <div className="flex items-center gap-3 rounded-control border border-border-strong px-1 py-1">
         <button
           type="button"
           aria-label="Decrease quantity"
@@ -62,7 +62,7 @@ export function AddToCart({
           setAdded(true);
           setTimeout(() => setAdded(false), 2000);
         }}
-        className="flex-1 rounded-pill bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition-all duration-200 hover:scale-[1.02] hover:bg-accent-hover active:scale-[0.98]"
+        className="flex-1 rounded-control bg-accent px-6 py-3 text-sm font-medium text-accent-fg transition-colors duration-200 hover:bg-accent-hover"
       >
         {added ? "✓ Added to Cart" : `Add to Cart · ${formatPrice(product.priceCents * qty)}`}
       </button>

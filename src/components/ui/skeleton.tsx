@@ -1,5 +1,5 @@
 export function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-border-default ${className}`} />;
+  return <div className={`animate-pulse bg-border-default ${className}`} />;
 }
 
 /** Matches product-card.tsx / category-section.tsx's card shape — reused

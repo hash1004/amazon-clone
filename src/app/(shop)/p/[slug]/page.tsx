@@ -11,7 +11,6 @@ import { AddToCart } from "@/components/add-to-cart";
 import { WishlistButton } from "@/components/wishlist-button";
 import { ProductCard } from "@/components/product-card";
 import { MobileBuyBar } from "@/components/product/mobile-buy-bar";
-import { Reveal } from "@/components/ui/reveal";
 import { RecordView } from "@/lib/recently-viewed";
 
 const ROAST_LABEL = { LIGHT: "Light", MEDIUM: "Medium", DARK: "Dark" } as const;
@@ -86,14 +85,24 @@ export default async function ProductPage({
     <div className="mx-auto max-w-[1400px] bg-canvas px-4 py-6 sm:px-8 lg:px-12">
       <RecordView entry={cartLine} />
 
-      <nav className="mb-4 text-xs text-text-secondary">
-        <Link href={`/s?roast=${product.roastLevel.toLowerCase()}`} className="link">
-          {roastLabel} Roasts
-        </Link>
-        {" › "}
-        <Link href={`/s?origin=${encodeURIComponent(product.origin)}`} className="link">
-          {product.origin}
-        </Link>
+      <nav aria-label="Breadcrumb" className="mb-4 text-xs text-text-secondary">
+        <ol className="flex flex-wrap items-center gap-x-1.5">
+          <li>
+            <Link href={`/s?roast=${product.roastLevel.toLowerCase()}`} className="link">
+              {roastLabel} roasts
+            </Link>
+          </li>
+          <li aria-hidden>›</li>
+          <li>
+            <Link href={`/s?origin=${encodeURIComponent(product.origin)}`} className="link">
+              {product.origin}
+            </Link>
+          </li>
+          <li aria-hidden>›</li>
+          <li aria-current="page" className="text-text-primary">
+            {product.title}
+          </li>
+        </ol>
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
@@ -131,7 +140,7 @@ export default async function ProductPage({
             {product.tastingNotes.map((note) => (
               <li
                 key={note}
-                className="rounded-pill border border-border-default bg-surface px-3 py-1 text-xs text-text-secondary"
+                className="rounded-control border border-border-default bg-surface px-3 py-1 text-xs text-text-secondary"
               >
                 {note}
               </li>
@@ -145,7 +154,7 @@ export default async function ProductPage({
                 <span className="text-sm text-text-secondary line-through">
                   {formatPrice(product.listPriceCents!)}
                 </span>
-                <span className="rounded-full bg-accent-subtle px-2 py-0.5 text-xs font-bold text-text-accent">
+                <span className="bg-accent-subtle px-2 py-0.5 text-xs font-bold text-text-accent">
                   {pct}% off
                 </span>
               </>
@@ -223,7 +232,7 @@ export default async function ProductPage({
         </div>
       </div>
 
-      <Reveal className="mt-10">
+      <div className="mt-10">
         <h2 className="mb-4 font-serif text-xl font-medium text-text-primary">Brew guide</h2>
         <div className="grain bg-chrome-nav overflow-hidden rounded-xl text-text-on-brown">
           <table className="w-full text-sm">
@@ -245,10 +254,10 @@ export default async function ProductPage({
             </tbody>
           </table>
         </div>
-      </Reveal>
+      </div>
 
       {related.length > 0 && (
-        <Reveal className="mt-12">
+        <div className="mt-12">
           <h2 className="mb-3 font-serif text-lg font-medium text-text-primary">
             More {roastLabel.toLowerCase()} roasts
           </h2>
@@ -257,7 +266,7 @@ export default async function ProductPage({
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
-        </Reveal>
+        </div>
       )}
 
       <div className="pb-16 lg:pb-0" />

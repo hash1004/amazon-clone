@@ -42,7 +42,7 @@ export function CategorySection({
       <div className="mt-8 text-center">
         <Link
           href={href}
-          className="inline-flex items-center rounded-pill border border-border-strong px-6 py-2.5 text-sm font-medium text-text-primary transition hover:bg-subtle"
+          className="inline-flex items-center rounded-control border border-border-strong px-6 py-2.5 text-sm font-medium text-text-primary transition hover:bg-subtle"
         >
           See more {title}
         </Link>

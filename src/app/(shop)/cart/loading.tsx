@@ -20,7 +20,7 @@ export default function CartLoading() {
       </div>
       <div className="h-fit bg-surface p-4">
         <Skeleton className="h-6 w-40" />
-        <Skeleton className="mt-3 h-10 w-full rounded-pill" />
+        <Skeleton className="mt-3 h-10 w-full rounded-control" />
       </div>
     </div>
   );

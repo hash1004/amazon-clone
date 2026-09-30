@@ -23,7 +23,7 @@ export function WishlistClient() {
         </p>
         <Link
           href="/s"
-          className="mt-5 inline-block rounded-pill bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+          className="mt-5 inline-block rounded-control bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
         >
           Browse coffee
         </Link>
@@ -86,7 +86,7 @@ export function WishlistClient() {
                   {it.inStock ? (
                     <span className="text-text-secondary">In stock</span>
                   ) : (
-                    <span className="text-text-deal">Currently unavailable</span>
+                    <span className="text-danger">Currently unavailable</span>
                   )}
                 </p>
 
@@ -108,14 +108,14 @@ export function WishlistClient() {
                       remove(it.productId);
                       toast("Moved to your Cart");
                     }}
-                    className="rounded-pill bg-accent px-4 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
+                    className="rounded-control bg-accent px-4 py-1.5 text-xs font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-50"
                   >
                     Move to Cart
                   </button>
                   <button
                     type="button"
                     onClick={() => remove(it.productId)}
-                    className="rounded-pill border border-border-strong px-4 py-1.5 text-xs hover:bg-subtle"
+                    className="rounded-control border border-border-strong px-4 py-1.5 text-xs hover:bg-subtle"
                   >
                     Remove
                   </button>

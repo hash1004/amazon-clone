@@ -46,8 +46,11 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
     }, FADE_MS);
   };
 
+  // No auto-advance for reduced-motion users: the slides still change on
+  // arrows, dots and swipe, just never on their own.
   useEffect(() => {
     if (paused || n <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = setInterval(() => step((i + 1) % n), INTERVAL_MS);
     return () => clearInterval(t);
   }, [paused, n, i]);
@@ -73,6 +76,12 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
       style={{ ["--icon-hover-bg" as string]: "rgba(243, 234, 217, 0.14)" }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      // Keyboard users get the same pause as a hovering mouse, so the slide
+      // never changes under a focused link.
+      onFocus={() => setPaused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false);
+      }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -89,7 +98,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
             alt={product.title}
             fill
             sizes="(max-width:1024px) 100vw, 600px"
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-105"
             priority
           />
         </Link>
@@ -107,7 +116,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
             {product.tastingNotes.map((note) => (
               <li
                 key={note}
-                className="cursor-default rounded-pill border border-border-on-brown px-2.5 py-0.5 text-[0.7rem] text-text-on-brown-muted transition-colors duration-150 ease-out hover:border-accent hover:bg-accent hover:text-accent-fg sm:px-3 sm:py-1 sm:text-xs"
+                className="cursor-default rounded-control border border-border-on-brown px-2.5 py-0.5 text-[0.7rem] text-text-on-brown-muted transition-colors duration-150 ease-out hover:border-accent hover:bg-accent hover:text-accent-fg sm:px-3 sm:py-1 sm:text-xs"
               >
                 {note}
               </li>
@@ -116,7 +125,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
 
           <Link
             href={`/p/${product.slug}`}
-            className="mt-4 inline-flex items-center rounded-pill bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg transition-all duration-200 ease-out hover:scale-[1.03] hover:bg-accent-hover active:scale-[0.98] sm:mt-7 sm:px-7 sm:py-3"
+            className="mt-4 inline-flex items-center rounded-control bg-accent px-6 py-2.5 text-sm font-medium text-accent-fg transition-colors duration-200 ease-out hover:bg-accent-hover sm:mt-7 sm:px-7 sm:py-3"
           >
             Shop this roast
           </Link>
@@ -133,7 +142,7 @@ export function Spotlight({ products }: { products: SpotlightProduct[] }) {
                     type="button"
                     aria-label={`Slide ${k + 1}`}
                     onClick={() => step(k)}
-                    className={`h-1.5 rounded-pill transition-all ${
+                    className={`h-1.5 rounded-control transition-all ${
                       k === i ? "w-6 bg-accent" : "w-1.5 bg-border-on-brown"
                     }`}
                   />

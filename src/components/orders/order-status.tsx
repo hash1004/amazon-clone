@@ -1,13 +1,13 @@
 import { TRACKING_STAGES } from "@/lib/tracking";
 
-/** Square status label: caramel while on its way, solid brown once delivered, rust if cancelled. */
+/** Square status label: caramel while on its way, olive (success) once delivered, rust if cancelled. */
 export function OrderStatusBadge({ index, cancelled }: { index: number; cancelled: boolean }) {
   const delivered = index >= TRACKING_STAGES.length - 1;
   const label = cancelled ? "Cancelled" : (TRACKING_STAGES[index]?.label ?? "Processing");
   const tone = cancelled
     ? "bg-danger-subtle text-danger"
     : delivered
-      ? "bg-text-accent text-text-inverse"
+      ? "bg-success text-text-inverse"
       : "bg-accent-subtle text-text-accent";
   return <span className={`inline-block px-2 py-0.5 text-xs font-semibold ${tone}`}>{label}</span>;
 }

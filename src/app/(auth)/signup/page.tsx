@@ -88,7 +88,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={pending}
-          className="w-full rounded-pill bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60"
+          className="w-full rounded-control bg-accent px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover disabled:opacity-60"
         >
           {pending ? "Creating…" : "Create your account"}
         </button>

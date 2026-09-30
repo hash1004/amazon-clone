@@ -6,7 +6,6 @@ import { ProductCard } from "@/components/product-card";
 import { SearchFilters } from "@/components/search/search-filters";
 import { searchUrl, type SearchParams } from "@/lib/search-query";
 import { SorryMug } from "@/components/ui/sorry-mug";
-import { Reveal } from "@/components/ui/reveal";
 import { searchProducts } from "@/lib/product-search";
 
 const PAGE_SIZE = 24;
@@ -189,6 +188,7 @@ export default async function SearchPage({
                 <Link
                   key={c.label}
                   href={c.href}
+                  aria-label={`Remove filter: ${c.label}`}
                   className="inline-flex items-center gap-1 border border-border-strong bg-subtle px-2.5 py-1 text-xs hover:bg-elevated"
                 >
                   {c.label}
@@ -229,7 +229,7 @@ export default async function SearchPage({
               <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <Link
                   href="/s"
-                  className="rounded-pill bg-accent px-5 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+                  className="rounded-control bg-accent px-5 py-1.5 text-sm font-medium text-accent-fg hover:bg-accent-hover"
                 >
                   Browse all coffee
                 </Link>
@@ -237,11 +237,11 @@ export default async function SearchPage({
             </div>
           </div>
         ) : (
-          <Reveal className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-5 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {products.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
-          </Reveal>
+          </div>
         )}
 
         {totalPages > 1 && (

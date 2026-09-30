@@ -89,7 +89,7 @@ export function ShopMenu({
                 <Link
                   href="/cart"
                   onClick={close}
-                  className="mt-2 block rounded-pill bg-accent px-4 py-1.5 text-center text-xs font-medium text-accent-fg hover:bg-accent-hover"
+                  className="mt-2 block rounded-control bg-accent px-4 py-1.5 text-center text-xs font-medium text-accent-fg hover:bg-accent-hover"
                 >
                   View Cart
                 </Link>
@@ -114,7 +114,7 @@ export function ShopMenu({
                 <Link
                   href="/login"
                   onClick={close}
-                  className="block rounded-pill bg-accent px-4 py-1.5 text-center text-sm font-medium text-accent-fg hover:bg-accent-hover"
+                  className="block rounded-control bg-accent px-4 py-1.5 text-center text-sm font-medium text-accent-fg hover:bg-accent-hover"
                 >
                   Sign in
                 </Link>
