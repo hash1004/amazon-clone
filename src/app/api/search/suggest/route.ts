@@ -3,9 +3,9 @@ import { db } from "@/lib/db";
 import { searchProducts } from "@/lib/product-search";
 
 const ROAST_LEVELS = [
-  { slug: "light", label: "Light Roasts" },
-  { slug: "medium", label: "Medium Roasts" },
-  { slug: "dark", label: "Dark Roasts" },
+  { slug: "light", label: "Light roasts" },
+  { slug: "medium", label: "Medium roasts" },
+  { slug: "dark", label: "Dark roasts" },
 ];
 
 export async function GET(req: Request) {

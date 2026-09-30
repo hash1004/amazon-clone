@@ -5,7 +5,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { AddressManager } from "@/components/account/address-manager";
 
-export const metadata: Metadata = { title: "Your Addresses" };
+export const metadata: Metadata = { title: "Your addresses" };
 
 export default async function AddressesPage() {
   const session = await auth();
@@ -22,9 +22,9 @@ export default async function AddressesPage() {
         <Link href="/account" className="link">
           Your Account
         </Link>{" "}
-        › <span>Your Addresses</span>
+        › <span>Your addresses</span>
       </nav>
-      <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">Your Addresses</h1>
+      <h1 className="mb-4 font-serif text-2xl font-medium text-text-primary">Your addresses</h1>
       <AddressManager addresses={addresses} />
     </div>
   );

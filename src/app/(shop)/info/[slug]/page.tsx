@@ -1,47 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { INFO_PAGES } from "@/lib/info-pages";
 
-const PAGES: Record<string, { title: string; blurb: string }> = {
-  about: {
-    title: "Our Story",
-    blurb: "On the real site, this covers the roastery, the people, and why we only do one thing.",
-  },
-  careers: {
-    title: "Careers",
-    blurb: "Roasting, packing and shipping — a small team, listed here.",
-  },
-  blog: {
-    title: "How We Roast",
-    blurb: "Notes from the roastery: sourcing, roast curves, and new arrivals.",
-  },
-  "shipping-policy": {
-    title: "Shipping & Policies",
-    blurb: "Delivery speeds, costs, and how fresh a bag is when it ships.",
-  },
-  help: {
-    title: "Help",
-    blurb: "Customer service, returns, and answers to common questions.",
-  },
-  "conditions-of-use": {
-    title: "Conditions of Use",
-    blurb: "The terms that govern use of the site.",
-  },
-  "privacy-notice": {
-    title: "Privacy Notice",
-    blurb: "How personal information is collected and used.",
-  },
-};
-
-function resolve(slug: string) {
-  return (
-    PAGES[slug] ?? {
-      title: slug
-        .split("-")
-        .map((w) => w[0]?.toUpperCase() + w.slice(1))
-        .join(" "),
-      blurb: "",
-    }
-  );
+export function generateStaticParams() {
+  return Object.keys(INFO_PAGES).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -50,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  return { title: resolve(slug).title };
+  return { title: INFO_PAGES[slug]?.title ?? "Page not found" };
 }
 
 export default async function InfoPage({
@@ -59,44 +22,46 @@ export default async function InfoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const page = resolve(slug);
+  const page = INFO_PAGES[slug];
+  if (!page) notFound();
 
   return (
-    <div className="mx-auto max-w-[760px] px-4 py-10">
-      <nav className="mb-3 text-xs text-text-secondary">
-        <Link href="/" className="link">
-          Home
-        </Link>{" "}
-        › <span>{page.title}</span>
+    <div className="mx-auto max-w-[720px] px-4 py-10">
+      <nav aria-label="Breadcrumb" className="mb-3 text-xs text-text-secondary">
+        <ol className="flex items-center gap-1.5">
+          <li>
+            <Link href="/" className="link">
+              Home
+            </Link>
+          </li>
+          <li aria-hidden>›</li>
+          <li aria-current="page">{page.title}</li>
+        </ol>
       </nav>
 
-      <h1 className="font-serif text-2xl font-medium text-text-primary">{page.title}</h1>
+      <h1 className="font-serif text-3xl font-medium text-text-primary">{page.title}</h1>
+      <p className="mt-3 text-base leading-relaxed text-text-secondary">{page.intro}</p>
 
-      <div className="mt-4 rounded-lg border border-border-default bg-surface p-6">
-        <p className="text-sm font-medium">
-          This page isn&apos;t built out in this demo.
-        </p>
-        {page.blurb && (
-          <p className="mt-2 text-sm text-text-secondary">{page.blurb}</p>
-        )}
-        <p className="mt-4 text-sm text-text-secondary">
-          The demo focuses on the shopping flow — browse, search, product pages,
-          cart, checkout, orders and your list.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Link
-            href="/s"
-            className="rounded-control bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
-          >
-            Continue shopping
-          </Link>
-          <Link
-            href="/"
-            className="rounded-control border border-border-strong px-6 py-2 text-sm hover:bg-subtle"
-          >
-            Back to home
-          </Link>
-        </div>
+      <div className="mt-8 space-y-8">
+        {page.sections.map((s) => (
+          <section key={s.heading}>
+            <h2 className="font-serif text-xl font-medium text-text-primary">{s.heading}</h2>
+            {s.body.map((p) => (
+              <p key={p} className="mt-2 text-sm leading-relaxed text-text-primary">
+                {p}
+              </p>
+            ))}
+          </section>
+        ))}
+      </div>
+
+      <div className="mt-10 border-t border-border-default pt-6">
+        <Link
+          href="/s"
+          className="inline-block rounded-control bg-accent px-6 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+        >
+          Shop coffee
+        </Link>
       </div>
     </div>
   );

@@ -96,12 +96,16 @@ cross-device cart sync.
 npm install
 cp .env.example .env          # set DATABASE_URL and AUTH_SECRET
 npx prisma db push            # sync schema
-npx prisma db seed            # 12 curated coffees, real Unsplash photography
+npx prisma db seed            # 12 curated coffees + sample reviews, real Unsplash photography
 npm run dev
 ```
 
-Checkout test cards: `4242 4242 4242 4242` succeeds, any number ending `0002`
-is declined. UPI IDs starting `fail@` simulate a failed request.
+Checkout is card-only (US). Payments are mocked, so checkout runs in **test
+mode** unless `CHECKOUT_TEST_MODE="false"`: the payment step shows a "Test
+mode" banner and a **Fill test card** button (`4242 4242 4242 4242`), and any
+number ending `0002` is declined. With test mode off, the hints are hidden
+and the orders API refuses test card numbers. It's read at request time, so
+set it on the running service, not at build.
 
 ## Deploying
 
@@ -157,6 +161,12 @@ A few coffees are deliberately kept low on stock (3–8 bags) so the "Only N
 left" states show; orders decrement stock and refuse to oversell. To apply
 those levels to the live catalog without reseeding — or reset them after
 test orders — run `./scripts/set-low-stock.sh` on the VPS.
+
+Sample written reviews go onto the live catalog with
+`./scripts/seed-reviews-prod.sh` (run on the VPS after a deploy has added
+the `Review` table). It only inserts, skips any coffee that already has
+reviews, and reads the database URL from the running service — safe to
+re-run. Locally: `npm run db:seed-reviews`.
 
 Reseeding the catalog is a separate, deliberately manual step
 (`prisma/seed.ts` deletes every `Product`/`Cart`/`Order` row first) —

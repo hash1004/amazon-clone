@@ -34,7 +34,7 @@ export default async function AccountPage() {
           href="/account/orders"
           className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
         >
-          <h2 className="font-medium text-text-primary">Your Orders</h2>
+          <h2 className="font-medium text-text-primary">Your orders</h2>
           <p className="text-sm text-text-secondary">
             {orderCount} {orderCount === 1 ? "order" : "orders"} — track, view details
           </p>
@@ -43,14 +43,14 @@ export default async function AccountPage() {
           href="/account/addresses"
           className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
         >
-          <h2 className="font-medium text-text-primary">Your Addresses</h2>
+          <h2 className="font-medium text-text-primary">Your addresses</h2>
           <p className="text-sm text-text-secondary">Manage shipping addresses</p>
         </Link>
         <Link
           href="/cart"
           className="rounded-lg border border-border-default bg-surface p-5 transition hover:border-border-strong"
         >
-          <h2 className="font-medium text-text-primary">Your Cart</h2>
+          <h2 className="font-medium text-text-primary">Your cart</h2>
           <p className="text-sm text-text-secondary">Review items and check out</p>
         </Link>
         <Link

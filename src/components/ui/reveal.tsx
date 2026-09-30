@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
  * Fades + rises a section in once it scrolls into view. Plain
  * IntersectionObserver + a CSS class toggle (see `.reveal`/`.reveal-visible`
  * in globals.css) — no animation library. Fires once, then disconnects;
- * `prefers-reduced-motion` skips the observer entirely and renders visible.
+ * `prefers-reduced-motion` skips the observer; the CSS keeps it visible.
  */
 export function Reveal({
   children,
@@ -18,11 +18,10 @@ export function Reveal({
   delayMs?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
+  // Starts hidden on server and client alike (no hydration mismatch).
+  // Reduced-motion users never see it hidden: the .reveal rule in
+  // globals.css keeps it visible under prefers-reduced-motion.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;

@@ -12,7 +12,7 @@ import { reorderLine, REORDER_PRODUCT_SELECT } from "@/lib/reorder";
 import { OrderProgress, OrderStatusBadge } from "@/components/orders/order-status";
 import { SorryMug } from "@/components/ui/sorry-mug";
 
-export const metadata: Metadata = { title: "Your Orders" };
+export const metadata: Metadata = { title: "Your orders" };
 
 // Thumbnails shown per order before the rest collapse into a "+N" tile.
 const THUMBS = 4;
@@ -30,7 +30,7 @@ export default async function OrdersPage() {
   return (
     <div className="mx-auto max-w-[1000px] px-4 py-8">
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
-        <h1 className="font-serif text-2xl font-medium text-text-primary">Your Orders</h1>
+        <h1 className="font-serif text-2xl font-medium text-text-primary">Your orders</h1>
         {orders.length > 0 && (
           <p className="text-sm text-text-secondary">
             {orders.length} {orders.length === 1 ? "order" : "orders"}

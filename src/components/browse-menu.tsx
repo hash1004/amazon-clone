@@ -14,11 +14,11 @@ type Suggestion =
   | { kind: "product"; slug: string; title: string; image: string };
 
 const SHOP_LINKS = [
-  { label: "All Coffee", href: "/s" },
-  { label: "Light Roasts", href: "/s?roast=light" },
-  { label: "Medium Roasts", href: "/s?roast=medium" },
-  { label: "Dark Roasts", href: "/s?roast=dark" },
-  { label: "Our Story", href: "/info/about" },
+  { label: "All coffee", href: "/s" },
+  { label: "Light roasts", href: "/s?roast=light" },
+  { label: "Medium roasts", href: "/s?roast=medium" },
+  { label: "Dark roasts", href: "/s?roast=dark" },
+  { label: "Our story", href: "/info/about" },
 ];
 
 const MOBILE_QUERY = "(max-width: 639px)";

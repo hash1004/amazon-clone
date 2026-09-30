@@ -11,7 +11,7 @@ export function SignOutButton({ className }: { className?: string }) {
       onClick={() => signOut({ callbackUrl: "/" })}
       className={className ?? "text-left hover:text-text-accent hover:underline"}
     >
-      Sign Out
+      Sign out
     </button>
   );
 }

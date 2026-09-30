@@ -91,7 +91,7 @@ export function ShopMenu({
                   onClick={close}
                   className="mt-2 block rounded-control bg-accent px-4 py-1.5 text-center text-xs font-medium text-accent-fg hover:bg-accent-hover"
                 >
-                  View Cart
+                  View cart
                 </Link>
               </>
             ) : (
@@ -128,7 +128,7 @@ export function ShopMenu({
             ) : (
               <ul className="space-y-1.5 text-sm text-text-secondary">
                 <li className="mb-1 font-medium text-text-primary">
-                  {firstName ? `Hi, ${firstName}` : "Your Account"}
+                  {firstName ? `Hi, ${firstName}` : "Your account"}
                 </li>
                 <li>
                   <Link href="/account" onClick={close} className="hover:text-text-accent">

@@ -79,7 +79,7 @@ export function AccountMenu({
           ) : (
             <ul className="space-y-1.5 text-sm text-text-secondary">
               <li className="mb-1 font-medium text-text-primary">
-                {firstName ? `Hi, ${firstName}` : "Your Account"}
+                {firstName ? `Hi, ${firstName}` : "Your account"}
               </li>
               <li>
                 <Link href="/account" onClick={close} className="hover:text-text-accent">

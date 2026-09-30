@@ -15,9 +15,9 @@ const PAGE_SIZE = 24;
 const POPULAR_SEARCHES = ["Ethiopia", "Chocolate", "Fruity", "Dark roast", "Natural"];
 
 const ROAST_LABEL: Record<string, string> = {
-  light: "Light Roasts",
-  medium: "Medium Roasts",
-  dark: "Dark Roasts",
+  light: "Light roasts",
+  medium: "Medium roasts",
+  dark: "Dark roasts",
 };
 
 const ORDER_BY: Record<string, Prisma.ProductOrderByWithRelationInput> = {
@@ -35,7 +35,7 @@ export async function generateMetadata({
   const sp = await searchParams;
   if (sp.q) return { title: `"${sp.q}"` };
   if (sp.roast && ROAST_LABEL[sp.roast]) return { title: ROAST_LABEL[sp.roast] };
-  return { title: "All Coffee" };
+  return { title: "All coffee" };
 }
 
 function buildWhere(sp: SearchParams): Prisma.ProductWhereInput {
@@ -129,7 +129,7 @@ export default async function SearchPage({
   const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const to = Math.min(page * PAGE_SIZE, total);
 
-  const heading = sp.q ? sp.q : sp.roast && ROAST_LABEL[sp.roast] ? ROAST_LABEL[sp.roast] : "All Coffee";
+  const heading = sp.q ? sp.q : sp.roast && ROAST_LABEL[sp.roast] ? ROAST_LABEL[sp.roast] : "All coffee";
 
   const chips: { label: string; href: string }[] = [];
   if (sp.roast && ROAST_LABEL[sp.roast] && sp.q)

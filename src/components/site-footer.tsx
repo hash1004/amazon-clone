@@ -6,18 +6,17 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
   {
     heading: "The roastery",
     links: [
-      { label: "Our Story", href: "/info/about" },
-      { label: "How We Roast", href: "/info/blog" },
-      { label: "Careers", href: "/info/careers" },
+      { label: "Our story", href: "/info/about" },
+      { label: "How we roast", href: "/info/blog" },
     ],
   },
   {
     heading: "Your account",
     links: [
-      { label: "Your Account", href: "/account" },
-      { label: "Your Orders", href: "/account/orders" },
-      { label: "Your Cart", href: "/cart" },
-      { label: "Shipping & Policies", href: "/info/shipping-policy" },
+      { label: "Your account", href: "/account" },
+      { label: "Your orders", href: "/account/orders" },
+      { label: "Your cart", href: "/cart" },
+      { label: "Shipping & returns", href: "/info/shipping-policy" },
       { label: "Help", href: "/info/help" },
     ],
   },
